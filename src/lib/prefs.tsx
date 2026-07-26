@@ -1,5 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
+import { supabase } from "@/integrations/supabase/client";
+
+import { useAuth } from "./auth";
 import { CITIES, DEFAULT_CITY_ID, cityForTimeZone, findCity, type City } from "./panchang/cities";
 
 export type ReminderKey = "ekadashi" | "purnima" | "amavasya" | "sankashti" | "pradosh" | "festivals";
@@ -59,6 +62,9 @@ const PrefsContext = createContext<Ctx | null>(null);
 export function PrefsProvider({ children }: { children: ReactNode }) {
   const [prefs, setPrefsState] = useState<Prefs>(DEFAULTS);
   const [hydrated, setHydrated] = useState(false);
+  const { user } = useAuth();
+  const userId = user?.id ?? null;
+  const [cloudLoadedFor, setCloudLoadedFor] = useState<string | null>(null);
 
   useEffect(() => {
     let next = DEFAULTS;
@@ -93,6 +99,46 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     }
     document.documentElement.classList.toggle("day", prefs.theme === "day");
   }, [prefs, hydrated]);
+
+  // Pull saved settings from the account on sign-in.
+  useEffect(() => {
+    if (!hydrated || !userId || cloudLoadedFor === userId) return;
+    let cancelled = false;
+    void (async () => {
+      const { data } = await supabase
+        .from("user_settings")
+        .select("prefs")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (cancelled) return;
+      const remote = (data?.prefs ?? null) as Partial<Prefs> | null;
+      if (remote && Object.keys(remote).length > 0) {
+        setPrefsState((prev) => ({
+          ...prev,
+          ...remote,
+          reminders: { ...prev.reminders, ...(remote.reminders ?? {}) },
+          custom: Array.isArray(remote.custom) ? remote.custom : prev.custom,
+        }));
+      }
+      setCloudLoadedFor(userId);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrated, userId, cloudLoadedFor]);
+
+  useEffect(() => {
+    if (!userId) setCloudLoadedFor(null);
+  }, [userId]);
+
+  // Push settings back to the account.
+  useEffect(() => {
+    if (!hydrated || !userId || cloudLoadedFor !== userId) return;
+    const id = window.setTimeout(() => {
+      void supabase.from("user_settings").upsert({ user_id: userId, prefs });
+    }, 600);
+    return () => window.clearTimeout(id);
+  }, [prefs, hydrated, userId, cloudLoadedFor]);
 
   const setPrefs = useCallback((patch: Partial<Prefs>) => {
     setPrefsState((prev) => ({ ...prev, ...patch }));

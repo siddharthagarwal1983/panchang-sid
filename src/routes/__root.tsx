@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PrefsProvider } from "../lib/prefs";
+import { AuthProvider } from "../lib/auth";
 import { BottomNav } from "../components/BottomNav";
 import { ReminderScheduler } from "../lib/useReminderNotifications";
 
@@ -144,14 +145,16 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <PrefsProvider>
-        <div className="min-h-screen pb-20">
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-        </div>
-        <BottomNav />
-        <ReminderScheduler />
-      </PrefsProvider>
+      <AuthProvider>
+        <PrefsProvider>
+          <div className="min-h-screen pb-20">
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+          </div>
+          <BottomNav />
+          <ReminderScheduler />
+        </PrefsProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

@@ -1,7 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
+import { useAuth } from "@/lib/auth";
 import { usePrefs } from "@/lib/prefs";
+import { useReminderNotifications } from "@/lib/useReminderNotifications";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -27,9 +30,12 @@ function SettingsPage() {
 
   return (
     <main className="mx-auto max-w-md">
-      <AppHeader title="Settings" subtitle="Stored on this device only" />
+      <AppHeader title="Settings" subtitle="Account, notifications and display" />
 
       <div className="space-y-4 px-5 py-5">
+        <AccountCard />
+
+        <NotificationsCard />
 
         <Segmented
           label="Time format"
@@ -63,11 +69,126 @@ function SettingsPage() {
           </p>
           <div className="hairline my-4" />
           <p className="text-xs text-muted-foreground">
-            Everything runs on your device. No account, no data leaves your phone.
+            Calculations run on your device. Sign in only if you want your settings and reminders
+            synced across devices.
           </p>
         </section>
       </div>
     </main>
+  );
+}
+
+function AccountCard() {
+  const { user, profile, signOut, updateDisplayName } = useAuth();
+  const [name, setName] = useState("");
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    setName(profile?.display_name ?? "");
+  }, [profile?.display_name]);
+
+  if (!user) {
+    return (
+      <section className="panel px-5 py-4">
+        <h2 className="label-caps">Account</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Sign in with Google or email to keep your city, reminders and preferences in sync across
+          devices.
+        </p>
+        <Link
+          to="/auth"
+          className="mt-3 flex w-full items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm text-primary-foreground transition-opacity hover:opacity-90"
+        >
+          Sign in
+        </Link>
+      </section>
+    );
+  }
+
+  return (
+    <section className="panel px-5 py-4">
+      <h2 className="label-caps">Account</h2>
+      <p className="mt-2 truncate font-display text-base">{profile?.display_name || user.email}</p>
+      {profile?.display_name && (
+        <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+      )}
+
+      <label className="mt-3 block">
+        <span className="label-caps">Display name</span>
+        <input
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value);
+            setSaved(false);
+          }}
+          placeholder="Your name"
+          className="mt-1.5 w-full rounded-xl border border-border bg-transparent px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary"
+        />
+      </label>
+      <div className="mt-3 flex gap-2">
+        <button
+          onClick={async () => {
+            await updateDisplayName(name.trim());
+            setSaved(true);
+          }}
+          className="flex-1 rounded-xl bg-primary px-4 py-2.5 text-sm text-primary-foreground transition-opacity hover:opacity-90"
+        >
+          {saved ? "Saved" : "Save"}
+        </button>
+        <button
+          onClick={() => void signOut()}
+          className="rounded-xl border border-border px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-secondary"
+        >
+          Sign out
+        </button>
+      </div>
+      <p className="mt-2.5 text-xs text-muted-foreground">
+        Your city, time format, theme and reminders are saved to this account.
+      </p>
+    </section>
+  );
+}
+
+function NotificationsCard() {
+  const { prefs, setPrefs } = usePrefs();
+  const { permission, request } = useReminderNotifications();
+
+  const status =
+    permission === "granted"
+      ? "Notifications are on for this device."
+      : permission === "denied"
+        ? "Blocked in your browser settings — allow notifications for this site to receive reminders."
+        : "Turn on notifications to get festival and vrat reminders.";
+
+  return (
+    <section className="panel px-5 py-4">
+      <h2 className="label-caps">Notifications</h2>
+      <p className="mt-2 text-sm text-muted-foreground">{status}</p>
+      {permission !== "granted" && (
+        <button
+          onClick={() => void request()}
+          disabled={permission === "denied"}
+          className="mt-3 w-full rounded-xl bg-primary px-4 py-2.5 text-sm text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+        >
+          Enable notifications
+        </button>
+      )}
+
+      <div className="hairline my-4" />
+      <label className="flex items-center justify-between gap-3">
+        <span className="text-sm">Daily reminder time</span>
+        <input
+          type="time"
+          value={prefs.reminderTime}
+          onChange={(e) => setPrefs({ reminderTime: e.target.value })}
+          className="rounded-lg border border-border bg-transparent px-3 py-1.5 text-sm tabular-nums outline-none focus:border-primary"
+        />
+      </label>
+      <p className="mt-2.5 text-xs leading-relaxed text-muted-foreground">
+        Reminders fire in your city's timezone while the app is open. Choose which observances to be
+        reminded about on the Reminders tab.
+      </p>
+    </section>
   );
 }
 
