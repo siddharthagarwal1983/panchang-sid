@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { CityPicker } from "@/components/CityPicker";
 import { useAuth } from "@/lib/auth";
+import { tzLabel } from "@/lib/panchang/cities";
 import { usePrefs } from "@/lib/prefs";
 
 export function AppHeader({
@@ -73,7 +74,8 @@ export function AppHeader({
               Calculating for{" "}
               <span className="text-foreground">
                 {city.name}, {city.state}
-              </span>
+              </span>{" "}
+              <span className="text-muted-foreground">· {tzLabel(city.tz)}</span>
             </span>
           </button>
         )}
