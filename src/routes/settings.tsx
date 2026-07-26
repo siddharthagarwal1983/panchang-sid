@@ -39,17 +39,6 @@ function SettingsPage() {
         <NotificationsCard />
 
         <Segmented
-          label="Reading style"
-          value={prefs.reading}
-          options={[
-            { value: "traditional", label: "Traditional" },
-            { value: "guided", label: "Explained" },
-          ]}
-          onChange={(v) => setPrefs({ reading: v as "traditional" | "guided" })}
-          hint="Traditional keeps the terse almanac wording with full Sanskrit detail. Explained adds English meanings and cultural context under each term."
-        />
-
-        <Segmented
           label="Time format"
           value={prefs.hour12 ? "12" : "24"}
           options={[
