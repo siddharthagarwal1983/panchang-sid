@@ -178,7 +178,13 @@ function TodayPage() {
                       key={f.id}
                       className="flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 py-1 pl-3 pr-1.5 font-display text-sm text-gold"
                     >
-                      {f.name}
+                      <button
+                        onClick={() => setOpenFestival(f)}
+                        className="underline-offset-4 hover:underline"
+                        aria-label={`Details about ${f.name}`}
+                      >
+                        {f.name}
+                      </button>
                       <button
                         onClick={() => toggleFestivalReminder(f)}
                         aria-pressed={isReminded(f.id)}
