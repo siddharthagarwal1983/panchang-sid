@@ -169,7 +169,7 @@ function TodayPage() {
   const location = `${city.name}, ${city.state}`;
   const eventFor = (item: FestivalSheetItem): CalendarEvent => {
     const lines = [item.note];
-    if (vrat && item.id === "vrat") {
+    if (vrat) {
       lines.push(
         `${vrat.start.label}: ${formatTime(vrat.start.at, city.tz, prefs.hour12)} ${zone}`,
         `${vrat.end.label}: ${formatTime(vrat.end.at, city.tz, prefs.hour12)} ${zone}`,
@@ -298,12 +298,45 @@ function TodayPage() {
             </div>
 
             {fasting && (
-              <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-gold/35 bg-gold/10 px-3 py-2.5">
-                <UtensilsCrossed className="mt-0.5 size-4 shrink-0 text-gold" />
-                <p className="text-sm leading-snug">
-                  <span className="font-display text-gold">{fasting.label}</span>
-                  <span className="block text-xs text-muted-foreground">{fasting.detail}</span>
-                </p>
+              <div className="mt-4 rounded-xl border border-gold/35 bg-gold/10 px-3 py-2.5">
+                <button
+                  onClick={openVrat}
+                  className="flex w-full items-start gap-2.5 text-left"
+                  aria-label={`Details about ${fasting.label}`}
+                >
+                  <UtensilsCrossed className="mt-0.5 size-4 shrink-0 text-gold" />
+                  <span className="text-sm leading-snug">
+                    <span className="font-display text-gold underline-offset-4 hover:underline">
+                      {fasting.label}
+                    </span>
+                    <span className="block text-xs text-muted-foreground">{fasting.detail}</span>
+                  </span>
+                </button>
+                {vrat && (
+                  <div className="mt-2.5 grid grid-cols-2 gap-2 text-xs">
+                    <span className="text-muted-foreground">
+                      {vrat.start.label}
+                      <span className="block tabular-nums text-foreground">
+                        {formatTime(vrat.start.at, city.tz, prefs.hour12)} {zone}
+                      </span>
+                    </span>
+                    <span className="text-muted-foreground">
+                      {vrat.end.label}
+                      <span className="block tabular-nums text-foreground">
+                        {formatTime(vrat.end.at, city.tz, prefs.hour12)} {zone}
+                      </span>
+                    </span>
+                  </div>
+                )}
+                <div className="mt-3">
+                  <AddToCalendar
+                    event={eventFor({
+                      id: "vrat",
+                      name: vrat?.label ?? fasting.label,
+                      note: fasting.detail,
+                    })}
+                  />
+                </div>
               </div>
             )}
 
@@ -440,7 +473,7 @@ function TodayPage() {
         item={openItem}
         dateLabel={formatLongDate(date)}
         reminded={openItem ? isReminded(openItem.id) : false}
-        vrat={openItem?.id === "vrat" || (vrat && openItem && fastingRelated(openItem.id)) ? vrat : null}
+        vrat={vrat}
         formatTime={(d) => formatTime(d, city.tz, prefs.hour12)}
         zone={zone}
         calendarEvent={openItem ? eventFor(openItem) : null}
