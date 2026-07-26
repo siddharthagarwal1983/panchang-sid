@@ -3,9 +3,10 @@ import { Bell, BellRing, ChevronLeft, ChevronRight, Moon, Sunrise, Sunset } from
 import { useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
+import { FestivalModal } from "@/components/FestivalModal";
 import { MoonGlyph } from "@/components/MoonGlyph";
 import { computeDayPanchang } from "@/lib/panchang/core";
-import { festivalsForSummary } from "@/lib/panchang/festivals";
+import { festivalsForSummary, scanFestivals, type Festival } from "@/lib/panchang/festivals";
 import { computeDaySummary } from "@/lib/panchang/core";
 import {
   addDays,
@@ -54,6 +55,7 @@ function TodayPage() {
   const { d } = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
   const [now] = useState(() => new Date());
+  const [openFestival, setOpenFestival] = useState<Festival | null>(null);
 
   const today = useMemo(() => toCalendarDay(now, city.tz), [now, city.tz]);
   const date = parseDay(d) ?? today;
@@ -69,10 +71,22 @@ function TodayPage() {
         ? festivalsForSummary(
             computeDaySummary(date, city),
             computeDaySummary(addDays(date, -1), city),
-          )
+          ).filter((f) => f.category === "major")
         : [],
     [hydrated, date.year, date.month, date.day, city],
   );
+
+  const upcoming = useMemo(() => {
+    if (!hydrated) return [];
+    const out: { date: CalendarDay; festival: Festival }[] = [];
+    for (const day of scanFestivals(addDays(date, 1), 120, city)) {
+      for (const f of day.festivals) {
+        if (f.category === "major") out.push({ date: day.date, festival: f });
+      }
+      if (out.length >= 5) break;
+    }
+    return out.slice(0, 5);
+  }, [hydrated, date.year, date.month, date.day, city]);
 
   const go = (delta: number) => {
     const next = addDays(date, delta);
