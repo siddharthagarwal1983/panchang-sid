@@ -60,6 +60,7 @@ export function AppHeader({
           </div>
 
           <div className="flex shrink-0 items-center gap-1.5 self-center sm:gap-2">
+            {showScript && <ScriptToggle />}
             {showLocation && (
               <button
                 onClick={() => openPicker(isFamily ? "family" : "mine")}
@@ -136,7 +137,6 @@ export function AppHeader({
           </div>
           </>
         )}
-        {showScript && <ScriptToggle className="mt-2" />}
         {children}
       </div>
       {showLocation && (

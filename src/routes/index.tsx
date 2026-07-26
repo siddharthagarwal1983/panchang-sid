@@ -44,7 +44,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Today's tithi with a live progress bar, fasting status, local sunrise and sunset, plus Abhijit Muhurta and Rahu Kalam windows for your city.",
+          "Today's tithi with fasting status, local sunrise and sunset, plus Abhijit Muhurta and Rahu Kalam windows for your city.",
       },
       { property: "og:title", content: "Today's Panchang — Tithi, Fasting & Muhurta" },
       {
@@ -148,15 +148,6 @@ function TodayPage() {
   };
 
   const fasting = panchang ? fastingStatus(panchang.tithi.name, panchang.tithi.paksha) : null;
-  const tithiProgress = (() => {
-    if (!panchang) return 0;
-    const { start, end } = panchang.tithi;
-    const at = isToday ? now.getTime() : panchang.reference.getTime();
-    const span = end.getTime() - start.getTime();
-    if (span <= 0) return 0;
-    return Math.min(100, Math.max(0, ((at - start.getTime()) / span) * 100));
-  })();
-
   return (
     <main className="mx-auto max-w-md">
       <AppHeader title="Panchāṅga" showLocation showScript />
@@ -257,18 +248,7 @@ function TodayPage() {
             </div>
 
             <div className="mt-4">
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-                <div
-                  className="h-full rounded-full bg-primary transition-[width] duration-500"
-                  style={{ width: `${tithiProgress}%` }}
-                  role="progressbar"
-                  aria-valuenow={Math.round(tithiProgress)}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-label="Tithi elapsed"
-                />
-              </div>
-              <p className="mt-2 text-sm">
+              <p className="text-sm">
                 Ends {t(panchang.tithi.end)} {zone}
                 <span className="text-muted-foreground">
                   {" "}
