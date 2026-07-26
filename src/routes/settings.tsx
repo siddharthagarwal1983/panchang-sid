@@ -30,16 +30,6 @@ function SettingsPage() {
       <AppHeader title="Settings" subtitle="Stored on this device only" />
 
       <div className="space-y-4 px-5 py-5">
-        <Segmented
-          label="Month naming"
-          hint="Amanta ends at the new moon (South & West India). Purnimanta ends at the full moon (North India)."
-          value={prefs.tradition}
-          options={[
-            { value: "amanta", label: "Amanta" },
-            { value: "purnimanta", label: "Purnimanta" },
-          ]}
-          onChange={(v) => setPrefs({ tradition: v as "amanta" | "purnimanta" })}
-        />
 
         <Segmented
           label="Time format"
