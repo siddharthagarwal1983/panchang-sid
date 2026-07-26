@@ -1,4 +1,4 @@
-import { Apple, Bell, BellRing, CalendarPlus, Mail, Sunrise, UtensilsCrossed } from "lucide-react";
+import { Bell, BellRing, Sunrise, UtensilsCrossed } from "lucide-react";
 
 import { AddToCalendar } from "@/components/AddToCalendar";
 import {
