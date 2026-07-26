@@ -1,5 +1,6 @@
 import { Check, Crosshair, LoaderCircle, MapPin, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { CITIES, nearestCity } from "@/lib/panchang/cities";
 import { usePrefs } from "@/lib/prefs";
@@ -27,7 +28,8 @@ export function CityPicker({ open, onClose }: { open: boolean; onClose: () => vo
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const { city } = nearestCity(pos.coords.latitude, pos.coords.longitude);
+        const deviceTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const { city } = nearestCity(pos.coords.latitude, pos.coords.longitude, deviceTz);
         setPrefs({ cityId: city.id });
         setLocating(false);
         onClose();
