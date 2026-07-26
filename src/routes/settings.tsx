@@ -74,6 +74,15 @@ function SettingsPage() {
             synced across devices.
           </p>
         </section>
+
+        <section className="panel px-5 py-4">
+          <h2 className="label-caps">Legal & feedback</h2>
+          <div className="mt-3 space-y-1">
+            <SettingsLink to="/feedback" icon={MessageSquare} label="Send feedback" />
+            <SettingsLink to="/privacy" icon={Shield} label="Privacy policy" />
+            <SettingsLink to="/terms" icon={FileText} label="Terms of service" />
+          </div>
+        </section>
       </div>
     </main>
   );
