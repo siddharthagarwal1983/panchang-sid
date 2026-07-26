@@ -11,7 +11,7 @@ type Status =
   | { kind: "located"; miles: number }
   | { kind: "error"; message: string };
 
-export function LocationWidget() {
+export function LocationWidget({ inHeader = false }: { inHeader?: boolean }) {
   const { city, setPrefs } = usePrefs();
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -42,29 +42,40 @@ export function LocationWidget() {
   };
 
   return (
-    <section className="panel flex items-center gap-3 px-4 py-3">
-      <MapPin className="size-5 shrink-0 text-primary" />
+    <section
+      className={
+        inHeader
+          ? "mt-2 flex items-center gap-2.5"
+          : "panel flex items-center gap-3 px-4 py-3"
+      }
+    >
+      <MapPin className={inHeader ? "size-4 shrink-0 text-primary" : "size-5 shrink-0 text-primary"} />
       <div className="min-w-0 flex-1">
-        <p className="label-caps">Calculating for</p>
+        {!inHeader && <p className="label-caps">Calculating for</p>}
         <button
           onClick={() => setPickerOpen(true)}
-          className="block max-w-full truncate text-left font-display text-base underline-offset-4 hover:underline"
+          className={`block max-w-full truncate text-left font-display underline-offset-4 hover:underline ${
+            inHeader ? "text-sm" : "text-base"
+          }`}
         >
           {city.name}, {city.state}
         </button>
-        <p className="mt-0.5 text-xs text-muted-foreground">
+        <p className="mt-0.5 truncate text-xs text-muted-foreground">
           {status.kind === "locating" && "Finding you…"}
           {status.kind === "located" &&
             `Nearest city to you · ${status.miles < 1 ? "under a mile" : `${Math.round(status.miles)} mi`} away`}
           {status.kind === "error" && status.message}
-          {status.kind === "idle" && "Tap the name to change, or use your location"}
+          {status.kind === "idle" &&
+            (inHeader ? "Tap to change · or locate me" : "Tap the name to change, or use your location")}
         </p>
       </div>
       <button
         onClick={locate}
         disabled={status.kind === "locating"}
         aria-label="Use my current location"
-        className="flex shrink-0 items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-2 text-xs text-primary transition-colors hover:bg-primary/20 disabled:opacity-60"
+        className={`flex shrink-0 items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 text-xs text-primary transition-colors hover:bg-primary/20 disabled:opacity-60 ${
+          inHeader ? "px-2.5 py-1.5" : "px-3 py-2"
+        }`}
       >
         {status.kind === "locating" ? (
           <LoaderCircle className="size-4 animate-spin" />
