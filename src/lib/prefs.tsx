@@ -4,7 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { useAuth } from "./auth";
 import { CITIES, DEFAULT_CITY_ID, cityForTimeZone, findCity, type City } from "./panchang/cities";
-import type { Place } from "./panchang/geocode";
+import {
+  FAMILY_DEFAULT_PLACE,
+  placeForTimeZone,
+  reverseGeocode,
+  type Place,
+} from "./panchang/geocode";
 
 export type ReminderKey = "ekadashi" | "purnima" | "amavasya" | "sankashti" | "pradosh" | "festivals";
 
@@ -23,6 +28,12 @@ export type Prefs = {
   cityId: string;
   /** Any place in the world; when set it wins over the preset `cityId`. */
   place: Place | null;
+  /** Parents / family location, used by the dual-location toggle. */
+  familyPlace: Place;
+  /** Which of the two locations panchang is currently calculated for. */
+  activeLocation: "mine" | "family";
+  /** True once we've attempted automatic device geolocation. */
+  autoLocated: boolean;
   /** Most recently chosen places, newest first. */
   recentPlaces: Place[];
   hour12: boolean;
@@ -36,6 +47,9 @@ export type Prefs = {
 const DEFAULTS: Prefs = {
   cityId: DEFAULT_CITY_ID,
   place: null,
+  familyPlace: FAMILY_DEFAULT_PLACE,
+  activeLocation: "mine",
+  autoLocated: false,
   recentPlaces: [],
   hour12: true,
   tradition: "amanta",
@@ -57,9 +71,15 @@ const STORAGE_KEY = "panchang.prefs.v1";
 type Ctx = {
   prefs: Prefs;
   city: City;
+  /** The user's own (device) location, independent of the active toggle. */
+  myPlace: City;
+  familyPlace: Place;
+  locating: boolean;
   hydrated: boolean;
   setPrefs: (patch: Partial<Prefs>) => void;
-  setPlace: (place: Place) => void;
+  setPlace: (place: Place, target?: "mine" | "family") => void;
+  setActiveLocation: (target: "mine" | "family") => void;
+  detectMyLocation: () => Promise<void>;
   toggleReminder: (key: ReminderKey) => void;
   addCustomReminder: (reminder: CustomReminder) => void;
   removeCustomReminder: (key: string) => void;
@@ -70,6 +90,7 @@ const PrefsContext = createContext<Ctx | null>(null);
 export function PrefsProvider({ children }: { children: ReactNode }) {
   const [prefs, setPrefsState] = useState<Prefs>(DEFAULTS);
   const [hydrated, setHydrated] = useState(false);
+  const [locating, setLocating] = useState(false);
   const { user } = useAuth();
   const userId = user?.id ?? null;
   const [cloudLoadedFor, setCloudLoadedFor] = useState<string | null>(null);
@@ -87,13 +108,19 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
           custom: Array.isArray(parsed.custom) ? parsed.custom : [],
           recentPlaces: Array.isArray(parsed.recentPlaces) ? parsed.recentPlaces : [],
           place: parsed.place && parsed.place.tz ? parsed.place : null,
+          familyPlace:
+            parsed.familyPlace && parsed.familyPlace.tz ? parsed.familyPlace : FAMILY_DEFAULT_PLACE,
+          activeLocation: parsed.activeLocation === "family" ? "family" : "mine",
         };
         if (!next.place && !CITIES.some((c) => c.id === next.cityId)) {
           next = { ...next, cityId: DEFAULT_CITY_ID };
         }
       } else {
-        const guess = cityForTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
-        if (guess) next = { ...DEFAULTS, cityId: guess.id };
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const guess = cityForTimeZone(tz);
+        const worldGuess = placeForTimeZone(tz);
+        if (guess) next = { ...DEFAULTS, cityId: guess.id, place: { ...guess } };
+        else if (worldGuess) next = { ...DEFAULTS, cityId: worldGuess.id, place: worldGuess };
       }
     } catch {
       next = DEFAULTS;
@@ -156,14 +183,53 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     setPrefsState((prev) => ({ ...prev, ...patch }));
   }, []);
 
-  const setPlace = useCallback((place: Place) => {
+  const setPlace = useCallback((place: Place, target: "mine" | "family" = "mine") => {
     setPrefsState((prev) => ({
       ...prev,
-      place,
-      cityId: place.id,
+      ...(target === "family"
+        ? { familyPlace: place }
+        : { place, cityId: place.id }),
+      activeLocation: target,
       recentPlaces: [place, ...prev.recentPlaces.filter((p) => p.id !== place.id)].slice(0, 6),
     }));
   }, []);
+
+  const setActiveLocation = useCallback((target: "mine" | "family") => {
+    setPrefsState((prev) => ({ ...prev, activeLocation: target }));
+  }, []);
+
+  const detectMyLocation = useCallback(async () => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) return;
+    setLocating(true);
+    try {
+      const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 10 * 60 * 1000,
+        }),
+      );
+      const place = await reverseGeocode(pos.coords.latitude, pos.coords.longitude);
+      setPrefsState((prev) => ({
+        ...prev,
+        place,
+        cityId: place.id,
+        activeLocation: "mine",
+        autoLocated: true,
+      }));
+    } catch {
+      setPrefsState((prev) => ({ ...prev, autoLocated: true }));
+    } finally {
+      setLocating(false);
+    }
+  }, []);
+
+  // First launch: silently ask the device where we are, so panchang defaults to
+  // the user's real city instead of an Indian default.
+  useEffect(() => {
+    if (!hydrated || prefs.autoLocated) return;
+    void detectMyLocation();
+  }, [hydrated, prefs.autoLocated, detectMyLocation]);
 
   const toggleReminder = useCallback((key: ReminderKey) => {
     setPrefsState((prev) => ({
@@ -188,15 +254,34 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
   const value = useMemo<Ctx>(
     () => ({
       prefs,
-      city: prefs.place ?? findCity(prefs.cityId),
+      city:
+        prefs.activeLocation === "family"
+          ? prefs.familyPlace
+          : (prefs.place ?? findCity(prefs.cityId)),
+      myPlace: prefs.place ?? findCity(prefs.cityId),
+      familyPlace: prefs.familyPlace,
+      locating,
       hydrated,
       setPrefs,
       setPlace,
+      setActiveLocation,
+      detectMyLocation,
       toggleReminder,
       addCustomReminder,
       removeCustomReminder,
     }),
-    [prefs, hydrated, setPrefs, setPlace, toggleReminder, addCustomReminder, removeCustomReminder],
+    [
+      prefs,
+      locating,
+      hydrated,
+      setPrefs,
+      setPlace,
+      setActiveLocation,
+      detectMyLocation,
+      toggleReminder,
+      addCustomReminder,
+      removeCustomReminder,
+    ],
   );
 
   return <PrefsContext.Provider value={value}>{children}</PrefsContext.Provider>;
