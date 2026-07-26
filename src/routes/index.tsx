@@ -155,6 +155,39 @@ function TodayPage() {
   };
 
   const fasting = panchang ? fastingStatus(panchang.tithi.name, panchang.tithi.paksha) : null;
+  const vrat =
+    panchang && fasting
+      ? vratGuide(panchang.tithi.name, panchang.tithi.paksha, {
+          sunrise: panchang.sunrise,
+          sunset: panchang.sunset,
+          moonrise: panchang.moonrise,
+          tithiEnd: panchang.tithi.end,
+          nextSunrise,
+        })
+      : null;
+
+  const location = `${city.name}, ${city.state}`;
+  const eventFor = (item: FestivalSheetItem): CalendarEvent => {
+    const lines = [item.note];
+    if (vrat && item.id === "vrat") {
+      lines.push(
+        `${vrat.start.label}: ${formatTime(vrat.start.at, city.tz, prefs.hour12)} ${zone}`,
+        `${vrat.end.label}: ${formatTime(vrat.end.at, city.tz, prefs.hour12)} ${zone}`,
+        ...vrat.dietary,
+      );
+    }
+    lines.push(`Sunrise ${formatTime(panchang?.sunrise ?? null, city.tz, prefs.hour12)} · Sunset ${formatTime(panchang?.sunset ?? null, city.tz, prefs.hour12)} ${zone}`);
+    lines.push(`Calculated for ${location} local sunrise — Panchāṅga`);
+    return {
+      title: item.name,
+      description: lines.filter(Boolean).join("\n"),
+      location,
+      day: date,
+    };
+  };
+  const openVrat = () =>
+    vrat && setOpenItem({ id: "vrat", name: vrat.label, note: fasting?.detail ?? "" });
+
   return (
     <main className="mx-auto max-w-md">
       <AppHeader title="Panchāṅga" showLocation showScript />
