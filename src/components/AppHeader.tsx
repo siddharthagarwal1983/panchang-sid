@@ -27,16 +27,20 @@ export function AppHeader({
 
   return (
     <header
-      className="sticky top-0 z-30 border-b border-border bg-background/90 pb-3 pt-[calc(env(safe-area-inset-top)+0.85rem)] backdrop-blur landscape:pt-[calc(env(safe-area-inset-top)+0.55rem)]"
+      data-testid="app-header"
+      className="sticky top-0 z-30 border-b border-border bg-background/90 pb-3 pt-[calc(var(--sa-top)+0.85rem)] backdrop-blur landscape:pt-[calc(var(--sa-top)+0.55rem)]"
       style={{
-        paddingLeft: "max(1rem, env(safe-area-inset-left))",
-        paddingRight: "max(1rem, env(safe-area-inset-right))",
+        paddingLeft: "max(1rem, var(--sa-left))",
+        paddingRight: "max(1rem, var(--sa-right))",
       }}
     >
       <div className="mx-auto max-w-md">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2 sm:gap-3">
           <div className="min-w-0">
-            <h1 className="truncate font-display text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl">
+            <h1
+              data-testid="app-header-title"
+              className="truncate font-display text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl"
+            >
               {title}
             </h1>
             {subtitle && (
@@ -69,7 +73,7 @@ export function AppHeader({
                 <Link
                   to="/auth"
                   aria-label="Sign in"
-                  className="flex size-9 shrink-0 items-center justify-center gap-1.5 rounded-full border border-border text-[11px] font-semibold uppercase tracking-wider transition-colors hover:bg-secondary min-[360px]:size-auto min-[360px]:px-3 min-[360px]:py-1.5"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center gap-1.5 rounded-full border border-border text-[11px] font-semibold uppercase tracking-wider transition-colors hover:bg-secondary min-[360px]:w-auto min-[360px]:px-3"
                 >
                   <UserRound className="size-3.5" />
                   <span className="hidden min-[360px]:inline">Sign in</span>
