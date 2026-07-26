@@ -44,7 +44,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Today's tithi with a live progress bar, fasting status, local sunrise and sunset, plus Abhijit Muhurta and Rahu Kalam windows for your city.",
+          "Today's tithi with fasting status, local sunrise and sunset, plus Abhijit Muhurta and Rahu Kalam windows for your city.",
       },
       { property: "og:title", content: "Today's Panchang — Tithi, Fasting & Muhurta" },
       {
