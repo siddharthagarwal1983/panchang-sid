@@ -14,13 +14,16 @@ import {
 import { useEffect, useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
-import { FestivalModal } from "@/components/FestivalModal";
+import { AddToCalendar } from "@/components/AddToCalendar";
+import { FestivalModal, type FestivalSheetItem } from "@/components/FestivalModal";
 import { MoonGlyph } from "@/components/MoonGlyph";
 import { computeDayPanchang, type Muhurta } from "@/lib/panchang/core";
 import { tzLabel } from "@/lib/panchang/cities";
 import { festivalsForSummary, scanFestivals, type Festival } from "@/lib/panchang/festivals";
 import { computeDaySummary } from "@/lib/panchang/core";
 import { fastingStatus, gloss, muhurtaTerm, pakshaTerm, term, tithiTerm } from "@/lib/panchang/lang";
+import { vratGuide } from "@/lib/panchang/vrat";
+import type { CalendarEvent } from "@/lib/calendar-export";
 import {
   addDays,
   dayKey,
@@ -80,7 +83,7 @@ function TodayPage() {
   const { d } = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
   const [now, setNow] = useState(() => new Date());
-  const [openFestival, setOpenFestival] = useState<Festival | null>(null);
+  const [openItem, setOpenItem] = useState<FestivalSheetItem | null>(null);
 
   // Keep progress bars and countdowns alive.
   useEffect(() => {
@@ -95,6 +98,10 @@ function TodayPage() {
 
   const panchang = useMemo(
     () => (hydrated ? computeDayPanchang(date, city) : null),
+    [hydrated, date.year, date.month, date.day, city],
+  );
+  const nextSunrise = useMemo(
+    () => (hydrated ? computeDayPanchang(addDays(date, 1), city).sunrise : null),
     [hydrated, date.year, date.month, date.day, city],
   );
   const festivals = useMemo(
