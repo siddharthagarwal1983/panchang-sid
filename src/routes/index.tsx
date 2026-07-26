@@ -3,9 +3,10 @@ import { Bell, BellRing, ChevronLeft, ChevronRight, Moon, Sunrise, Sunset } from
 import { useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
+import { FestivalModal } from "@/components/FestivalModal";
 import { MoonGlyph } from "@/components/MoonGlyph";
 import { computeDayPanchang } from "@/lib/panchang/core";
-import { festivalsForSummary } from "@/lib/panchang/festivals";
+import { festivalsForSummary, scanFestivals, type Festival } from "@/lib/panchang/festivals";
 import { computeDaySummary } from "@/lib/panchang/core";
 import {
   addDays,
@@ -54,6 +55,7 @@ function TodayPage() {
   const { d } = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
   const [now] = useState(() => new Date());
+  const [openFestival, setOpenFestival] = useState<Festival | null>(null);
 
   const today = useMemo(() => toCalendarDay(now, city.tz), [now, city.tz]);
   const date = parseDay(d) ?? today;
@@ -69,10 +71,22 @@ function TodayPage() {
         ? festivalsForSummary(
             computeDaySummary(date, city),
             computeDaySummary(addDays(date, -1), city),
-          )
+          ).filter((f) => f.category === "major")
         : [],
     [hydrated, date.year, date.month, date.day, city],
   );
+
+  const upcoming = useMemo(() => {
+    if (!hydrated) return [];
+    const out: { date: CalendarDay; festival: Festival }[] = [];
+    for (const day of scanFestivals(addDays(date, 1), 120, city)) {
+      for (const f of day.festivals) {
+        if (f.category === "major") out.push({ date: day.date, festival: f });
+      }
+      if (out.length >= 5) break;
+    }
+    return out.slice(0, 5);
+  }, [hydrated, date.year, date.month, date.day, city]);
 
   const go = (delta: number) => {
     const next = addDays(date, delta);
@@ -164,7 +178,13 @@ function TodayPage() {
                       key={f.id}
                       className="flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 py-1 pl-3 pr-1.5 font-display text-sm text-gold"
                     >
-                      {f.name}
+                      <button
+                        onClick={() => setOpenFestival(f)}
+                        className="underline-offset-4 hover:underline"
+                        aria-label={`Details about ${f.name}`}
+                      >
+                        {f.name}
+                      </button>
                       <button
                         onClick={() => toggleFestivalReminder(f)}
                         aria-pressed={isReminded(f.id)}
@@ -241,6 +261,26 @@ function TodayPage() {
             </ul>
           </section>
 
+          {upcoming.length > 0 && (
+            <section className="panel px-5 py-4">
+              <h3 className="label-caps">Upcoming festivals</h3>
+              <ul className="mt-3 space-y-2.5">
+                {upcoming.map((u) => (
+                  <li key={`${dayKey(u.date)}:${u.festival.id}`}>
+                    <button
+                      onClick={() => navigate({ search: { d: dayKey(u.date) } })}
+                      className="flex w-full items-center justify-between gap-3 text-left text-sm"
+                    >
+                      <span className="font-display text-base text-gold">{u.festival.name}</span>
+                      <span className="shrink-0 text-xs text-muted-foreground">
+                        {formatLongDate(u.date)}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <p className="px-1 text-center text-xs leading-relaxed text-muted-foreground">
             Computed for {city.name}, {city.state} using drik ganita with the Lahiri ayanamsa.
@@ -248,6 +288,14 @@ function TodayPage() {
           </p>
         </div>
       )}
+
+      <FestivalModal
+        festival={openFestival}
+        dateLabel={formatLongDate(date)}
+        reminded={openFestival ? isReminded(openFestival.id) : false}
+        onToggleReminder={() => openFestival && toggleFestivalReminder(openFestival)}
+        onOpenChange={(open) => !open && setOpenFestival(null)}
+      />
     </main>
   );
 }
