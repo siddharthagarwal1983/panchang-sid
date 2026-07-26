@@ -237,3 +237,24 @@ function Segmented({
     </section>
   );
 }
+
+function SettingsLink({
+  to,
+  icon: Icon,
+  label,
+}: {
+  to: string;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-foreground transition-colors hover:bg-secondary"
+    >
+      <Icon className="size-4 text-muted-foreground" />
+      <span className="flex-1">{label}</span>
+      <span className="text-muted-foreground">›</span>
+    </Link>
+  );
+}
