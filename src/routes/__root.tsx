@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PrefsProvider } from "../lib/prefs";
 import { BottomNav } from "../components/BottomNav";
+import { ReminderScheduler } from "../lib/useReminderNotifications";
 
 function NotFoundComponent() {
   return (
@@ -148,6 +149,7 @@ function RootComponent() {
           <Outlet />
         </div>
         <BottomNav />
+        <ReminderScheduler />
       </PrefsProvider>
     </QueryClientProvider>
   );
