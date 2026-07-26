@@ -27,8 +27,6 @@ export type Prefs = {
   recentPlaces: Place[];
   hour12: boolean;
   tradition: "amanta" | "purnimanta";
-  /** "traditional" = terse almanac wording, "guided" = English explanations. */
-  reading: "traditional" | "guided";
   theme: "night" | "day";
   reminders: Record<ReminderKey, boolean>;
   reminderTime: string;
@@ -41,7 +39,6 @@ const DEFAULTS: Prefs = {
   recentPlaces: [],
   hour12: true,
   tradition: "amanta",
-  reading: "guided",
   theme: "night",
   reminders: {
     ekadashi: true,
