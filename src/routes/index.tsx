@@ -133,6 +133,22 @@ function TodayPage() {
               </span>{" "}
               masa · {panchang.ritu} ritu · Vikram Samvat {panchang.samvat}
             </p>
+            {festivals.length > 0 && (
+              <>
+                <div className="hairline my-5" />
+                <p className="label-caps">Observance{festivals.length > 1 ? "s" : ""} today</p>
+                <ul className="mt-2 flex flex-wrap justify-center gap-2">
+                  {festivals.map((f) => (
+                    <li
+                      key={f.id}
+                      className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 font-display text-sm text-gold"
+                    >
+                      {f.name}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           <section className="grid grid-cols-2 gap-3">
