@@ -6,6 +6,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { FestivalModal } from "@/components/FestivalModal";
 import { MoonGlyph } from "@/components/MoonGlyph";
 import { computeDayPanchang } from "@/lib/panchang/core";
+import { tzLabel } from "@/lib/panchang/cities";
 import { festivalsForSummary, scanFestivals, type Festival } from "@/lib/panchang/festivals";
 import { computeDaySummary } from "@/lib/panchang/core";
 import {
