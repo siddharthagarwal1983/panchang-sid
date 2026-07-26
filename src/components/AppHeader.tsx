@@ -26,11 +26,19 @@ export function AppHeader({
   const initial = (profile?.display_name || user?.email || "?").trim().charAt(0).toUpperCase();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/90 px-5 pb-3 pt-[calc(env(safe-area-inset-top)+0.85rem)] backdrop-blur">
+    <header
+      className="sticky top-0 z-30 border-b border-border bg-background/90 pb-3 pt-[calc(env(safe-area-inset-top)+0.85rem)] backdrop-blur landscape:pt-[calc(env(safe-area-inset-top)+0.55rem)]"
+      style={{
+        paddingLeft: "max(1rem, env(safe-area-inset-left))",
+        paddingRight: "max(1rem, env(safe-area-inset-right))",
+      }}
+    >
       <div className="mx-auto max-w-md">
-        <div className="flex items-baseline justify-between gap-3">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2 sm:gap-3">
           <div className="min-w-0">
-            <h1 className="truncate font-display text-2xl leading-snug tracking-tight">{title}</h1>
+            <h1 className="truncate font-display text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl">
+              {title}
+            </h1>
             {subtitle && (
               <p className="mt-1 truncate text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {subtitle}
@@ -38,12 +46,12 @@ export function AppHeader({
             )}
           </div>
 
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1.5 self-center sm:gap-2">
             {showLocation && (
               <button
                 onClick={() => setPickerOpen(true)}
                 aria-label="Change location"
-                className="flex size-9 items-center justify-center rounded-full border border-border text-primary transition-colors hover:bg-secondary"
+                className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border text-primary transition-colors hover:bg-secondary"
               >
                 <MapPin className="size-4" />
               </button>
@@ -60,10 +68,11 @@ export function AppHeader({
               ) : (
                 <Link
                   to="/auth"
-                  className="flex shrink-0 items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors hover:bg-secondary"
+                  aria-label="Sign in"
+                  className="flex size-9 shrink-0 items-center justify-center gap-1.5 rounded-full border border-border text-[11px] font-semibold uppercase tracking-wider transition-colors hover:bg-secondary min-[360px]:size-auto min-[360px]:px-3 min-[360px]:py-1.5"
                 >
                   <UserRound className="size-3.5" />
-                  Sign in
+                  <span className="hidden min-[360px]:inline">Sign in</span>
                 </Link>
               ))}
           </div>
@@ -71,15 +80,15 @@ export function AppHeader({
         {showLocation && (
           <button
             onClick={() => setPickerOpen(true)}
-            className="mt-2.5 flex w-full items-center gap-1.5 text-left"
+            className="mt-2.5 flex w-full min-w-0 items-center gap-1.5 text-left"
           >
             <MapPin className="size-3.5 shrink-0 text-primary" />
-            <span className="flex items-center gap-1.5 truncate text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              <span className="text-foreground">
+            <span className="flex min-w-0 items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <span className="truncate text-foreground">
                 {city.name}, {city.state}
               </span>
-              <span className="h-3 w-px bg-border" />
-              <span>{tzLabel(city.tz)}</span>
+              <span className="h-3 w-px shrink-0 bg-border" />
+              <span className="shrink-0">{tzLabel(city.tz)}</span>
             </span>
           </button>
         )}
