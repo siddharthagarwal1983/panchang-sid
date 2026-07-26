@@ -3,7 +3,15 @@ import { UserRound } from "lucide-react";
 
 import { useAuth } from "@/lib/auth";
 
-export function AppHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+export function AppHeader({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  children?: React.ReactNode;
+}) {
   const { user, profile } = useAuth();
   const { pathname } = useLocation();
   const onAuthPage = pathname === "/auth";
@@ -11,7 +19,8 @@ export function AppHeader({ title, subtitle }: { title: string; subtitle?: strin
 
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/90 px-5 pb-3 pt-[calc(env(safe-area-inset-top)+0.85rem)] backdrop-blur">
-      <div className="mx-auto flex max-w-md items-center justify-between gap-3">
+      <div className="mx-auto max-w-md">
+        <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <h1 className="truncate font-display text-xl leading-tight">{title}</h1>
           {subtitle && <p className="truncate text-xs text-muted-foreground">{subtitle}</p>}
@@ -35,6 +44,8 @@ export function AppHeader({ title, subtitle }: { title: string; subtitle?: strin
               Sign in
             </Link>
           ))}
+        </div>
+        {children}
       </div>
     </header>
   );
