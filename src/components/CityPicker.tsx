@@ -1,16 +1,48 @@
-import { Check, MapPin, Search, X } from "lucide-react";
+import { Check, Crosshair, LoaderCircle, MapPin, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import { CITIES } from "@/lib/panchang/cities";
+import { CITIES, nearestCity } from "@/lib/panchang/cities";
 import { usePrefs } from "@/lib/prefs";
 
 export function CityPicker({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { prefs, setPrefs } = usePrefs();
   const [query, setQuery] = useState("");
+  const [locating, setLocating] = useState(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!open) setQuery("");
+    if (!open) {
+      setQuery("");
+      setGeoError(null);
+      setLocating(false);
+    }
   }, [open]);
+
+  const locate = () => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setGeoError("This device can't share its location.");
+      return;
+    }
+    setGeoError(null);
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { city } = nearestCity(pos.coords.latitude, pos.coords.longitude);
+        setPrefs({ cityId: city.id });
+        setLocating(false);
+        onClose();
+      },
+      (err) => {
+        setLocating(false);
+        setGeoError(
+          err.code === err.PERMISSION_DENIED
+            ? "Location permission denied — search for a city instead."
+            : "Couldn't get your location — search for a city instead.",
+        );
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 },
+    );
+  };
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -51,6 +83,19 @@ export function CityPicker({ open, onClose }: { open: boolean; onClose: () => vo
               className="w-full bg-transparent py-2.5 text-sm outline-none placeholder:text-muted-foreground"
             />
           </div>
+          <button
+            onClick={locate}
+            disabled={locating}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-primary/40 bg-primary/10 px-3 py-2.5 text-sm text-primary transition-colors hover:bg-primary/20 disabled:opacity-60"
+          >
+            {locating ? (
+              <LoaderCircle className="size-4 animate-spin" />
+            ) : (
+              <Crosshair className="size-4" />
+            )}
+            Use my current location
+          </button>
+          {geoError && <p className="mt-2 text-xs text-muted-foreground">{geoError}</p>}
         </div>
         <ul className="mt-3 flex-1 overflow-y-auto px-3 pb-4">
           {results.map((c) => {

@@ -1,19 +1,26 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { UserRound } from "lucide-react";
+import { MapPin, UserRound } from "lucide-react";
+import { useState } from "react";
 
+import { CityPicker } from "@/components/CityPicker";
 import { useAuth } from "@/lib/auth";
+import { usePrefs } from "@/lib/prefs";
 
 export function AppHeader({
   title,
   subtitle,
+  showLocation = false,
   children,
 }: {
   title: string;
   subtitle?: string;
+  showLocation?: boolean;
   children?: React.ReactNode;
 }) {
   const { user, profile } = useAuth();
+  const { city } = usePrefs();
   const { pathname } = useLocation();
+  const [pickerOpen, setPickerOpen] = useState(false);
   const onAuthPage = pathname === "/auth";
   const initial = (profile?.display_name || user?.email || "?").trim().charAt(0).toUpperCase();
 
@@ -26,6 +33,16 @@ export function AppHeader({
           {subtitle && <p className="truncate text-xs text-muted-foreground">{subtitle}</p>}
         </div>
 
+        <div className="flex shrink-0 items-center gap-2">
+        {showLocation && (
+          <button
+            onClick={() => setPickerOpen(true)}
+            aria-label="Change location"
+            className="flex size-9 items-center justify-center rounded-full border border-border text-primary transition-colors hover:bg-secondary"
+          >
+            <MapPin className="size-4" />
+          </button>
+        )}
         {!onAuthPage &&
           (user ? (
             <Link
@@ -45,8 +62,24 @@ export function AppHeader({
             </Link>
           ))}
         </div>
+        </div>
+        {showLocation && (
+          <button
+            onClick={() => setPickerOpen(true)}
+            className="mt-2 flex w-full items-center gap-1.5 text-left text-xs text-muted-foreground"
+          >
+            <MapPin className="size-3.5 shrink-0 text-primary" />
+            <span className="truncate">
+              Calculating for{" "}
+              <span className="text-foreground">
+                {city.name}, {city.state}
+              </span>
+            </span>
+          </button>
+        )}
         {children}
       </div>
+      {showLocation && <CityPicker open={pickerOpen} onClose={() => setPickerOpen(false)} />}
     </header>
   );
 }

@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
 import { FestivalModal } from "@/components/FestivalModal";
-import { LocationWidget } from "@/components/LocationWidget";
 import { MoonGlyph } from "@/components/MoonGlyph";
 import { computeDayPanchang } from "@/lib/panchang/core";
 import { festivalsForSummary, scanFestivals, type Festival } from "@/lib/panchang/festivals";
@@ -117,9 +116,7 @@ function TodayPage() {
 
   return (
     <main className="mx-auto max-w-md">
-      <AppHeader title="Panchāṅga" subtitle="Drik ganita · Lahiri ayanamsa">
-        <LocationWidget inHeader />
-      </AppHeader>
+      <AppHeader title="Panchāṅga" subtitle="Drik ganita · Lahiri ayanamsa" showLocation />
 
       <div className="flex items-center justify-between gap-2 px-5 py-4">
         <button
