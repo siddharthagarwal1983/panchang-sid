@@ -30,7 +30,7 @@ export function AppHeader({
       <div className="mx-auto max-w-md">
         <div className="flex items-baseline justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="truncate font-display text-2xl leading-none tracking-tight">{title}</h1>
+            <h1 className="truncate font-display text-2xl leading-snug tracking-tight">{title}</h1>
             {subtitle && (
               <p className="mt-1 truncate text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {subtitle}
