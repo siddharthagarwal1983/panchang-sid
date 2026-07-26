@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { useAuth } from "./auth";
 import { CITIES, DEFAULT_CITY_ID, cityForTimeZone, findCity, type City } from "./panchang/cities";
+import type { ScriptMode } from "./panchang/lang";
 import {
   FAMILY_DEFAULT_PLACE,
   placeForTimeZone,
@@ -39,6 +40,8 @@ export type Prefs = {
   hour12: boolean;
   tradition: "amanta" | "purnimanta";
   theme: "night" | "day";
+  /** How panchang terms are written: Devanagari, transliteration or plain English. */
+  script: ScriptMode;
   reminders: Record<ReminderKey, boolean>;
   reminderTime: string;
   custom: CustomReminder[];
@@ -54,6 +57,7 @@ const DEFAULTS: Prefs = {
   hour12: true,
   tradition: "amanta",
   theme: "night",
+  script: "iast",
   reminders: {
     ekadashi: true,
     purnima: false,
@@ -112,6 +116,7 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
             parsed.familyPlace && parsed.familyPlace.tz ? parsed.familyPlace : FAMILY_DEFAULT_PLACE,
           activeLocation: parsed.activeLocation === "family" ? "family" : "mine",
         };
+        if (next.script !== "devanagari" && next.script !== "english") next.script = "iast";
         if (!next.place && !CITIES.some((c) => c.id === next.cityId)) {
           next = { ...next, cityId: DEFAULT_CITY_ID };
         }
