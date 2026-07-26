@@ -20,6 +20,8 @@ export type VratGuide = {
   start: { label: string; at: Date | null };
   /** When it is broken (parana). */
   end: { label: string; at: Date | null; note?: string };
+  /** Optional explicit ritual window, e.g. Pradosh kaal. */
+  window?: { label: string; start: Date; end: Date };
   dietary: string[];
 };
 
@@ -91,7 +93,11 @@ export function vratGuide(
         end: {
           label: "Pradosh puja — break fast",
           at: new Date(times.sunset.getTime() + 1.5 * HOUR),
-          note: `Pradosh kaal runs roughly from ${fmtRangeHint(times.sunset)}.`,
+        },
+        window: {
+          label: "Pradosh kaal",
+          start: new Date(times.sunset.getTime() - 1.5 * HOUR),
+          end: new Date(times.sunset.getTime() + 1.5 * HOUR),
         },
         dietary: [
           "Grain-free through the day; fruit and milk are allowed.",
@@ -143,10 +149,4 @@ export function vratGuide(
     default:
       return null;
   }
-}
-
-function fmtRangeHint(sunset: Date): string {
-  const from = new Date(sunset.getTime() - 1.5 * HOUR);
-  const to = new Date(sunset.getTime() + 1.5 * HOUR);
-  return `${from.toISOString()}|${to.toISOString()}`;
 }
