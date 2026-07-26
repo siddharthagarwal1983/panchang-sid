@@ -1,4 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { MessageSquare, Shield, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
