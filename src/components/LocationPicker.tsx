@@ -14,7 +14,15 @@ type SearchState =
 
 const PRESETS: Place[] = CITIES.slice(0, 8);
 
-export function LocationPicker({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function LocationPicker({
+  open,
+  onClose,
+  target = "mine",
+}: {
+  open: boolean;
+  onClose: () => void;
+  target?: "mine" | "family";
+}) {
   const { city, prefs, setPlace } = usePrefs();
   const [query, setQuery] = useState("");
   const [state, setState] = useState<SearchState>({ kind: "idle" });
@@ -92,10 +100,10 @@ export function LocationPicker({ open, onClose }: { open: boolean; onClose: () =
 
   const choose = useCallback(
     (place: Place) => {
-      setPlace(place);
+      setPlace(place, target);
       onClose();
     },
-    [setPlace, onClose],
+    [setPlace, onClose, target],
   );
 
   const locate = () => {
@@ -165,7 +173,9 @@ export function LocationPicker({ open, onClose }: { open: boolean; onClose: () =
         className="relative flex max-h-[86vh] flex-col rounded-t-3xl border border-border bg-popover pb-[env(safe-area-inset-bottom)] shadow-2xl"
       >
         <div className="flex items-center justify-between px-5 pt-4">
-          <h2 className="font-display text-lg">Choose your location</h2>
+          <h2 className="font-display text-lg">
+            {target === "family" ? "Choose family location" : "Choose your location"}
+          </h2>
           <button
             onClick={onClose}
             className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-secondary"
@@ -199,6 +209,7 @@ export function LocationPicker({ open, onClose }: { open: boolean; onClose: () =
               </button>
             )}
           </div>
+          {target === "mine" && (
           <button
             onClick={locate}
             disabled={locating}
@@ -211,6 +222,7 @@ export function LocationPicker({ open, onClose }: { open: boolean; onClose: () =
             )}
             Use my current location
           </button>
+          )}
           {geoError && <p className="mt-2 text-xs text-muted-foreground">{geoError}</p>}
           <p className="mt-2 hidden text-[11px] text-muted-foreground sm:block">
             Use ↑ ↓ to browse, Enter to select, Esc to close.
