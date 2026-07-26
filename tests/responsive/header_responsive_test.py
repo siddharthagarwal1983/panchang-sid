@@ -91,7 +91,8 @@ async def assert_header(page, label: str) -> None:
         if not box:
             continue
         check(
-            box["x"] >= -0.5 and box["x"] + box["width"] <= hbox["width"] + 0.5,
+            box["x"] >= hbox["x"] - 0.5
+            and box["x"] + box["width"] <= hbox["x"] + hbox["width"] + 0.5,
             f"{label}: '{name}' fully on-screen",
         )
         check(box["height"] >= 32 and box["width"] >= 32, f"{label}: '{name}' tap target >= 32px")
