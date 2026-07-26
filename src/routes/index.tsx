@@ -381,10 +381,21 @@ function TodayPage() {
   );
 }
 
-function Fact({ label, value, sub }: { label: string; value: string; sub: string }) {
+function Fact({
+  label,
+  value,
+  sub,
+  hint,
+}: {
+  label: string;
+  value: string;
+  sub: string;
+  hint?: string;
+}) {
   return (
     <div className="panel px-4 py-3">
       <p className="label-caps">{label}</p>
+      {hint && <p className="text-[0.7rem] leading-snug text-muted-foreground">{hint}</p>}
       <p className="mt-1 font-display text-lg leading-tight">{value}</p>
       <p className="mt-1 text-xs text-muted-foreground">{sub}</p>
     </div>
