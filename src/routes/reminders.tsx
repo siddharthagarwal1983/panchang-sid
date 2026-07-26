@@ -147,6 +147,9 @@ function RemindersPage() {
 
         <section>
           <h2 className="label-caps px-1">Upcoming</h2>
+        </section>
+
+        <section className="hidden" />
           <ul className="mt-3 space-y-2">
             {upcoming.map((entry) => (
               <li key={`${entry.date.year}-${entry.date.month}-${entry.date.day}`} className="panel px-4 py-3">
