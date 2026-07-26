@@ -443,9 +443,14 @@ function MuhurtaTile({
   hour12: boolean;
 }) {
   const good = muhurta.kind === "auspicious";
+  const severe = muhurta.name === "Rahu Kalam";
   const tone = good
     ? "border-auspicious/40 bg-auspicious/10 text-auspicious"
-    : "border-avoid/40 bg-avoid/10 text-avoid";
+    : severe
+      ? "border-avoid/45 bg-avoid/10 text-avoid"
+      : "border-caution/45 bg-caution/10 text-caution";
+  const title = muhurtaTerm(muhurta.name, script === "english" ? "iast" : script);
+  const description = gloss(muhurta.name);
 
   let status: string;
   if (!isToday) status = "";
@@ -463,14 +468,15 @@ function MuhurtaTile({
         ) : (
           <ShieldAlert className="size-3.5 shrink-0" />
         )}
-        <p className="truncate font-display text-sm">{muhurtaTerm(muhurta.name, script)}</p>
+        <p className="truncate font-display text-sm">{title}</p>
       </div>
       <p className="mt-1.5 text-[13px] tabular-nums text-foreground">
         {formatTime(muhurta.start, tz, hour12)} – {formatTime(muhurta.end, tz, hour12)}
       </p>
-      <p className="mt-0.5 text-[11px] text-muted-foreground">
-        {status || (good ? "Auspicious" : "Avoid new work")}
-      </p>
+      {description && (
+        <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">{description}</p>
+      )}
+      {status && <p className="mt-1 text-[11px] font-semibold">{status}</p>}
     </div>
   );
 }
