@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Bell,
   BellRing,
+  CalendarPlus,
   ChevronLeft,
   ChevronRight,
   Moon,
@@ -14,13 +15,16 @@ import {
 import { useEffect, useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
-import { FestivalModal } from "@/components/FestivalModal";
+import { AddToCalendar } from "@/components/AddToCalendar";
+import { FestivalModal, type FestivalSheetItem } from "@/components/FestivalModal";
 import { MoonGlyph } from "@/components/MoonGlyph";
 import { computeDayPanchang, type Muhurta } from "@/lib/panchang/core";
 import { tzLabel } from "@/lib/panchang/cities";
 import { festivalsForSummary, scanFestivals, type Festival } from "@/lib/panchang/festivals";
 import { computeDaySummary } from "@/lib/panchang/core";
 import { fastingStatus, gloss, muhurtaTerm, pakshaTerm, term, tithiTerm } from "@/lib/panchang/lang";
+import { vratGuide } from "@/lib/panchang/vrat";
+import type { CalendarEvent } from "@/lib/calendar-export";
 import {
   addDays,
   dayKey,
@@ -80,7 +84,7 @@ function TodayPage() {
   const { d } = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
   const [now, setNow] = useState(() => new Date());
-  const [openFestival, setOpenFestival] = useState<Festival | null>(null);
+  const [openItem, setOpenItem] = useState<FestivalSheetItem | null>(null);
 
   // Keep progress bars and countdowns alive.
   useEffect(() => {
@@ -95,6 +99,10 @@ function TodayPage() {
 
   const panchang = useMemo(
     () => (hydrated ? computeDayPanchang(date, city) : null),
+    [hydrated, date.year, date.month, date.day, city],
+  );
+  const nextSunrise = useMemo(
+    () => (hydrated ? computeDayPanchang(addDays(date, 1), city).sunrise : null),
     [hydrated, date.year, date.month, date.day, city],
   );
   const festivals = useMemo(
@@ -148,6 +156,39 @@ function TodayPage() {
   };
 
   const fasting = panchang ? fastingStatus(panchang.tithi.name, panchang.tithi.paksha) : null;
+  const vrat =
+    panchang && fasting && panchang.sunrise && panchang.sunset
+      ? vratGuide(panchang.tithi.name, panchang.tithi.paksha, {
+          sunrise: panchang.sunrise,
+          sunset: panchang.sunset,
+          moonrise: panchang.moonrise,
+          tithiEnd: panchang.tithi.end,
+          nextSunrise,
+        })
+      : null;
+
+  const location = `${city.name}, ${city.state}`;
+  const eventFor = (item: FestivalSheetItem): CalendarEvent => {
+    const lines = [item.note];
+    if (vrat) {
+      lines.push(
+        `${vrat.start.label}: ${t(vrat.start.at)} ${zone}`,
+        `${vrat.end.label}: ${t(vrat.end.at)} ${zone}`,
+        ...vrat.dietary,
+      );
+    }
+    lines.push(`Sunrise ${formatTime(panchang?.sunrise ?? null, city.tz, prefs.hour12)} · Sunset ${formatTime(panchang?.sunset ?? null, city.tz, prefs.hour12)} ${zone}`);
+    lines.push(`Calculated for ${location} local sunrise — Panchāṅga`);
+    return {
+      title: item.name,
+      description: lines.filter(Boolean).join("\n"),
+      location,
+      day: date,
+    };
+  };
+  const openVrat = () =>
+    vrat && setOpenItem({ id: "vrat", name: vrat.label, note: fasting?.detail ?? "" });
+
   return (
     <main className="mx-auto max-w-md">
       <AppHeader title="Panchāṅga" showLocation showScript />
@@ -258,12 +299,45 @@ function TodayPage() {
             </div>
 
             {fasting && (
-              <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-gold/35 bg-gold/10 px-3 py-2.5">
-                <UtensilsCrossed className="mt-0.5 size-4 shrink-0 text-gold" />
-                <p className="text-sm leading-snug">
-                  <span className="font-display text-gold">{fasting.label}</span>
-                  <span className="block text-xs text-muted-foreground">{fasting.detail}</span>
-                </p>
+              <div className="mt-4 rounded-xl border border-gold/35 bg-gold/10 px-3 py-2.5">
+                <button
+                  onClick={openVrat}
+                  className="flex w-full items-start gap-2.5 text-left"
+                  aria-label={`Details about ${fasting.label}`}
+                >
+                  <UtensilsCrossed className="mt-0.5 size-4 shrink-0 text-gold" />
+                  <span className="text-sm leading-snug">
+                    <span className="font-display text-gold underline-offset-4 hover:underline">
+                      {fasting.label}
+                    </span>
+                    <span className="block text-xs text-muted-foreground">{fasting.detail}</span>
+                  </span>
+                </button>
+                {vrat && (
+                  <div className="mt-2.5 grid grid-cols-2 gap-2 text-xs">
+                    <span className="text-muted-foreground">
+                      {vrat.start.label}
+                      <span className="block tabular-nums text-foreground">
+                        {t(vrat.start.at)} {zone}
+                      </span>
+                    </span>
+                    <span className="text-muted-foreground">
+                      {vrat.end.label}
+                      <span className="block tabular-nums text-foreground">
+                        {t(vrat.end.at)} {zone}
+                      </span>
+                    </span>
+                  </div>
+                )}
+                <div className="mt-3">
+                  <AddToCalendar
+                    event={eventFor({
+                      id: "vrat",
+                      name: vrat?.label ?? fasting.label,
+                      note: fasting.detail,
+                    })}
+                  />
+                </div>
               </div>
             )}
 
@@ -278,11 +352,20 @@ function TodayPage() {
                       className="flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 py-1 pl-3 pr-1.5 font-display text-sm text-gold"
                     >
                       <button
-                        onClick={() => setOpenFestival(f)}
+                        onClick={() => setOpenItem({ id: f.id, name: f.name, note: f.note, festival: f })}
                         className="underline-offset-4 hover:underline"
                         aria-label={`Details about ${f.name}`}
                       >
                         {f.name}
+                      </button>
+                      <button
+                        onClick={() =>
+                          setOpenItem({ id: f.id, name: f.name, note: f.note, festival: f })
+                        }
+                        aria-label={`Add ${f.name} to calendar`}
+                        className="rounded-full p-1.5 text-gold transition-colors hover:bg-gold/20"
+                      >
+                        <CalendarPlus className="size-3.5" />
                       </button>
                       <button
                         onClick={() => toggleFestivalReminder(f)}
@@ -397,11 +480,18 @@ function TodayPage() {
       )}
 
       <FestivalModal
-        festival={openFestival}
+        item={openItem}
         dateLabel={formatLongDate(date)}
-        reminded={openFestival ? isReminded(openFestival.id) : false}
-        onToggleReminder={() => openFestival && toggleFestivalReminder(openFestival)}
-        onOpenChange={(open) => !open && setOpenFestival(null)}
+        reminded={openItem ? isReminded(openItem.id) : false}
+        vrat={vrat}
+        formatTime={t}
+        zone={zone}
+        calendarEvent={openItem ? eventFor(openItem) : null}
+        onToggleReminder={() =>
+          openItem &&
+          toggleFestivalReminder({ id: openItem.id, name: openItem.name, note: openItem.note })
+        }
+        onOpenChange={(open) => !open && setOpenItem(null)}
       />
     </main>
   );
