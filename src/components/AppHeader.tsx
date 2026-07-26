@@ -27,16 +27,20 @@ export function AppHeader({
 
   return (
     <header
-      className="sticky top-0 z-30 border-b border-border bg-background/90 pb-3 pt-[calc(env(safe-area-inset-top)+0.85rem)] backdrop-blur landscape:pt-[calc(env(safe-area-inset-top)+0.55rem)]"
+      data-testid="app-header"
+      className="sticky top-0 z-30 border-b border-border bg-background/90 pb-3 pt-[calc(var(--sa-top)+0.85rem)] backdrop-blur landscape:pt-[calc(var(--sa-top)+0.55rem)]"
       style={{
-        paddingLeft: "max(1rem, env(safe-area-inset-left))",
-        paddingRight: "max(1rem, env(safe-area-inset-right))",
+        paddingLeft: "max(1rem, var(--sa-left))",
+        paddingRight: "max(1rem, var(--sa-right))",
       }}
     >
       <div className="mx-auto max-w-md">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2 sm:gap-3">
           <div className="min-w-0">
-            <h1 className="truncate font-display text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl">
+            <h1
+              data-testid="app-header-title"
+              className="truncate font-display text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl"
+            >
               {title}
             </h1>
             {subtitle && (
