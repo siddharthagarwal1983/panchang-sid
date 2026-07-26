@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BellRing } from "lucide-react";
+import { BellRing, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
 import { scanFestivals, type FestivalCategory } from "@/lib/panchang/festivals";
-import { formatLongDate, toCalendarDay } from "@/lib/panchang/tz";
+import { dayKey, formatLongDate, toCalendarDay } from "@/lib/panchang/tz";
 import { usePrefs, type ReminderKey } from "@/lib/prefs";
 import { useReminderNotifications } from "@/lib/useReminderNotifications";
 
@@ -46,9 +46,15 @@ const CATEGORY_FOR: Record<ReminderKey, FestivalCategory | "purnima" | "amavasya
 };
 
 function RemindersPage() {
-  const { prefs, city, hydrated, setPrefs, toggleReminder } = usePrefs();
+  const { prefs, city, hydrated, setPrefs, toggleReminder, removeCustomReminder } = usePrefs();
   const [now] = useState(() => new Date());
   const { permission, request } = useReminderNotifications();
+
+  const pinned = useMemo(() => {
+    if (!hydrated) return [];
+    const today = dayKey(toCalendarDay(now, city.tz));
+    return prefs.custom.filter((c) => c.date >= today);
+  }, [hydrated, now, city.tz, prefs.custom]);
 
   const upcoming = useMemo(() => {
     if (!hydrated) return [];
