@@ -156,7 +156,7 @@ function TodayPage() {
 
   const fasting = panchang ? fastingStatus(panchang.tithi.name, panchang.tithi.paksha) : null;
   const vrat =
-    panchang && fasting
+    panchang && fasting && panchang.sunrise && panchang.sunset
       ? vratGuide(panchang.tithi.name, panchang.tithi.paksha, {
           sunrise: panchang.sunrise,
           sunset: panchang.sunset,
@@ -318,7 +318,7 @@ function TodayPage() {
                       className="flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 py-1 pl-3 pr-1.5 font-display text-sm text-gold"
                     >
                       <button
-                        onClick={() => setOpenFestival(f)}
+                        onClick={() => setOpenItem({ id: f.id, name: f.name, note: f.note, festival: f })}
                         className="underline-offset-4 hover:underline"
                         aria-label={`Details about ${f.name}`}
                       >
@@ -437,11 +437,18 @@ function TodayPage() {
       )}
 
       <FestivalModal
-        festival={openFestival}
+        item={openItem}
         dateLabel={formatLongDate(date)}
-        reminded={openFestival ? isReminded(openFestival.id) : false}
-        onToggleReminder={() => openFestival && toggleFestivalReminder(openFestival)}
-        onOpenChange={(open) => !open && setOpenFestival(null)}
+        reminded={openItem ? isReminded(openItem.id) : false}
+        vrat={openItem?.id === "vrat" || (vrat && openItem && fastingRelated(openItem.id)) ? vrat : null}
+        formatTime={(d) => formatTime(d, city.tz, prefs.hour12)}
+        zone={zone}
+        calendarEvent={openItem ? eventFor(openItem) : null}
+        onToggleReminder={() =>
+          openItem &&
+          toggleFestivalReminder({ id: openItem.id, name: openItem.name, note: openItem.note })
+        }
+        onOpenChange={(open) => !open && setOpenItem(null)}
       />
     </main>
   );
