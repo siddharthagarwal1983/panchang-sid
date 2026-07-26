@@ -3,6 +3,7 @@ import { Home, MapPin, Pencil, UserRound } from "lucide-react";
 import { useState } from "react";
 
 import { LocationPicker } from "@/components/LocationPicker";
+import { ScriptToggle } from "@/components/ScriptToggle";
 import { useAuth } from "@/lib/auth";
 import { tzLabel } from "@/lib/panchang/cities";
 import { usePrefs } from "@/lib/prefs";
@@ -11,11 +12,13 @@ export function AppHeader({
   title,
   subtitle,
   showLocation = false,
+  showScript = false,
   children,
 }: {
   title: string;
   subtitle?: string;
   showLocation?: boolean;
+  showScript?: boolean;
   children?: React.ReactNode;
 }) {
   const { user, profile } = useAuth();
@@ -133,6 +136,7 @@ export function AppHeader({
           </div>
           </>
         )}
+        {showScript && <ScriptToggle className="mt-2" />}
         {children}
       </div>
       {showLocation && (
