@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { MapPin, UserRound } from "lucide-react";
+import { Home, MapPin, Pencil, UserRound } from "lucide-react";
 import { useState } from "react";
 
 import { LocationPicker } from "@/components/LocationPicker";
@@ -19,10 +19,16 @@ export function AppHeader({
   children?: React.ReactNode;
 }) {
   const { user, profile } = useAuth();
-  const { city } = usePrefs();
+  const { city, prefs, familyPlace, setActiveLocation } = usePrefs();
   const { pathname } = useLocation();
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerTarget, setPickerTarget] = useState<"mine" | "family">("mine");
   const onAuthPage = pathname === "/auth";
+  const isFamily = prefs.activeLocation === "family";
+  const openPicker = (target: "mine" | "family") => {
+    setPickerTarget(target);
+    setPickerOpen(true);
+  };
   const initial = (profile?.display_name || user?.email || "?").trim().charAt(0).toUpperCase();
 
   return (
@@ -53,7 +59,7 @@ export function AppHeader({
           <div className="flex shrink-0 items-center gap-1.5 self-center sm:gap-2">
             {showLocation && (
               <button
-                onClick={() => setPickerOpen(true)}
+                onClick={() => openPicker(isFamily ? "family" : "mine")}
                 aria-label="Change location"
                 className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border text-primary transition-colors hover:bg-secondary"
               >
@@ -82,8 +88,9 @@ export function AppHeader({
           </div>
         </div>
         {showLocation && (
+          <>
           <button
-            onClick={() => setPickerOpen(true)}
+            onClick={() => openPicker(isFamily ? "family" : "mine")}
             className="mt-2.5 flex w-full min-w-0 items-center gap-1.5 text-left"
           >
             <MapPin className="size-3.5 shrink-0 text-primary" />
@@ -95,10 +102,46 @@ export function AppHeader({
               <span className="shrink-0">{tzLabel(city.tz)}</span>
             </span>
           </button>
+          <div className="mt-2.5 flex items-center gap-1 rounded-full border border-border bg-secondary/40 p-1">
+            <button
+              onClick={() => setActiveLocation("mine")}
+              aria-pressed={!isFamily}
+              className={`flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-full px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors ${
+                !isFamily ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+              }`}
+            >
+              <MapPin className="size-3.5 shrink-0" />
+              <span className="truncate">My location</span>
+            </button>
+            <button
+              onClick={() => setActiveLocation("family")}
+              aria-pressed={isFamily}
+              className={`flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-full px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors ${
+                isFamily ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+              }`}
+            >
+              <Home className="size-3.5 shrink-0" />
+              <span className="truncate">{familyPlace.name}</span>
+            </button>
+            <button
+              onClick={() => openPicker("family")}
+              aria-label="Change family location"
+              className="flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary"
+            >
+              <Pencil className="size-3.5" />
+            </button>
+          </div>
+          </>
         )}
         {children}
       </div>
-      {showLocation && <LocationPicker open={pickerOpen} onClose={() => setPickerOpen(false)} />}
+      {showLocation && (
+        <LocationPicker
+          open={pickerOpen}
+          target={pickerTarget}
+          onClose={() => setPickerOpen(false)}
+        />
+      )}
     </header>
   );
 }
