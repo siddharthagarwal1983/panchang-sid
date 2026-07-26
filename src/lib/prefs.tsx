@@ -4,7 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { useAuth } from "./auth";
 import { CITIES, DEFAULT_CITY_ID, cityForTimeZone, findCity, type City } from "./panchang/cities";
-import type { Place } from "./panchang/geocode";
+import {
+  FAMILY_DEFAULT_PLACE,
+  placeForTimeZone,
+  reverseGeocode,
+  type Place,
+} from "./panchang/geocode";
 
 export type ReminderKey = "ekadashi" | "purnima" | "amavasya" | "sankashti" | "pradosh" | "festivals";
 
@@ -23,6 +28,12 @@ export type Prefs = {
   cityId: string;
   /** Any place in the world; when set it wins over the preset `cityId`. */
   place: Place | null;
+  /** Parents / family location, used by the dual-location toggle. */
+  familyPlace: Place;
+  /** Which of the two locations panchang is currently calculated for. */
+  activeLocation: "mine" | "family";
+  /** True once we've attempted automatic device geolocation. */
+  autoLocated: boolean;
   /** Most recently chosen places, newest first. */
   recentPlaces: Place[];
   hour12: boolean;
@@ -36,6 +47,9 @@ export type Prefs = {
 const DEFAULTS: Prefs = {
   cityId: DEFAULT_CITY_ID,
   place: null,
+  familyPlace: FAMILY_DEFAULT_PLACE,
+  activeLocation: "mine",
+  autoLocated: false,
   recentPlaces: [],
   hour12: true,
   tradition: "amanta",
@@ -57,9 +71,15 @@ const STORAGE_KEY = "panchang.prefs.v1";
 type Ctx = {
   prefs: Prefs;
   city: City;
+  /** The user's own (device) location, independent of the active toggle. */
+  myPlace: City;
+  familyPlace: Place;
+  locating: boolean;
   hydrated: boolean;
   setPrefs: (patch: Partial<Prefs>) => void;
-  setPlace: (place: Place) => void;
+  setPlace: (place: Place, target?: "mine" | "family") => void;
+  setActiveLocation: (target: "mine" | "family") => void;
+  detectMyLocation: () => Promise<void>;
   toggleReminder: (key: ReminderKey) => void;
   addCustomReminder: (reminder: CustomReminder) => void;
   removeCustomReminder: (key: string) => void;
