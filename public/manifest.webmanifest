@@ -1,0 +1,15 @@
+{
+  "name": "Panchanga — Daily Hindu Almanac",
+  "short_name": "Panchanga",
+  "description": "Tithi, nakshatra, muhurta, festivals and vrat reminders for your US city.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#181430",
+  "theme_color": "#181430",
+  "icons": [
+    { "src": "/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
