@@ -261,7 +261,6 @@ function TodayPage() {
             </ul>
           </section>
 
-          <p className="px-1 text-center text-xs leading-relaxed text-muted-foreground">
           {upcoming.length > 0 && (
             <section className="panel px-5 py-4">
               <h3 className="label-caps">Upcoming festivals</h3>
