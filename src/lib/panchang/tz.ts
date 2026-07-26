@@ -97,6 +97,14 @@ export function formatLongDate(d: CalendarDay): string {
   }).format(new Date(Date.UTC(d.year, d.month - 1, d.day)));
 }
 
+/** Short zone abbreviation for an instant, e.g. "EDT", "IST". */
+export function tzAbbr(date: Date, tz: string): string {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "short" }).formatToParts(
+    date,
+  );
+  return parts.find((p) => p.type === "timeZoneName")?.value ?? "";
+}
+
 export function weekdayIndex(d: CalendarDay): number {
   return new Date(Date.UTC(d.year, d.month - 1, d.day)).getUTCDay();
 }
