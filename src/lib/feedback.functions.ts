@@ -9,7 +9,7 @@ const feedbackSchema = z.object({
 });
 
 export const submitFeedback = createServerFn({ method: "POST" })
-  .inputValidator((data) => feedbackSchema.parse(data))
+  .validator({ adapter: "zod" }, (data) => feedbackSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
