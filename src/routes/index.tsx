@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Bell,
   BellRing,
+  CalendarPlus,
   ChevronLeft,
   ChevronRight,
   Moon,
@@ -356,6 +357,15 @@ function TodayPage() {
                         aria-label={`Details about ${f.name}`}
                       >
                         {f.name}
+                      </button>
+                      <button
+                        onClick={() =>
+                          setOpenItem({ id: f.id, name: f.name, note: f.note, festival: f })
+                        }
+                        aria-label={`Add ${f.name} to calendar`}
+                        className="rounded-full p-1.5 text-gold transition-colors hover:bg-gold/20"
+                      >
+                        <CalendarPlus className="size-3.5" />
                       </button>
                       <button
                         onClick={() => toggleFestivalReminder(f)}
