@@ -70,8 +70,8 @@ function recurring(summary: DaySummary): Festival[] {
 }
 
 const SOLAR_INGRESS: Record<number, { id: string; name: string; note: string }> = {
-  9: { id: "makar-sankranti", name: "Makar Sankranti / Pongal", note: "Sun enters Makara", category: "solar" } as never,
-  0: { id: "mesha-sankranti", name: "Mesha Sankranti", note: "Tamil & Bengali new year", category: "solar" } as never,
+  9: { id: "makar-sankranti", name: "Makar Sankranti / Pongal", note: "Sun enters Makara" },
+  0: { id: "mesha-sankranti", name: "Mesha Sankranti", note: "Tamil & Bengali new year" },
 };
 
 /** Festivals falling on a given day, using the tithi prevailing at sunrise. */
@@ -82,7 +82,7 @@ export function festivalsForSummary(summary: DaySummary, previous?: DaySummary):
       out.push({ id: rule.id, name: rule.name, note: rule.note, category: rule.category });
     }
   }
-  if (summary.id_placeholder === undefined && previous && previous.sunRashiIndex !== summary.sunRashiIndex) {
+  if (previous && previous.sunRashiIndex !== summary.sunRashiIndex) {
     const ingress = SOLAR_INGRESS[summary.sunRashiIndex];
     if (ingress) out.push({ ...ingress, category: "solar" });
   }
