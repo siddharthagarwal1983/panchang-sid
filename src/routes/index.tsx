@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
 import { FestivalModal } from "@/components/FestivalModal";
-import { LocationWidget } from "@/components/LocationWidget";
 import { MoonGlyph } from "@/components/MoonGlyph";
 import { computeDayPanchang } from "@/lib/panchang/core";
 import { festivalsForSummary, scanFestivals, type Festival } from "@/lib/panchang/festivals";
