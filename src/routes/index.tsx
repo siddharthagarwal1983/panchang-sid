@@ -117,11 +117,9 @@ function TodayPage() {
 
   return (
     <main className="mx-auto max-w-md">
-      <AppHeader title="Panchāṅga" subtitle="Drik ganita · Lahiri ayanamsa" />
-
-      <div className="px-5 pt-4">
-        <LocationWidget />
-      </div>
+      <AppHeader title="Panchāṅga" subtitle="Drik ganita · Lahiri ayanamsa">
+        <LocationWidget inHeader />
+      </AppHeader>
 
       <div className="flex items-center justify-between gap-2 px-5 py-4">
         <button
