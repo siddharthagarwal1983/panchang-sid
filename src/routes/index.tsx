@@ -118,6 +118,16 @@ function TodayPage() {
     <main className="mx-auto max-w-md">
       <AppHeader title="Panchāṅga" showLocation />
 
+      <div className="px-5 pt-3">
+        <p className="flex items-start gap-2 rounded-xl border border-primary/30 bg-primary/10 px-3 py-2 text-[12px] leading-snug text-primary">
+          <Sunrise className="mt-px size-3.5 shrink-0" />
+          <span>
+            Calculated for <span className="font-semibold">{city.name}</span> local sunrise
+            {prefs.activeLocation === "family" ? " (family location)" : ""} · {tzLabel(city.tz)}
+          </span>
+        </p>
+      </div>
+
       <div className="flex items-center justify-between gap-2 px-5 py-4">
         <button
           onClick={() => go(-1)}
