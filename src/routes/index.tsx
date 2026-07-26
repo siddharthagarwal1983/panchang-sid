@@ -261,6 +261,27 @@ function TodayPage() {
             </ul>
           </section>
 
+          <p className="px-1 text-center text-xs leading-relaxed text-muted-foreground">
+          {upcoming.length > 0 && (
+            <section className="panel px-5 py-4">
+              <h3 className="label-caps">Upcoming festivals</h3>
+              <ul className="mt-3 space-y-2.5">
+                {upcoming.map((u) => (
+                  <li key={`${dayKey(u.date)}:${u.festival.id}`}>
+                    <button
+                      onClick={() => navigate({ search: { d: dayKey(u.date) } })}
+                      className="flex w-full items-center justify-between gap-3 text-left text-sm"
+                    >
+                      <span className="font-display text-base text-gold">{u.festival.name}</span>
+                      <span className="shrink-0 text-xs text-muted-foreground">
+                        {formatLongDate(u.date)}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <p className="px-1 text-center text-xs leading-relaxed text-muted-foreground">
             Computed for {city.name}, {city.state} using drik ganita with the Lahiri ayanamsa.
@@ -268,6 +289,14 @@ function TodayPage() {
           </p>
         </div>
       )}
+
+      <FestivalModal
+        festival={openFestival}
+        dateLabel={formatLongDate(date)}
+        reminded={openFestival ? isReminded(openFestival.id) : false}
+        onToggleReminder={() => openFestival && toggleFestivalReminder(openFestival)}
+        onOpenChange={(open) => !open && setOpenFestival(null)}
+      />
     </main>
   );
 }
