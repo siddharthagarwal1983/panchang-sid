@@ -66,9 +66,9 @@ function SettingsPage() {
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Panchāṅga uses drik ganita (true positions of the sun and moon) with the Lahiri
             (Chitrapaksha) ayanamsa. Tithi, nakshatra, yoga and karana are read at local sunrise for
-            your selected city, so festival dates land on the correct US day rather than the India
-            date. Timings can differ by a few minutes from printed almanacs that follow vakya or a
-            different ayanamsa.
+            your location, so festival dates land on the correct US day rather than the India date.
+            Set or update your location from the location widget on the home page. Timings can differ
+            by a few minutes from printed almanacs that follow vakya or a different ayanamsa.
           </p>
           <div className="hairline my-4" />
           <p className="text-xs text-muted-foreground">
