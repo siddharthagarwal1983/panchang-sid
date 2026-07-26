@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, Moon, Sunrise, Sunset } from "lucide-react";
+import { Bell, BellRing, ChevronLeft, ChevronRight, Moon, Sunrise, Sunset } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
@@ -17,6 +17,7 @@ import {
   type CalendarDay,
 } from "@/lib/panchang/tz";
 import { usePrefs } from "@/lib/prefs";
+import { useReminderNotifications } from "@/lib/useReminderNotifications";
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -48,7 +49,8 @@ function parseDay(value: string | undefined): CalendarDay | null {
 }
 
 function TodayPage() {
-  const { city, prefs, hydrated } = usePrefs();
+  const { city, prefs, hydrated, addCustomReminder, removeCustomReminder } = usePrefs();
+  const { permission, request } = useReminderNotifications();
   const { d } = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
   const [now] = useState(() => new Date());
@@ -78,6 +80,25 @@ function TodayPage() {
   };
 
   const t = (value: Date | null) => formatTimeWithDay(value, city.tz, prefs.hour12, date);
+
+  const key = dayKey(date);
+  const isReminded = (id: string) => prefs.custom.some((c) => c.key === `${key}:${id}`);
+  const toggleFestivalReminder = async (f: { id: string; name: string; note: string }) => {
+    const k = `${key}:${f.id}`;
+    if (isReminded(f.id)) {
+      removeCustomReminder(k);
+      return;
+    }
+    if (permission === "default") await request();
+    addCustomReminder({
+      key: k,
+      date: key,
+      festivalId: f.id,
+      name: f.name,
+      note: f.note,
+      time: prefs.reminderTime,
+    });
+  };
 
   return (
     <main className="mx-auto max-w-md">
@@ -141,12 +162,43 @@ function TodayPage() {
                   {festivals.map((f) => (
                     <li
                       key={f.id}
-                      className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 font-display text-sm text-gold"
+                      className="flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 py-1 pl-3 pr-1.5 font-display text-sm text-gold"
                     >
                       {f.name}
+                      <button
+                        onClick={() => toggleFestivalReminder(f)}
+                        aria-pressed={isReminded(f.id)}
+                        aria-label={
+                          isReminded(f.id)
+                            ? `Remove reminder for ${f.name}`
+                            : `Remind me on ${f.name}`
+                        }
+                        title={
+                          isReminded(f.id)
+                            ? `Reminder set for ${prefs.reminderTime}`
+                            : "Set a reminder for this date"
+                        }
+                        className={`rounded-full p-1.5 transition-colors ${
+                          isReminded(f.id)
+                            ? "bg-gold text-background"
+                            : "text-gold hover:bg-gold/20"
+                        }`}
+                      >
+                        {isReminded(f.id) ? (
+                          <BellRing className="size-3.5" />
+                        ) : (
+                          <Bell className="size-3.5" />
+                        )}
+                      </button>
                     </li>
                   ))}
                 </ul>
+                {festivals.some((f) => isReminded(f.id)) && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Reminder set for {prefs.reminderTime} {city.name} time
+                    {permission !== "granted" && " — allow notifications to receive it"}.
+                  </p>
+                )}
               </>
             )}
           </section>

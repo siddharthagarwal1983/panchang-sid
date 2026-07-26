@@ -5,6 +5,7 @@ import { toCalendarDay, dayKey } from "./panchang/tz";
 import { usePrefs, type ReminderKey } from "./prefs";
 
 const FIRED_KEY = "panchang.lastNotified.v1";
+const CUSTOM_FIRED_KEY = "panchang.customNotified.v1";
 
 const MATCHERS: Record<ReminderKey, (id: string, category: string) => boolean> = {
   ekadashi: (_id, c) => c === "ekadashi",
@@ -46,14 +47,31 @@ export function ReminderScheduler() {
       const now = new Date();
       const today = toCalendarDay(now, city.tz);
       const key = dayKey(today);
-      if (window.localStorage.getItem(FIRED_KEY) === key) return;
-
       const hhmm = new Intl.DateTimeFormat("en-GB", {
         timeZone: city.tz,
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
       }).format(now);
+
+      // Date-specific festival reminders
+      let fired: string[] = [];
+      try {
+        fired = JSON.parse(window.localStorage.getItem(CUSTOM_FIRED_KEY) ?? "[]") as string[];
+      } catch {
+        fired = [];
+      }
+      for (const c of prefs.custom) {
+        if (c.date !== key || hhmm < c.time || fired.includes(c.key)) continue;
+        new Notification(c.name, { body: `Today in ${city.name} · ${c.note}`, tag: c.key });
+        fired = [...fired, c.key];
+      }
+      window.localStorage.setItem(
+        CUSTOM_FIRED_KEY,
+        JSON.stringify(fired.filter((k) => k.slice(0, 10) >= key)),
+      );
+
+      if (window.localStorage.getItem(FIRED_KEY) === key) return;
       if (hhmm < prefs.reminderTime) return;
 
       const [entry] = scanFestivals(today, 1, city);
@@ -76,7 +94,7 @@ export function ReminderScheduler() {
     tick();
     const id = window.setInterval(tick, 60_000);
     return () => window.clearInterval(id);
-  }, [hydrated, city, prefs.reminderTime, prefs.reminders]);
+  }, [hydrated, city, prefs.reminderTime, prefs.reminders, prefs.custom]);
 
   return null;
 }

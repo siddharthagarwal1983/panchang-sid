@@ -4,6 +4,17 @@ import { CITIES, DEFAULT_CITY_ID, cityForTimeZone, findCity, type City } from ".
 
 export type ReminderKey = "ekadashi" | "purnima" | "amavasya" | "sankashti" | "pradosh" | "festivals";
 
+/** A reminder pinned to one festival on one specific calendar day. */
+export type CustomReminder = {
+  /** `${YYYY-MM-DD}:${festivalId}` */
+  key: string;
+  date: string;
+  festivalId: string;
+  name: string;
+  note: string;
+  time: string;
+};
+
 export type Prefs = {
   cityId: string;
   hour12: boolean;
@@ -11,6 +22,7 @@ export type Prefs = {
   theme: "night" | "day";
   reminders: Record<ReminderKey, boolean>;
   reminderTime: string;
+  custom: CustomReminder[];
 };
 
 const DEFAULTS: Prefs = {
@@ -27,6 +39,7 @@ const DEFAULTS: Prefs = {
     festivals: true,
   },
   reminderTime: "07:00",
+  custom: [],
 };
 
 const STORAGE_KEY = "panchang.prefs.v1";
@@ -37,6 +50,8 @@ type Ctx = {
   hydrated: boolean;
   setPrefs: (patch: Partial<Prefs>) => void;
   toggleReminder: (key: ReminderKey) => void;
+  addCustomReminder: (reminder: CustomReminder) => void;
+  removeCustomReminder: (key: string) => void;
 };
 
 const PrefsContext = createContext<Ctx | null>(null);
@@ -55,6 +70,7 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
           ...DEFAULTS,
           ...parsed,
           reminders: { ...DEFAULTS.reminders, ...(parsed.reminders ?? {}) },
+          custom: Array.isArray(parsed.custom) ? parsed.custom : [],
         };
         if (!CITIES.some((c) => c.id === next.cityId)) next = { ...next, cityId: DEFAULT_CITY_ID };
       } else {
@@ -89,9 +105,30 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const addCustomReminder = useCallback((reminder: CustomReminder) => {
+    setPrefsState((prev) => ({
+      ...prev,
+      custom: [...prev.custom.filter((c) => c.key !== reminder.key), reminder].sort((a, b) =>
+        a.date === b.date ? a.time.localeCompare(b.time) : a.date.localeCompare(b.date),
+      ),
+    }));
+  }, []);
+
+  const removeCustomReminder = useCallback((key: string) => {
+    setPrefsState((prev) => ({ ...prev, custom: prev.custom.filter((c) => c.key !== key) }));
+  }, []);
+
   const value = useMemo<Ctx>(
-    () => ({ prefs, city: findCity(prefs.cityId), hydrated, setPrefs, toggleReminder }),
-    [prefs, hydrated, setPrefs, toggleReminder],
+    () => ({
+      prefs,
+      city: findCity(prefs.cityId),
+      hydrated,
+      setPrefs,
+      toggleReminder,
+      addCustomReminder,
+      removeCustomReminder,
+    }),
+    [prefs, hydrated, setPrefs, toggleReminder, addCustomReminder, removeCustomReminder],
   );
 
   return <PrefsContext.Provider value={value}>{children}</PrefsContext.Provider>;

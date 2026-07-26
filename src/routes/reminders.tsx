@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BellRing } from "lucide-react";
+import { BellRing, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
 import { scanFestivals, type FestivalCategory } from "@/lib/panchang/festivals";
-import { formatLongDate, toCalendarDay } from "@/lib/panchang/tz";
+import { dayKey, formatLongDate, toCalendarDay } from "@/lib/panchang/tz";
 import { usePrefs, type ReminderKey } from "@/lib/prefs";
 import { useReminderNotifications } from "@/lib/useReminderNotifications";
 
@@ -46,9 +46,15 @@ const CATEGORY_FOR: Record<ReminderKey, FestivalCategory | "purnima" | "amavasya
 };
 
 function RemindersPage() {
-  const { prefs, city, hydrated, setPrefs, toggleReminder } = usePrefs();
+  const { prefs, city, hydrated, setPrefs, toggleReminder, removeCustomReminder } = usePrefs();
   const [now] = useState(() => new Date());
   const { permission, request } = useReminderNotifications();
+
+  const pinned = useMemo(() => {
+    if (!hydrated) return [];
+    const today = dayKey(toCalendarDay(now, city.tz));
+    return prefs.custom.filter((c) => c.date >= today);
+  }, [hydrated, now, city.tz, prefs.custom]);
 
   const upcoming = useMemo(() => {
     if (!hydrated) return [];
@@ -138,6 +144,31 @@ function RemindersPage() {
             </div>
           </div>
         </section>
+
+        {pinned.length > 0 && (
+          <section>
+            <h2 className="label-caps px-1">Reminders you set for a date</h2>
+            <ul className="mt-3 space-y-2">
+              {pinned.map((c) => (
+                <li key={c.key} className="panel flex items-center gap-3 px-4 py-3">
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-display text-base">{c.name}</span>
+                    <span className="block text-xs text-muted-foreground">
+                      {c.date} · {c.time} {city.name} time
+                    </span>
+                  </span>
+                  <button
+                    onClick={() => removeCustomReminder(c.key)}
+                    aria-label={`Remove reminder for ${c.name}`}
+                    className="rounded-full border border-border p-1.5 text-muted-foreground transition-colors hover:bg-secondary"
+                  >
+                    <X className="size-3.5" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <section>
           <h2 className="label-caps px-1">Upcoming</h2>
