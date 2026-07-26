@@ -73,7 +73,7 @@ export function AppHeader({
                 <Link
                   to="/auth"
                   aria-label="Sign in"
-                  className="flex size-9 shrink-0 items-center justify-center gap-1.5 rounded-full border border-border text-[11px] font-semibold uppercase tracking-wider transition-colors hover:bg-secondary min-[360px]:size-auto min-[360px]:px-3 min-[360px]:py-1.5"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center gap-1.5 rounded-full border border-border text-[11px] font-semibold uppercase tracking-wider transition-colors hover:bg-secondary min-[360px]:w-auto min-[360px]:px-3"
                 >
                   <UserRound className="size-3.5" />
                   <span className="hidden min-[360px]:inline">Sign in</span>
