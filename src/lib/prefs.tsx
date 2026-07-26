@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { useAuth } from "./auth";
 import { CITIES, DEFAULT_CITY_ID, cityForTimeZone, findCity, type City } from "./panchang/cities";
+import type { Place } from "./panchang/geocode";
 
 export type ReminderKey = "ekadashi" | "purnima" | "amavasya" | "sankashti" | "pradosh" | "festivals";
 
@@ -20,6 +21,10 @@ export type CustomReminder = {
 
 export type Prefs = {
   cityId: string;
+  /** Any place in the world; when set it wins over the preset `cityId`. */
+  place: Place | null;
+  /** Most recently chosen places, newest first. */
+  recentPlaces: Place[];
   hour12: boolean;
   tradition: "amanta" | "purnimanta";
   theme: "night" | "day";
@@ -30,6 +35,8 @@ export type Prefs = {
 
 const DEFAULTS: Prefs = {
   cityId: DEFAULT_CITY_ID,
+  place: null,
+  recentPlaces: [],
   hour12: true,
   tradition: "amanta",
   theme: "night",
@@ -52,6 +59,7 @@ type Ctx = {
   city: City;
   hydrated: boolean;
   setPrefs: (patch: Partial<Prefs>) => void;
+  setPlace: (place: Place) => void;
   toggleReminder: (key: ReminderKey) => void;
   addCustomReminder: (reminder: CustomReminder) => void;
   removeCustomReminder: (key: string) => void;
@@ -77,8 +85,12 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
           ...parsed,
           reminders: { ...DEFAULTS.reminders, ...(parsed.reminders ?? {}) },
           custom: Array.isArray(parsed.custom) ? parsed.custom : [],
+          recentPlaces: Array.isArray(parsed.recentPlaces) ? parsed.recentPlaces : [],
+          place: parsed.place && parsed.place.tz ? parsed.place : null,
         };
-        if (!CITIES.some((c) => c.id === next.cityId)) next = { ...next, cityId: DEFAULT_CITY_ID };
+        if (!next.place && !CITIES.some((c) => c.id === next.cityId)) {
+          next = { ...next, cityId: DEFAULT_CITY_ID };
+        }
       } else {
         const guess = cityForTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
         if (guess) next = { ...DEFAULTS, cityId: guess.id };
@@ -144,6 +156,15 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     setPrefsState((prev) => ({ ...prev, ...patch }));
   }, []);
 
+  const setPlace = useCallback((place: Place) => {
+    setPrefsState((prev) => ({
+      ...prev,
+      place,
+      cityId: place.id,
+      recentPlaces: [place, ...prev.recentPlaces.filter((p) => p.id !== place.id)].slice(0, 6),
+    }));
+  }, []);
+
   const toggleReminder = useCallback((key: ReminderKey) => {
     setPrefsState((prev) => ({
       ...prev,
@@ -167,14 +188,15 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
   const value = useMemo<Ctx>(
     () => ({
       prefs,
-      city: findCity(prefs.cityId),
+      city: prefs.place ?? findCity(prefs.cityId),
       hydrated,
       setPrefs,
+      setPlace,
       toggleReminder,
       addCustomReminder,
       removeCustomReminder,
     }),
-    [prefs, hydrated, setPrefs, toggleReminder, addCustomReminder, removeCustomReminder],
+    [prefs, hydrated, setPrefs, setPlace, toggleReminder, addCustomReminder, removeCustomReminder],
   );
 
   return <PrefsContext.Provider value={value}>{children}</PrefsContext.Provider>;
