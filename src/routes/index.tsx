@@ -172,8 +172,8 @@ function TodayPage() {
     const lines = [item.note];
     if (vrat) {
       lines.push(
-        `${vrat.start.label}: ${formatTime(vrat.start.at, city.tz, prefs.hour12)} ${zone}`,
-        `${vrat.end.label}: ${formatTime(vrat.end.at, city.tz, prefs.hour12)} ${zone}`,
+        `${vrat.start.label}: ${t(vrat.start.at)} ${zone}`,
+        `${vrat.end.label}: ${t(vrat.end.at)} ${zone}`,
         ...vrat.dietary,
       );
     }
@@ -318,13 +318,13 @@ function TodayPage() {
                     <span className="text-muted-foreground">
                       {vrat.start.label}
                       <span className="block tabular-nums text-foreground">
-                        {formatTime(vrat.start.at, city.tz, prefs.hour12)} {zone}
+                        {t(vrat.start.at)} {zone}
                       </span>
                     </span>
                     <span className="text-muted-foreground">
                       {vrat.end.label}
                       <span className="block tabular-nums text-foreground">
-                        {formatTime(vrat.end.at, city.tz, prefs.hour12)} {zone}
+                        {t(vrat.end.at)} {zone}
                       </span>
                     </span>
                   </div>
@@ -484,7 +484,7 @@ function TodayPage() {
         dateLabel={formatLongDate(date)}
         reminded={openItem ? isReminded(openItem.id) : false}
         vrat={vrat}
-        formatTime={(d) => formatTime(d, city.tz, prefs.hour12)}
+        formatTime={t}
         zone={zone}
         calendarEvent={openItem ? eventFor(openItem) : null}
         onToggleReminder={() =>
