@@ -71,3 +71,27 @@ export function findCity(id: string | null | undefined): City {
 export function cityForTimeZone(tz: string): City | undefined {
   return CITIES.find((c) => c.tz === tz);
 }
+/** Great-circle distance in miles. */
+function distanceMiles(aLat: number, aLon: number, bLat: number, bLon: number): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(bLat - aLat);
+  const dLon = toRad(bLon - aLon);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(aLat)) * Math.cos(toRad(bLat)) * Math.sin(dLon / 2) ** 2;
+  return 3958.8 * 2 * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+
+/** Closest preset city to a device coordinate, with its distance in miles. */
+export function nearestCity(lat: number, lon: number): { city: City; miles: number } {
+  let best = CITIES[0];
+  let bestMiles = Infinity;
+  for (const c of CITIES) {
+    const miles = distanceMiles(lat, lon, c.lat, c.lon);
+    if (miles < bestMiles) {
+      best = c;
+      bestMiles = miles;
+    }
+  }
+  return { city: best, miles: bestMiles };
+}
