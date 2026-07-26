@@ -105,16 +105,6 @@ export function tzAbbr(date: Date, tz: string): string {
   return parts.find((p) => p.type === "timeZoneName")?.value ?? "";
 }
 
-function unusedFormatLongDate(d: CalendarDay): string {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(Date.UTC(d.year, d.month - 1, d.day)));
-}
-
 export function weekdayIndex(d: CalendarDay): number {
   return new Date(Date.UTC(d.year, d.month - 1, d.day)).getUTCDay();
 }
