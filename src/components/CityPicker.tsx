@@ -54,10 +54,10 @@ export function CityPicker({ open, onClose }: { open: boolean; onClose: () => vo
     );
   }, [query]);
 
-  if (!open) return null;
+  if (!open || typeof document === "undefined") return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-end">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex flex-col justify-end">
       <button
         aria-label="Close city picker"
         className="absolute inset-0 bg-background/80 backdrop-blur-sm"
@@ -132,6 +132,7 @@ export function CityPicker({ open, onClose }: { open: boolean; onClose: () => vo
           )}
         </ul>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
