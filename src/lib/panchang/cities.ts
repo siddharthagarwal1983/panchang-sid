@@ -82,16 +82,45 @@ function distanceMiles(aLat: number, aLon: number, bLat: number, bLon: number): 
   return 3958.8 * 2 * Math.asin(Math.min(1, Math.sqrt(h)));
 }
 
-/** Closest preset city to a device coordinate, with its distance in miles. */
-export function nearestCity(lat: number, lon: number): { city: City; miles: number } {
-  let best = CITIES[0];
-  let bestMiles = Infinity;
-  for (const c of CITIES) {
-    const miles = distanceMiles(lat, lon, c.lat, c.lon);
-    if (miles < bestMiles) {
-      best = c;
-      bestMiles = miles;
+/**
+ * Closest preset city to a device coordinate, with its distance in miles.
+ * When the device reports an IANA timezone, cities sharing it are preferred so
+ * that panchang timings always follow the user's actual clock.
+ */
+export function nearestCity(
+  lat: number,
+  lon: number,
+  deviceTz?: string,
+): { city: City; miles: number } {
+  const pick = (pool: City[]) => {
+    let best = pool[0];
+    let bestMiles = Infinity;
+    for (const c of pool) {
+      const miles = distanceMiles(lat, lon, c.lat, c.lon);
+      if (miles < bestMiles) {
+        best = c;
+        bestMiles = miles;
+      }
     }
+    return { city: best, miles: bestMiles };
+  };
+
+  if (deviceTz) {
+    const sameZone = CITIES.filter((c) => c.tz === deviceTz);
+    if (sameZone.length) return pick(sameZone);
   }
-  return { city: best, miles: bestMiles };
+  return pick(CITIES);
+}
+
+/** Short timezone label (e.g. "PDT") for a city at a given instant. */
+export function tzLabel(tz: string, at: Date = new Date()): string {
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: tz,
+      timeZoneName: "short",
+    }).formatToParts(at);
+    return parts.find((p) => p.type === "timeZoneName")?.value ?? tz;
+  } catch {
+    return tz;
+  }
 }
