@@ -157,7 +157,7 @@ function TodayPage() {
             {festivals.length > 0 && (
               <>
                 <div className="hairline my-5" />
-                <p className="label-caps">Observance{festivals.length > 1 ? "s" : ""} today</p>
+                <p className="label-caps">Festivals</p>
                 <ul className="mt-2 flex flex-wrap justify-center gap-2">
                   {festivals.map((f) => (
                     <li
@@ -241,26 +241,6 @@ function TodayPage() {
             </ul>
           </section>
 
-          <section className="panel px-5 py-4">
-            <h3 className="label-caps">Observances</h3>
-            {festivals.length === 0 ? (
-              <p className="mt-3 text-sm text-muted-foreground">
-                No special observance falls on this day.
-              </p>
-            ) : (
-              <ul className="mt-3 space-y-3">
-                {festivals.map((f) => (
-                  <li key={f.id} className="flex gap-3">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-gold" />
-                    <span>
-                      <span className="block font-display text-base">{f.name}</span>
-                      <span className="block text-xs text-muted-foreground">{f.note}</span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
 
           <p className="px-1 text-center text-xs leading-relaxed text-muted-foreground">
             Computed for {city.name}, {city.state} using drik ganita with the Lahiri ayanamsa.
