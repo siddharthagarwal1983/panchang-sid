@@ -1,14 +1,26 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Bell, BellRing, ChevronLeft, ChevronRight, Moon, Sunrise, Sunset } from "lucide-react";
-import { useMemo, useState } from "react";
+import {
+  Bell,
+  BellRing,
+  ChevronLeft,
+  ChevronRight,
+  Moon,
+  ShieldAlert,
+  Sparkles,
+  Sunrise,
+  Sunset,
+  UtensilsCrossed,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
 import { FestivalModal } from "@/components/FestivalModal";
 import { MoonGlyph } from "@/components/MoonGlyph";
-import { computeDayPanchang } from "@/lib/panchang/core";
+import { computeDayPanchang, type Muhurta } from "@/lib/panchang/core";
 import { tzLabel } from "@/lib/panchang/cities";
 import { festivalsForSummary, scanFestivals, type Festival } from "@/lib/panchang/festivals";
 import { computeDaySummary } from "@/lib/panchang/core";
+import { fastingStatus, gloss, muhurtaTerm, pakshaTerm, term, tithiTerm } from "@/lib/panchang/lang";
 import {
   addDays,
   dayKey,
@@ -16,6 +28,7 @@ import {
   formatTime,
   formatTimeWithDay,
   toCalendarDay,
+  tzAbbr,
   type CalendarDay,
 } from "@/lib/panchang/tz";
 import { usePrefs } from "@/lib/prefs";
@@ -27,17 +40,19 @@ export const Route = createFileRoute("/")({
   }),
   head: () => ({
     meta: [
-      { title: "Today's Panchang — Tithi, Nakshatra & Muhurta" },
+      { title: "Today's Panchang — Tithi, Fasting & Muhurta" },
       {
         name: "description",
         content:
-          "Today's tithi, nakshatra, yoga, karana, sunrise, Rahu Kalam and Abhijit Muhurta, computed for your US city.",
+          "Today's tithi with a live progress bar, fasting status, local sunrise and sunset, plus Abhijit Muhurta and Rahu Kalam windows for your city.",
       },
-      { property: "og:title", content: "Today's Panchang — Tithi, Nakshatra & Muhurta" },
+      { property: "og:title", content: "Today's Panchang — Tithi, Fasting & Muhurta" },
       {
         property: "og:description",
-        content: "Daily Hindu almanac timings calculated for your US city, no account needed.",
+        content: "Daily Hindu almanac timings calculated for your local sunrise, no account needed.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: TodayPage,
@@ -50,17 +65,33 @@ function parseDay(value: string | undefined): CalendarDay | null {
   return { year: Number(m[1]), month: Number(m[2]), day: Number(m[3]) };
 }
 
+/** "2h 14m" style duration for countdowns. */
+function duration(ms: number): string {
+  const mins = Math.max(0, Math.round(ms / 60000));
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  if (h === 0) return `${m}m`;
+  return m === 0 ? `${h}h` : `${h}h ${m}m`;
+}
+
 function TodayPage() {
   const { city, prefs, hydrated, addCustomReminder, removeCustomReminder } = usePrefs();
   const { permission, request } = useReminderNotifications();
   const { d } = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
-  const [now] = useState(() => new Date());
+  const [now, setNow] = useState(() => new Date());
   const [openFestival, setOpenFestival] = useState<Festival | null>(null);
+
+  // Keep progress bars and countdowns alive.
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   const today = useMemo(() => toCalendarDay(now, city.tz), [now, city.tz]);
   const date = parseDay(d) ?? today;
   const isToday = dayKey(date) === dayKey(today);
+  const script = prefs.script;
 
   const panchang = useMemo(
     () => (hydrated ? computeDayPanchang(date, city) : null),
@@ -95,6 +126,7 @@ function TodayPage() {
   };
 
   const t = (value: Date | null) => formatTimeWithDay(value, city.tz, prefs.hour12, date);
+  const zone = tzAbbr(now, city.tz);
 
   const key = dayKey(date);
   const isReminded = (id: string) => prefs.custom.some((c) => c.key === `${key}:${id}`);
@@ -115,9 +147,19 @@ function TodayPage() {
     });
   };
 
+  const fasting = panchang ? fastingStatus(panchang.tithi.name, panchang.tithi.paksha) : null;
+  const tithiProgress = (() => {
+    if (!panchang) return 0;
+    const { start, end } = panchang.tithi;
+    const at = isToday ? now.getTime() : panchang.reference.getTime();
+    const span = end.getTime() - start.getTime();
+    if (span <= 0) return 0;
+    return Math.min(100, Math.max(0, ((at - start.getTime()) / span) * 100));
+  })();
+
   return (
     <main className="mx-auto max-w-md">
-      <AppHeader title="Panchāṅga" showLocation />
+      <AppHeader title="Panchāṅga" showLocation showScript />
 
       <div className="px-5 pt-3">
         <p className="flex items-start gap-2 rounded-xl border border-primary/30 bg-primary/10 px-3 py-2 text-[12px] leading-snug text-primary">
@@ -163,27 +205,93 @@ function TodayPage() {
         </div>
       ) : (
         <div className="space-y-4 px-5 pb-8">
-          <section className="panel relative overflow-hidden px-5 py-6 text-center">
-            <div className="mx-auto w-fit">
-              <MoonGlyph phase={panchang.moonPhase} size={104} />
+          {/* 1. Local solar header — every vrat and parana window hangs off these. */}
+          <section className="panel px-4 py-3">
+            <div className="grid grid-cols-2 gap-3">
+              <SolarCell
+                icon={<Sunrise className="size-4 text-primary" />}
+                label="Sunrise"
+                value={formatTime(panchang.sunrise, city.tz, prefs.hour12)}
+                zone={zone}
+              />
+              <SolarCell
+                icon={<Sunset className="size-4 text-primary" />}
+                label="Sunset"
+                value={formatTime(panchang.sunset, city.tz, prefs.hour12)}
+                zone={zone}
+              />
             </div>
-            <p className="label-caps mt-4">{panchang.tithi.paksha} Paksha</p>
-            <h2 className="mt-1 font-display text-4xl text-primary">{panchang.tithi.name}</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              until {t(panchang.tithi.end)} · then {panchang.nextTithi.name}
-            </p>
-            <div className="hairline my-5" />
-            <p className="text-sm">
-              <span className="font-display text-base">
-                {prefs.tradition === "amanta" ? panchang.month.amanta : panchang.month.purnimanta}
-              </span>{" "}
-              masa · {panchang.ritu} ritu · Vikram Samvat {panchang.samvat}
-            </p>
+            <div className="hairline my-3" />
+            <div className="grid grid-cols-2 gap-3">
+              <SolarCell
+                icon={<Moon className="size-4 text-gold" />}
+                label="Moonrise"
+                value={t(panchang.moonrise)}
+              />
+              <SolarCell
+                icon={<Moon className="size-4 text-gold" />}
+                label="Moonset"
+                value={t(panchang.moonset)}
+              />
+            </div>
+          </section>
+
+          {/* 2. Active tithi + fasting status. */}
+          <section className="panel px-5 py-5">
+            <div className="flex items-start gap-4">
+              <MoonGlyph phase={panchang.moonPhase} size={64} />
+              <div className="min-w-0 flex-1">
+                <p className="label-caps">
+                  {pakshaTerm(panchang.tithi.paksha, script)}
+                  {script === "english" ? "" : " Paksha"}
+                </p>
+                <h2 className="mt-0.5 font-display text-3xl leading-tight text-primary">
+                  {tithiTerm(panchang.tithi.name, script)}
+                </h2>
+                {script !== "english" && gloss(panchang.tithi.name) && (
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {gloss(panchang.tithi.name)}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+                <div
+                  className="h-full rounded-full bg-primary transition-[width] duration-500"
+                  style={{ width: `${tithiProgress}%` }}
+                  role="progressbar"
+                  aria-valuenow={Math.round(tithiProgress)}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label="Tithi elapsed"
+                />
+              </div>
+              <p className="mt-2 text-sm">
+                Ends {t(panchang.tithi.end)} {zone}
+                <span className="text-muted-foreground">
+                  {" "}
+                  · then {tithiTerm(panchang.nextTithi.name, script)}
+                </span>
+              </p>
+            </div>
+
+            {fasting && (
+              <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-gold/35 bg-gold/10 px-3 py-2.5">
+                <UtensilsCrossed className="mt-0.5 size-4 shrink-0 text-gold" />
+                <p className="text-sm leading-snug">
+                  <span className="font-display text-gold">{fasting.label}</span>
+                  <span className="block text-xs text-muted-foreground">{fasting.detail}</span>
+                </p>
+              </div>
+            )}
+
             {festivals.length > 0 && (
               <>
-                <div className="hairline my-5" />
+                <div className="hairline my-4" />
                 <p className="label-caps">Festivals</p>
-                <ul className="mt-2 flex flex-wrap justify-center gap-2">
+                <ul className="mt-2 flex flex-wrap gap-2">
                   {festivals.map((f) => (
                     <li
                       key={f.id}
@@ -203,11 +311,6 @@ function TodayPage() {
                           isReminded(f.id)
                             ? `Remove reminder for ${f.name}`
                             : `Remind me on ${f.name}`
-                        }
-                        title={
-                          isReminded(f.id)
-                            ? `Reminder set for ${prefs.reminderTime}`
-                            : "Set a reminder for this date"
                         }
                         className={`rounded-full p-1.5 transition-colors ${
                           isReminded(f.id)
@@ -234,42 +337,55 @@ function TodayPage() {
             )}
           </section>
 
-          <section className="grid grid-cols-2 gap-3">
-            <Fact label="Nakshatra" value={panchang.nakshatra.name} sub={`until ${t(panchang.nakshatra.end)}`} />
-            <Fact label="Yoga" value={panchang.yoga.name} sub={`until ${t(panchang.yoga.end)}`} />
-            <Fact label="Karana" value={panchang.karana.name} sub={`then ${panchang.nextKarana.name}`} />
-            <Fact label="Vaara" value={panchang.vaara} sub={`Moon in ${panchang.moonRashi}`} />
-          </section>
-
-          <section className="panel px-5 py-4">
-            <h3 className="label-caps">Sun &amp; Moon</h3>
-            <div className="mt-3 grid grid-cols-2 gap-y-3 text-sm">
-              <Timing icon={<Sunrise className="size-4 text-primary" />} label="Sunrise" value={formatTime(panchang.sunrise, city.tz, prefs.hour12)} />
-              <Timing icon={<Sunset className="size-4 text-primary" />} label="Sunset" value={formatTime(panchang.sunset, city.tz, prefs.hour12)} />
-              <Timing icon={<Moon className="size-4 text-gold" />} label="Moonrise" value={t(panchang.moonrise)} />
-              <Timing icon={<Moon className="size-4 text-gold" />} label="Moonset" value={t(panchang.moonset)} />
-            </div>
-          </section>
-
-          <section className="panel px-5 py-4">
-            <h3 className="label-caps">Muhurta</h3>
-            <ul className="mt-3 space-y-2.5">
-              {panchang.muhurtas.map((m) => (
-                <li key={m.name} className="flex items-center justify-between gap-3 text-sm">
-                  <span className="flex items-center gap-2">
-                    <span
-                      className={`size-2 rounded-full ${
-                        m.kind === "auspicious" ? "bg-primary" : "bg-lotus"
-                      }`}
+          {/* 3. Auspicious vs inauspicious windows. */}
+          {panchang.muhurtas.length > 0 && (
+            <section>
+              <h3 className="label-caps px-1">Windows today</h3>
+              <div className="mt-2 grid grid-cols-2 gap-3">
+                {[...panchang.muhurtas]
+                  .sort((a, b) => (a.kind === b.kind ? 0 : a.kind === "auspicious" ? -1 : 1))
+                  .map((m) => (
+                    <MuhurtaTile
+                      key={m.name}
+                      muhurta={m}
+                      script={script}
+                      now={now}
+                      isToday={isToday}
+                      tz={city.tz}
+                      hour12={prefs.hour12}
                     />
-                    {m.name}
-                  </span>
-                  <span className="tabular-nums text-muted-foreground">
-                    {formatTime(m.start, city.tz, prefs.hour12)} – {formatTime(m.end, city.tz, prefs.hour12)}
-                  </span>
-                </li>
-              ))}
-            </ul>
+                  ))}
+              </div>
+            </section>
+          )}
+
+          <section className="grid grid-cols-2 gap-3">
+            <Fact
+              label="Nakshatra"
+              value={term(panchang.nakshatra.name, script)}
+              sub={`until ${t(panchang.nakshatra.end)}`}
+            />
+            <Fact label="Yoga" value={panchang.yoga.name} sub={`until ${t(panchang.yoga.end)}`} />
+            <Fact
+              label="Karana"
+              value={panchang.karana.name}
+              sub={`then ${panchang.nextKarana.name}`}
+            />
+            <Fact
+              label="Vaara"
+              value={term(panchang.vaara, script)}
+              sub={`Moon in ${panchang.moonRashi}`}
+            />
+          </section>
+
+          <section className="panel px-5 py-4 text-sm">
+            <span className="font-display text-base">
+              {term(
+                prefs.tradition === "amanta" ? panchang.month.amanta : panchang.month.purnimanta,
+                script,
+              )}
+            </span>{" "}
+            masa · {panchang.ritu} ritu · Vikram Samvat {panchang.samvat}
           </section>
 
           {upcoming.length > 0 && (
@@ -311,6 +427,54 @@ function TodayPage() {
   );
 }
 
+function MuhurtaTile({
+  muhurta,
+  script,
+  now,
+  isToday,
+  tz,
+  hour12,
+}: {
+  muhurta: Muhurta;
+  script: Parameters<typeof muhurtaTerm>[1];
+  now: Date;
+  isToday: boolean;
+  tz: string;
+  hour12: boolean;
+}) {
+  const good = muhurta.kind === "auspicious";
+  const tone = good
+    ? "border-auspicious/40 bg-auspicious/10 text-auspicious"
+    : "border-avoid/40 bg-avoid/10 text-avoid";
+
+  let status: string;
+  if (!isToday) status = "";
+  else if (now < muhurta.start) status = `starts in ${duration(muhurta.start.getTime() - now.getTime())}`;
+  else if (now < muhurta.end) status = `ends in ${duration(muhurta.end.getTime() - now.getTime())}`;
+  else status = "over for today";
+
+  const active = isToday && now >= muhurta.start && now < muhurta.end;
+
+  return (
+    <div className={`rounded-xl border px-3.5 py-3 ${tone} ${active ? "ring-1 ring-current" : ""}`}>
+      <div className="flex items-center gap-1.5">
+        {good ? (
+          <Sparkles className="size-3.5 shrink-0" />
+        ) : (
+          <ShieldAlert className="size-3.5 shrink-0" />
+        )}
+        <p className="truncate font-display text-sm">{muhurtaTerm(muhurta.name, script)}</p>
+      </div>
+      <p className="mt-1.5 text-[13px] tabular-nums text-foreground">
+        {formatTime(muhurta.start, tz, hour12)} – {formatTime(muhurta.end, tz, hour12)}
+      </p>
+      <p className="mt-0.5 text-[11px] text-muted-foreground">
+        {status || (good ? "Auspicious" : "Avoid new work")}
+      </p>
+    </div>
+  );
+}
+
 function Fact({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
     <div className="panel px-4 py-3">
@@ -321,13 +485,28 @@ function Fact({ label, value, sub }: { label: string; value: string; sub: string
   );
 }
 
-function Timing({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function SolarCell({
+  icon,
+  label,
+  value,
+  zone,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  zone?: string;
+}) {
   return (
     <div className="flex items-center gap-2">
       {icon}
-      <span className="flex-1">
-        <span className="block text-xs text-muted-foreground">{label}</span>
-        <span className="block tabular-nums">{value}</span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[11px] uppercase tracking-wider text-muted-foreground">
+          {label}
+        </span>
+        <span className="block truncate tabular-nums text-sm">
+          {value}
+          {zone ? <span className="text-muted-foreground"> {zone}</span> : null}
+        </span>
       </span>
     </div>
   );
