@@ -1,4 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { MessageSquare, Shield, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
@@ -13,12 +14,12 @@ export const Route = createFileRoute("/settings")({
       {
         name: "description",
         content:
-          "Set your US city, time format, amanta or purnimanta month naming, and app theme.",
+          "Set your city, time format, app theme, notifications, and read the privacy policy and terms of service.",
       },
       { property: "og:title", content: "Settings — Panchanga" },
       {
         property: "og:description",
-        content: "Personalise city, time format and calendar tradition.",
+        content: "Personalise city, time format, theme, notifications, and legal information.",
       },
     ],
   }),
@@ -72,6 +73,15 @@ function SettingsPage() {
             Calculations run on your device. Sign in only if you want your settings and reminders
             synced across devices.
           </p>
+        </section>
+
+        <section className="panel px-5 py-4">
+          <h2 className="label-caps">Legal & feedback</h2>
+          <div className="mt-3 space-y-1">
+            <SettingsLink to="/feedback" icon={MessageSquare} label="Send feedback" />
+            <SettingsLink to="/privacy" icon={Shield} label="Privacy policy" />
+            <SettingsLink to="/terms" icon={FileText} label="Terms of service" />
+          </div>
         </section>
       </div>
     </main>
@@ -225,5 +235,26 @@ function Segmented({
       </div>
       {hint && <p className="mt-2.5 text-xs leading-relaxed text-muted-foreground">{hint}</p>}
     </section>
+  );
+}
+
+function SettingsLink({
+  to,
+  icon: Icon,
+  label,
+}: {
+  to: string;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-foreground transition-colors hover:bg-secondary"
+    >
+      <Icon className="size-4 text-muted-foreground" />
+      <span className="flex-1">{label}</span>
+      <span className="text-muted-foreground">›</span>
+    </Link>
   );
 }
