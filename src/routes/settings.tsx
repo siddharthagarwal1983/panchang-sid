@@ -1,9 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ChevronRight, MapPin } from "lucide-react";
-import { useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
-import { CityPicker } from "@/components/CityPicker";
 import { usePrefs } from "@/lib/prefs";
 
 export const Route = createFileRoute("/settings")({
@@ -26,30 +23,13 @@ export const Route = createFileRoute("/settings")({
 });
 
 function SettingsPage() {
-  const { prefs, city, setPrefs } = usePrefs();
-  const [pickerOpen, setPickerOpen] = useState(false);
+  const { prefs, setPrefs } = usePrefs();
 
   return (
     <main className="mx-auto max-w-md">
       <AppHeader title="Settings" subtitle="Stored on this device only" />
 
       <div className="space-y-4 px-5 py-5">
-        <section className="panel overflow-hidden">
-          <button
-            onClick={() => setPickerOpen(true)}
-            className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-secondary"
-          >
-            <MapPin className="size-4 text-primary" />
-            <span className="flex-1">
-              <span className="block text-sm">City</span>
-              <span className="block text-xs text-muted-foreground">
-                {city.name}, {city.state}
-              </span>
-            </span>
-            <ChevronRight className="size-4 text-muted-foreground" />
-          </button>
-        </section>
-
         <Segmented
           label="Month naming"
           hint="Amanta ends at the new moon (South & West India). Purnimanta ends at the full moon (North India)."
@@ -96,8 +76,6 @@ function SettingsPage() {
           </p>
         </section>
       </div>
-
-      <CityPicker open={pickerOpen} onClose={() => setPickerOpen(false)} />
     </main>
   );
 }
