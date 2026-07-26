@@ -391,11 +391,13 @@ function Fact({
   value,
   sub,
   hint,
+  note,
 }: {
   label: string;
   value: string;
   sub: string;
   hint?: string;
+  note?: string;
 }) {
   return (
     <div className="panel px-4 py-3">
@@ -403,6 +405,9 @@ function Fact({
       {hint && <p className="text-[0.7rem] leading-snug text-muted-foreground">{hint}</p>}
       <p className="mt-1 font-display text-lg leading-tight">{value}</p>
       <p className="mt-1 text-xs text-muted-foreground">{sub}</p>
+      {note && (
+        <p className="mt-1.5 text-[0.7rem] leading-relaxed text-muted-foreground/80">{note}</p>
+      )}
     </div>
   );
 }
