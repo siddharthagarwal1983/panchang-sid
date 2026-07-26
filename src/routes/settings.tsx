@@ -14,12 +14,12 @@ export const Route = createFileRoute("/settings")({
       {
         name: "description",
         content:
-          "Set your US city, time format, amanta or purnimanta month naming, and app theme.",
+          "Set your city, time format, app theme, notifications, and read the privacy policy and terms of service.",
       },
       { property: "og:title", content: "Settings — Panchanga" },
       {
         property: "og:description",
-        content: "Personalise city, time format and calendar tradition.",
+        content: "Personalise city, time format, theme, notifications, and legal information.",
       },
     ],
   }),
