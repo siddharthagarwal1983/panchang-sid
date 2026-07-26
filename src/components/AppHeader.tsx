@@ -2,7 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { MapPin, UserRound } from "lucide-react";
 import { useState } from "react";
 
-import { CityPicker } from "@/components/CityPicker";
+import { LocationPicker } from "@/components/LocationPicker";
 import { useAuth } from "@/lib/auth";
 import { tzLabel } from "@/lib/panchang/cities";
 import { usePrefs } from "@/lib/prefs";
@@ -81,7 +81,7 @@ export function AppHeader({
         )}
         {children}
       </div>
-      {showLocation && <CityPicker open={pickerOpen} onClose={() => setPickerOpen(false)} />}
+      {showLocation && <LocationPicker open={pickerOpen} onClose={() => setPickerOpen(false)} />}
     </header>
   );
 }
