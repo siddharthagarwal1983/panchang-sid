@@ -9,16 +9,6 @@ import { computeDayPanchang } from "@/lib/panchang/core";
 import { festivalsForSummary, scanFestivals, type Festival } from "@/lib/panchang/festivals";
 import { computeDaySummary } from "@/lib/panchang/core";
 import {
-  CONCEPTS,
-  KARANA_MEANINGS,
-  MUHURTA_DETAILS,
-  MUHURTA_MEANINGS,
-  NAKSHATRA_MEANINGS,
-  TITHI_MEANINGS,
-  YOGA_MEANINGS,
-  moonPhaseLabel,
-} from "@/lib/panchang/glossary";
-import {
   addDays,
   dayKey,
   formatLongDate,
@@ -168,11 +158,6 @@ function TodayPage() {
             </div>
             <p className="label-caps mt-4">{panchang.tithi.paksha} Paksha</p>
             <h2 className="mt-1 font-display text-4xl text-primary">{panchang.tithi.name}</h2>
-            <p className="mx-auto mt-2 max-w-xs text-xs leading-relaxed text-muted-foreground">
-              {TITHI_MEANINGS[panchang.tithi.name] ?? CONCEPTS.tithi.short} ·{" "}
-              {moonPhaseLabel(panchang.moonPhase)} in the{" "}
-              {panchang.tithi.paksha === "Shukla" ? "bright" : "dark"} fortnight
-            </p>
             <p className="mt-2 text-sm text-muted-foreground">
               until {t(panchang.tithi.end)} · then {panchang.nextTithi.name}
             </p>
@@ -182,13 +167,6 @@ function TodayPage() {
                 {prefs.tradition === "amanta" ? panchang.month.amanta : panchang.month.purnimanta}
               </span>{" "}
               masa · {panchang.ritu} ritu · Vikram Samvat {panchang.samvat}
-            </p>
-            <p className="mx-auto mt-2 max-w-xs text-xs leading-relaxed text-muted-foreground">
-              {CONCEPTS.masa.short} · {CONCEPTS.ritu.short} · {CONCEPTS.samvat.short}
-            </p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Tithi {panchang.tithi.number}/30 · Amanta {panchang.month.amanta} · Purnimanta{" "}
-              {panchang.month.purnimanta} · Sun in {panchang.sunRashi}
             </p>
             {festivals.length > 0 && (
               <>
@@ -246,33 +224,10 @@ function TodayPage() {
           </section>
 
           <section className="grid grid-cols-2 gap-3">
-            <Fact
-              label="Nakshatra"
-              value={panchang.nakshatra.name}
-              sub={`until ${t(panchang.nakshatra.end)}`}
-              hint={CONCEPTS.nakshatra.short}
-              note={NAKSHATRA_MEANINGS[panchang.nakshatra.name]}
-            />
-            <Fact
-              label="Yoga"
-              value={panchang.yoga.name}
-              sub={`until ${t(panchang.yoga.end)}`}
-              hint={CONCEPTS.yoga.short}
-              note={YOGA_MEANINGS[panchang.yoga.name]}
-            />
-            <Fact
-              label="Karana"
-              value={panchang.karana.name}
-              sub={`then ${panchang.nextKarana.name}`}
-              hint={CONCEPTS.karana.short}
-              note={KARANA_MEANINGS[panchang.karana.name]}
-            />
-            <Fact
-              label="Vaara"
-              value={panchang.vaara}
-              sub={`Moon in ${panchang.moonRashi}`}
-              hint={CONCEPTS.vaara.short}
-            />
+            <Fact label="Nakshatra" value={panchang.nakshatra.name} sub={`until ${t(panchang.nakshatra.end)}`} />
+            <Fact label="Yoga" value={panchang.yoga.name} sub={`until ${t(panchang.yoga.end)}`} />
+            <Fact label="Karana" value={panchang.karana.name} sub={`then ${panchang.nextKarana.name}`} />
+            <Fact label="Vaara" value={panchang.vaara} sub={`Moon in ${panchang.moonRashi}`} />
           </section>
 
           <section className="panel px-5 py-4">
@@ -287,33 +242,18 @@ function TodayPage() {
 
           <section className="panel px-5 py-4">
             <h3 className="label-caps">Muhurta</h3>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              {CONCEPTS.muhurta.long}
-            </p>
             <ul className="mt-3 space-y-2.5">
               {panchang.muhurtas.map((m) => (
-                <li key={m.name} className="flex items-start justify-between gap-3 text-sm">
-                  <span className="flex min-w-0 items-start gap-2">
+                <li key={m.name} className="flex items-center justify-between gap-3 text-sm">
+                  <span className="flex items-center gap-2">
                     <span
-                      className={`mt-1.5 size-2 shrink-0 rounded-full ${
+                      className={`size-2 rounded-full ${
                         m.kind === "auspicious" ? "bg-primary" : "bg-lotus"
                       }`}
                     />
-                    <span className="min-w-0">
-                      <span className="block">{m.name}</span>
-                      {MUHURTA_MEANINGS[m.name] && (
-                        <span className="block text-xs text-muted-foreground">
-                          {MUHURTA_MEANINGS[m.name]}
-                        </span>
-                      )}
-                      {MUHURTA_DETAILS[m.name] && (
-                        <span className="mt-0.5 block text-[0.7rem] leading-relaxed text-muted-foreground/80">
-                          {MUHURTA_DETAILS[m.name]}
-                        </span>
-                      )}
-                    </span>
+                    {m.name}
                   </span>
-                  <span className="shrink-0 tabular-nums text-muted-foreground">
+                  <span className="tabular-nums text-muted-foreground">
                     {formatTime(m.start, city.tz, prefs.hour12)} – {formatTime(m.end, city.tz, prefs.hour12)}
                   </span>
                 </li>
@@ -342,32 +282,6 @@ function TodayPage() {
             </section>
           )}
 
-          <section className="panel px-5 py-4">
-            <h3 className="label-caps">What these words mean</h3>
-            <dl className="mt-3 space-y-3.5">
-              {["tithi", "paksha", "nakshatra", "yoga", "karana", "vaara", "masa", "ritu", "samvat", "muhurta"].map(
-                (k) => (
-                  <div key={k}>
-                    <dt className="font-display text-base">
-                      {CONCEPTS[k].title}{" "}
-                      <span className="font-sans text-xs text-muted-foreground">
-                        — {CONCEPTS[k].short}
-                      </span>
-                    </dt>
-                    <dd className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
-                      {CONCEPTS[k].long}
-                      {CONCEPTS[k].example && (
-                        <span className="mt-1 block italic text-muted-foreground/80">
-                          {CONCEPTS[k].example}
-                        </span>
-                      )}
-                    </dd>
-                  </div>
-                ),
-              )}
-            </dl>
-          </section>
-
           <p className="px-1 text-center text-xs leading-relaxed text-muted-foreground">
             Computed for {city.name}, {city.state} using drik ganita with the Lahiri ayanamsa.
             Timings may differ by a few minutes from your family almanac.
@@ -386,28 +300,12 @@ function TodayPage() {
   );
 }
 
-function Fact({
-  label,
-  value,
-  sub,
-  hint,
-  note,
-}: {
-  label: string;
-  value: string;
-  sub: string;
-  hint?: string;
-  note?: string;
-}) {
+function Fact({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
     <div className="panel px-4 py-3">
       <p className="label-caps">{label}</p>
-      {hint && <p className="text-[0.7rem] leading-snug text-muted-foreground">{hint}</p>}
       <p className="mt-1 font-display text-lg leading-tight">{value}</p>
       <p className="mt-1 text-xs text-muted-foreground">{sub}</p>
-      {note && (
-        <p className="mt-1.5 text-[0.7rem] leading-relaxed text-muted-foreground/80">{note}</p>
-      )}
     </div>
   );
 }
