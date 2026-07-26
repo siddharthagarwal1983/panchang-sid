@@ -67,7 +67,7 @@ export function ReminderScheduler() {
       window.localStorage.setItem(FIRED_KEY, key);
       if (hits.length === 0) return;
 
-      new Notification(hits.map((h) => h.name).join(" · '"), {
+      new Notification(hits.map((h) => h.name).join(" · "), {
         body: `Today in ${city.name}: ${hits.map((h) => h.note).join(" · ")}`,
         tag: `panchang-${key}`,
       });
