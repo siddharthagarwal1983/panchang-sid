@@ -13,11 +13,11 @@ const YEARS = ["2025", "2026"] as const;
 const BASE_URL = "https://panchanga.lovable.app";
 
 function titleFor(year: string) {
-  return `Hindu Festival Calendar ${year} — Dates in Your Local Time | Panchanga`;
+  return `Hindu Festival Calendar ${year} — Local Dates | Panchanga`;
 }
 
 function descriptionFor(year: string) {
-  return `Every major Hindu festival of ${year} — Holi, Ram Navami, Raksha Bandhan, Janmashtami, Navratri, Diwali and more — with dates recalculated for your own sunrise instead of India time.`;
+  return `Major Hindu festivals of ${year} with dates recalculated for your local sunrise instead of India time.`;
 }
 
 export const Route = createFileRoute("/festivals/$year")({
