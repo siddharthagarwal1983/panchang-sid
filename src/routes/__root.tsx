@@ -89,19 +89,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
-      { title: "Panchanga — Daily Hindu Panchang for the US" },
-      {
-        name: "description",
-        content:
-          "Tithi, nakshatra, muhurta, festivals and vrat reminders calculated for your US city.",
-      },
-      { property: "og:title", content: "Panchanga — Daily Hindu Panchang for the US" },
-      {
-        property: "og:description",
-        content:
-          "Tithi, nakshatra, muhurta, festivals and vrat reminders calculated for your US city.",
-      },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Panchanga" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#181430" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
