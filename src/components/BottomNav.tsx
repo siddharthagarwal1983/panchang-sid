@@ -16,6 +16,7 @@ export function BottomNav() {
           <li key={to} className="flex-1">
             <Link
               to={to}
+              preload="viewport"
               activeOptions={{ exact: to === "/" }}
               className="flex flex-col items-center gap-1 py-2.5 text-muted-foreground transition-colors"
               activeProps={{ className: "!text-primary" }}
