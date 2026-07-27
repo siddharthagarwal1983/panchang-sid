@@ -300,14 +300,20 @@ export type DaySummary = {
   sunRashiIndex: number;
 };
 
+const summaryCache = new Map<string, DaySummary>();
+const SUMMARY_CACHE_LIMIT = 1200;
+
 export function computeDaySummary(date: CalendarDay, city: City): DaySummary {
+  const key = `${city.id}|${city.lat}|${city.lon}|${city.tz}|${date.year}-${date.month}-${date.day}`;
+  const cached = summaryCache.get(key);
+  if (cached) return cached;
   const observer = new Observer(city.lat, city.lon, 0);
   const localMidnight = zonedToUtc(date.year, date.month, date.day, 0, 0, city.tz);
   const sunriseT = SearchRiseSet(Body.Sun, observer, +1, localMidnight, 2);
   const reference = sunriseT ? sunriseT.date : new Date(localMidnight.getTime() + 6 * 3600_000);
   const tithi = getTithi(reference);
   const month = getLunarMonth(reference, tithi.paksha);
-  return {
+  const summary: DaySummary = {
     date,
     sunrise: sunriseT ? sunriseT.date : null,
     tithiNumber: tithi.number,
@@ -318,6 +324,9 @@ export function computeDaySummary(date: CalendarDay, city: City): DaySummary {
     nakshatra: getNakshatra(reference).name,
     sunRashiIndex: Math.floor(siderealSun(reference) / 30),
   };
+  if (summaryCache.size >= SUMMARY_CACHE_LIMIT) summaryCache.clear();
+  summaryCache.set(key, summary);
+  return summary;
 }
 
 export function summariesForRange(start: CalendarDay, days: number, city: City): DaySummary[] {
