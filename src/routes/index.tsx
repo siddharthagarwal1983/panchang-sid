@@ -117,17 +117,46 @@ function TodayPage() {
     [hydrated, date.year, date.month, date.day, city],
   );
 
-  const upcoming = useMemo(() => {
-    if (!hydrated) return [];
+  // Scanning ~120 days of panchang is expensive, so it runs in small idle-time
+  // chunks after first paint instead of blocking hydration.
+  const [upcoming, setUpcoming] = useState<{ date: CalendarDay; festival: Festival }[]>([]);
+  const upcomingKey = `${hydrated}:${date.year}-${date.month}-${date.day}:${city.id}`;
+  useEffect(() => {
+    if (!hydrated) return;
+    let cancelled = false;
     const out: { date: CalendarDay; festival: Festival }[] = [];
-    for (const day of scanFestivals(addDays(date, 1), 120, city)) {
-      for (const f of day.festivals) {
-        if (f.category === "major") out.push({ date: day.date, festival: f });
+    let offset = 1;
+    const CHUNK = 10;
+    const LIMIT = 121;
+
+    const schedule = (fn: () => void) =>
+      typeof window.requestIdleCallback === "function"
+        ? window.requestIdleCallback(() => fn(), { timeout: 500 })
+        : window.setTimeout(fn, 0);
+
+    const step = () => {
+      if (cancelled) return;
+      for (const day of scanFestivals(addDays(date, offset), CHUNK, city)) {
+        for (const f of day.festivals) {
+          if (f.category === "major") out.push({ date: day.date, festival: f });
+        }
       }
-      if (out.length >= 5) break;
-    }
-    return out.slice(0, 5);
-  }, [hydrated, date.year, date.month, date.day, city]);
+      offset += CHUNK;
+      if (out.length >= 5 || offset > LIMIT) {
+        setUpcoming(out.slice(0, 5));
+        return;
+      }
+      setUpcoming(out.slice(0, 5));
+      schedule(step);
+    };
+
+    setUpcoming([]);
+    schedule(step);
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [upcomingKey]);
 
   const go = (delta: number) => {
     const next = addDays(date, delta);
