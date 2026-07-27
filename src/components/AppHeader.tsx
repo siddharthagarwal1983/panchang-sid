@@ -13,6 +13,7 @@ export function AppHeader({
   subtitle,
   showLocation = false,
   showScript = false,
+  headingSuffix,
   children,
 }: {
   title: string;
