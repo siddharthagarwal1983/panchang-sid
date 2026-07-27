@@ -34,6 +34,53 @@ export const Route = createFileRoute("/festivals/$year")({
       { name: "twitter:card", content: "summary" },
     ],
     links: [{ rel: "canonical", href: `${BASE_URL}/festivals/${params.year}` }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: titleFor(params.year),
+          description: descriptionFor(params.year),
+          articleSection: "Hindu festival calendar",
+          about: `Hindu festivals ${params.year}`,
+          inLanguage: "en",
+          isAccessibleForFree: true,
+          mainEntityOfPage: {
+            "@type": "WebPage",
+            "@id": `${BASE_URL}/festivals/${params.year}`,
+          },
+          author: { "@type": "Organization", name: "Panchāṅga", url: BASE_URL },
+          publisher: {
+            "@type": "Organization",
+            name: "Panchāṅga",
+            url: BASE_URL,
+            logo: {
+              "@type": "ImageObject",
+              url: `${BASE_URL}/app-icon-512.png`,
+              width: 512,
+              height: 512,
+            },
+          },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Panchāṅga", item: BASE_URL },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: `Hindu festival calendar ${params.year}`,
+              item: `${BASE_URL}/festivals/${params.year}`,
+            },
+          ],
+        }),
+      },
+    ],
   }),
   component: FestivalYearPage,
 });
