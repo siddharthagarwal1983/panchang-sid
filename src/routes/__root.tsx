@@ -113,16 +113,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "preload",
         as: "style",
-        href: "https://fonts.googleapis.com/css2?family=Marcellus&family=Karla:wght@400;500;600;700&family=Noto+Serif:wght@400;600&family=Noto+Sans:wght@400;600&display=swap",
+        href: "/fonts/fonts.css",
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Marcellus&family=Karla:wght@400;500;600;700&family=Noto+Serif:wght@400;600&family=Noto+Sans:wght@400;600&display=swap",
+        href: "/fonts/fonts.css",
       },
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "apple-touch-icon", href: "/app-icon-192.png" },
