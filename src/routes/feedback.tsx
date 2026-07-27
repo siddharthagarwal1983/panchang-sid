@@ -16,6 +16,7 @@ export const Route = createFileRoute("/feedback")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
+    links: [{ rel: "canonical", href: "https://panchanga.lovable.app/feedback" }],
   }),
   component: FeedbackPage,
 });
