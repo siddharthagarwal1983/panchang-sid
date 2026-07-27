@@ -1,6 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { FestivalDay } from "@/lib/panchang/festivals";
 
 import { AppHeader } from "@/components/AppHeader";
 import { scanFestivals } from "@/lib/panchang/festivals";
@@ -41,10 +42,30 @@ function CalendarPage() {
   const first: CalendarDay = { year: cursor.year, month: cursor.month, day: 1 };
   const leading = weekdayIndex(first);
 
-  const scan = useMemo(
-    () => (hydrated ? scanFestivals(first, daysInMonth, city) : []),
-    [hydrated, cursor.year, cursor.month, daysInMonth, city],
-  );
+  // Compute the month after the first paint so switching tabs feels instant.
+  const [scan, setScan] = useState<FestivalDay[]>([]);
+  useEffect(() => {
+    if (!hydrated) return;
+    setScan([]);
+    let cancelled = false;
+    const run = () => {
+      if (cancelled) return;
+      setScan(scanFestivals(first, daysInMonth, city));
+    };
+    const idle = (
+      window as unknown as { requestIdleCallback?: (cb: () => void) => number }
+    ).requestIdleCallback;
+    const handle = idle ? idle(run) : window.setTimeout(run, 0);
+    return () => {
+      cancelled = true;
+      const cancelIdle = (
+        window as unknown as { cancelIdleCallback?: (id: number) => void }
+      ).cancelIdleCallback;
+      if (idle && cancelIdle) cancelIdle(handle as number);
+      else window.clearTimeout(handle as number);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated, cursor.year, cursor.month, daysInMonth, city]);
 
   const shift = (delta: number) => {
     const m = cursor.month - 1 + delta;
