@@ -1,0 +1,18 @@
+# Panchāṅga
+
+> Daily Hindu panchang for the diaspora — tithi, nakshatra, yoga, karana, muhurta and festivals computed for your own location's local sunrise.
+
+Panchāṅga uses drik ganita (true positions of the sun and moon) with the Lahiri (Chitrapaksha) ayanamsa. All timings are calculated for the user's detected or chosen location and timezone, so festival and vrat dates match the local day rather than the India date.
+
+## Pages
+
+- [Today](/): Current tithi, paksha, nakshatra, yoga, karana, sunrise/sunset, Abhijit Muhurta, Rahu Kalam and today's festivals.
+- [Calendar](/calendar): Month view of tithis and major Hindu festivals for your location.
+- [Reminders](/reminders): Set local notifications for festivals, vrats and recurring observances.
+- [Settings](/settings): Location, script (Devanagari / transliterated / plain English), time format and notification preferences.
+- [Feedback](/feedback): Send feedback or report an incorrect timing.
+
+## Optional
+
+- [Privacy](/privacy): How location and account data are handled.
+- [Terms](/terms): Terms of use.
