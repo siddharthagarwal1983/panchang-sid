@@ -120,6 +120,15 @@ function CalendarPage() {
           {Array.from({ length: leading }).map((_, i) => (
             <div key={`pad-${i}`} />
           ))}
+          {scan.length === 0 &&
+            Array.from({ length: daysInMonth }).map((_, i) => (
+              <div
+                key={`skeleton-${i}`}
+                className="flex aspect-square flex-col items-center justify-center rounded-lg border border-transparent text-sm text-muted-foreground"
+              >
+                <span className="tabular-nums leading-none">{i + 1}</span>
+              </div>
+            ))}
           {scan.map((entry) => {
             const key = dayKey(entry.date);
             const isToday = key === dayKey(today);
