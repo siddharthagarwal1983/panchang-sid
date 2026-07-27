@@ -23,6 +23,7 @@ export const Route = createFileRoute("/reminders")({
         content: "Choose the observances you keep and see every upcoming date.",
       },
     ],
+    links: [{ rel: "canonical", href: "https://panchanga.lovable.app/reminders" }],
   }),
   component: RemindersPage,
 });
@@ -109,12 +110,14 @@ function RemindersPage() {
         </section>
 
         <section className="panel flex items-center justify-between gap-4 px-5 py-4">
-          <span>
+          <label htmlFor="reminder-time">
             <span className="block text-sm">Reminder time</span>
             <span className="block text-xs text-muted-foreground">{city.name} local time</span>
-          </span>
+          </label>
           <input
+            id="reminder-time"
             type="time"
+            aria-label="Daily reminder time"
             value={prefs.reminderTime}
             onChange={(e) => setPrefs({ reminderTime: e.target.value })}
             className="rounded-lg border border-input bg-secondary/50 px-3 py-2 text-sm tabular-nums"

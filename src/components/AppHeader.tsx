@@ -13,12 +13,14 @@ export function AppHeader({
   subtitle,
   showLocation = false,
   showScript = false,
+  headingSuffix,
   children,
 }: {
   title: string;
   subtitle?: string;
   showLocation?: boolean;
   showScript?: boolean;
+  headingSuffix?: string;
   children?: React.ReactNode;
 }) {
   const { user, profile } = useAuth();
@@ -51,6 +53,7 @@ export function AppHeader({
               className="truncate font-display text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl"
             >
               {title}
+              {headingSuffix && <span className="sr-only"> {headingSuffix}</span>}
             </h1>
             {subtitle && (
               <p className="mt-1 truncate text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">

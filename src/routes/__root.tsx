@@ -119,6 +119,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", href: "/app-icon-192.png" },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebSite",
+              name: "Panchāṅga",
+              url: "https://panchanga.lovable.app",
+              description:
+                "Daily Hindu panchang — tithi, nakshatra, yoga, karana, muhurta and festivals computed for your own location's local sunrise.",
+              inLanguage: "en",
+              publisher: { "@id": "https://panchanga.lovable.app/#organization" },
+            },
+            {
+              "@type": "Organization",
+              "@id": "https://panchanga.lovable.app/#organization",
+              name: "Panchāṅga",
+              url: "https://panchanga.lovable.app",
+              logo: "https://panchanga.lovable.app/app-icon-512.png",
+            },
+          ],
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,

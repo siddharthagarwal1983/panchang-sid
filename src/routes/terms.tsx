@@ -7,12 +7,21 @@ export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
       { title: "Terms of Service — Panchanga" },
-      { name: "description", content: "Terms of service for using the Panchanga app." },
+      {
+        name: "description",
+        content:
+          "Terms of service for the Panchanga app: how you may use our panchang timings, festival dates and reminders, and the limits of our liability.",
+      },
       { property: "og:title", content: "Terms of Service — Panchanga" },
-      { property: "og:description", content: "Terms of service for using the Panchanga app." },
+      {
+        property: "og:description",
+        content:
+          "The rules for using Panchanga's panchang timings, festival dates and reminder features.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
+    links: [{ rel: "canonical", href: "https://panchanga.lovable.app/terms" }],
   }),
   component: TermsPage,
 });

@@ -22,6 +22,7 @@ export const Route = createFileRoute("/settings")({
         content: "Personalise city, time format, theme, notifications, and legal information.",
       },
     ],
+    links: [{ rel: "canonical", href: "https://panchanga.lovable.app/settings" }],
   }),
   component: SettingsPage,
 });
@@ -31,7 +32,11 @@ function SettingsPage() {
 
   return (
     <main className="mx-auto max-w-md">
-      <AppHeader title="Settings" subtitle="Account, notifications and display" />
+      <AppHeader
+        title="Settings"
+        headingSuffix="for your account, notifications and display"
+        subtitle="Account, notifications and display"
+      />
 
       <div className="space-y-4 px-5 py-5">
         <AccountCard />
