@@ -3,9 +3,34 @@ import { MessageSquare, Shield, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
+import { FaqSection, type FaqItem } from "@/components/FaqSection";
 import { useAuth } from "@/lib/auth";
 import { usePrefs } from "@/lib/prefs";
 import { useReminderNotifications } from "@/lib/useReminderNotifications";
+import { SITE_URL, faqPageSchema, ldJson } from "@/lib/seo/schema";
+
+const FAQS: FaqItem[] = [
+  {
+    q: "What is today's panchang?",
+    a: "Panchang is the Hindu almanac for a day, made of five limbs: tithi (lunar day), vaara (weekday), nakshatra (lunar mansion), yoga and karana. Panchanga computes all five at your local sunrise, along with sunrise, sunset, moonrise and moonset.",
+  },
+  {
+    q: "Why does this app show a different date than Indian calendars?",
+    a: "Tithi and nakshatra are read at local sunrise. Sunrise where you live can be 10 to 14 hours behind India, so the tithi at that moment is often the previous one — which means a festival or fast can fall a day earlier or later than an India-printed calendar.",
+  },
+  {
+    q: "What are Rahu Kalam and Abhijit Muhurta?",
+    a: "Abhijit Muhurta is the auspicious window around local solar noon, good for starting new work. Rahu Kalam, Yamaganda and Gulika Kalam are inauspicious windows, each about 90 minutes long, whose position depends on the weekday and the length of your day from sunrise to sunset.",
+  },
+  {
+    q: "Do I need an account to use Panchanga?",
+    a: "No. Pick your location and everything is calculated on your device. Signing in only syncs your saved location, reminders and preferences across devices.",
+  },
+  {
+    q: "How accurate are the timings?",
+    a: "Panchanga uses drik ganita — the true computed positions of the sun and moon — with the Lahiri (Chitrapaksha) ayanamsa. Timings can differ by a few minutes from almanacs that follow vakya methods or a different ayanamsa.",
+  },
+];
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -14,15 +39,17 @@ export const Route = createFileRoute("/settings")({
       {
         name: "description",
         content:
-          "Set your city, time format, app theme, notifications, and read the privacy policy and terms of service.",
+          "Set your city, time format, app theme and notifications, read answers to common panchang questions, and view the privacy policy and terms of service.",
       },
       { property: "og:title", content: "Settings — Panchanga" },
       {
         property: "og:description",
-        content: "Personalise city, time format, theme, notifications, and legal information.",
+        content:
+          "Personalise city, time format, theme and notifications, plus panchang FAQs and legal information.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://panchanga.lovable.app/settings" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/settings` }],
+    scripts: [ldJson([faqPageSchema(FAQS)])],
   }),
   component: SettingsPage,
 });
@@ -79,6 +106,8 @@ function SettingsPage() {
             synced across devices.
           </p>
         </section>
+
+        <FaqSection items={FAQS} heading="Panchang FAQ" />
 
         <section className="panel px-5 py-4">
           <h2 className="label-caps">Legal & feedback</h2>
