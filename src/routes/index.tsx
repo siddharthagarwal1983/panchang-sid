@@ -295,38 +295,7 @@ function TodayPage() {
         </div>
       ) : (
         <div className="space-y-4 px-5 pb-8">
-          {/* 1. Local solar header — every vrat and parana window hangs off these. */}
-          <section className="panel px-4 py-3">
-            <div className="grid grid-cols-2 gap-3">
-              <SolarCell
-                icon={<Sunrise className="size-4 text-primary" />}
-                label="Sunrise"
-                value={formatTime(panchang.sunrise, city.tz, prefs.hour12)}
-                zone={zone}
-              />
-              <SolarCell
-                icon={<Sunset className="size-4 text-primary" />}
-                label="Sunset"
-                value={formatTime(panchang.sunset, city.tz, prefs.hour12)}
-                zone={zone}
-              />
-            </div>
-            <div className="hairline my-3" />
-            <div className="grid grid-cols-2 gap-3">
-              <SolarCell
-                icon={<Moon className="size-4 text-gold" />}
-                label="Moonrise"
-                value={t(panchang.moonrise)}
-              />
-              <SolarCell
-                icon={<Moon className="size-4 text-gold" />}
-                label="Moonset"
-                value={t(panchang.moonset)}
-              />
-            </div>
-          </section>
-
-          {/* 2. Active tithi + fasting status. */}
+          {/* 1. Active tithi + fasting status. */}
           <section className="panel px-5 py-5">
             <div className="flex items-start gap-4">
               <MoonGlyph phase={panchang.moonPhase} size={64} />
@@ -456,6 +425,37 @@ function TodayPage() {
                 )}
               </>
             )}
+          </section>
+
+          {/* 2. Local solar header — every vrat and parana window hangs off these. */}
+          <section className="panel px-4 py-3">
+            <div className="grid grid-cols-2 gap-3">
+              <SolarCell
+                icon={<Sunrise className="size-4 text-primary" />}
+                label="Sunrise"
+                value={formatTime(panchang.sunrise, city.tz, prefs.hour12)}
+                zone={zone}
+              />
+              <SolarCell
+                icon={<Sunset className="size-4 text-primary" />}
+                label="Sunset"
+                value={formatTime(panchang.sunset, city.tz, prefs.hour12)}
+                zone={zone}
+              />
+            </div>
+            <div className="hairline my-3" />
+            <div className="grid grid-cols-2 gap-3">
+              <SolarCell
+                icon={<Moon className="size-4 text-gold" />}
+                label="Moonrise"
+                value={t(panchang.moonrise)}
+              />
+              <SolarCell
+                icon={<Moon className="size-4 text-gold" />}
+                label="Moonset"
+                value={t(panchang.moonset)}
+              />
+            </div>
           </section>
 
           {/* 3. Auspicious vs inauspicious windows. */}
