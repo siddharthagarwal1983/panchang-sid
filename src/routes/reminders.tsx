@@ -72,7 +72,7 @@ function RemindersPage() {
         ),
       }))
       .filter((e) => e.items.length > 0)
-      .slice(0, 20);
+      .slice(0, 5);
   }, [hydrated, now, city, prefs.reminders]);
 
   return (
