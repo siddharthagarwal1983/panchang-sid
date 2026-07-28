@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
 import { SignInGate } from "@/components/SignInGate";
+import { useAuth } from "@/lib/auth";
 import { scanFestivals, type FestivalCategory } from "@/lib/panchang/festivals";
 import { dayKey, formatLongDate, toCalendarDay } from "@/lib/panchang/tz";
 import { usePrefs, type ReminderKey } from "@/lib/prefs";
@@ -59,6 +60,7 @@ function isPreviousDay(prev: string, key: string) {
 
 function RemindersPage() {
   const { prefs, city, hydrated, setPrefs, toggleReminder, removeCustomReminder } = usePrefs();
+  const { user } = useAuth();
   const [now, setNow] = useState(() => new Date());
   const [visible, setVisible] = useState(INITIAL_VISIBLE);
   const { permission, request } = useReminderNotifications();
@@ -89,7 +91,8 @@ function RemindersPage() {
   }, [hydrated, now, city.tz, prefs.custom]);
 
   const matches = useMemo(() => {
-    if (!hydrated) return [];
+    // Never scan for signed-out visitors: the upcoming list is gated anyway.
+    if (!hydrated || !user) return [];
     const start = toCalendarDay(now, city.tz);
     const days = Math.min(730, Math.max(120, visible * 30));
     const scan = scanFestivals(start, days, city);
@@ -119,7 +122,7 @@ function RemindersPage() {
       if (items.length > 0) out.push({ key, date: entry.date, items });
     }
     return out;
-  }, [hydrated, now, city, prefs.reminders, visible]);
+  }, [hydrated, now, city, prefs.reminders, visible, user]);
 
   const upcoming = useMemo(() => matches.slice(0, visible), [matches, visible]);
 
