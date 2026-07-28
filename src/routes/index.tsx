@@ -509,6 +509,18 @@ function TodayPage() {
               )}
             </span>{" "}
             masa · {panchang.ritu} ritu · Vikram Samvat {panchang.samvat}
+            {panchang.month.adhika && (
+              <span className="ml-2 rounded-full bg-gold/20 px-2 py-0.5 text-xs font-semibold text-gold">
+                Adhika Māsa
+              </span>
+            )}
+            {panchang.tithiSpan.kind !== "normal" && (
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                {panchang.tithiSpan.kind === "vriddhi"
+                  ? "Vṛddhi tithi — this lunar day covers two consecutive sunrises here."
+                  : `Kṣaya tithi — lunar day ${panchang.tithiSpan.skipped} begins and ends between two sunrises and is skipped.`}
+              </p>
+            )}
           </section>
 
           {upcoming.length > 0 && (
