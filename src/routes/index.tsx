@@ -109,6 +109,8 @@ function TodayPage() {
   const navigate = useNavigate({ from: "/" });
   const [now, setNow] = useState(() => new Date());
   const [openItem, setOpenItem] = useState<FestivalSheetItem | null>(null);
+  // Used only to skip protected data work; no protected UI reads this.
+  const isSignedIn = Boolean(useAuth().user);
 
   // Keep progress bars and countdowns alive.
   useEffect(() => {
