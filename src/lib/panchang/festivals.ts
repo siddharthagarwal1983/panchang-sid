@@ -99,15 +99,10 @@ function ruleScore(summary: DaySummary, rule: LunarRule): number {
   }
   const windows = summary.windows;
   if (!windows) return 0;
-  // Window rules may fire on the day before or after the sunrise tithi, so the
-  // masa test is relaxed to the lunation either side of the boundary.
-  const monthOk =
-    rule.month === summary.amantaIndex ||
-    rule.month === (summary.amantaIndex + 11) % 12 ||
-    rule.month === (summary.amantaIndex + 1) % 12;
-  if (!monthOk) return 0;
+  if (rule.month !== summary.amantaIndex) return 0;
+  // The window can hold the tithi running at sunrise or the one that follows.
   const spread = (rule.tithi - summary.tithiNumber + 30) % 30;
-  if (spread > 2 && spread < 28) return 0;
+  if (spread > 1 && spread < 29) return 0;
   return tithiCoverage(rule.tithi, windows[rule.window]);
 }
 
