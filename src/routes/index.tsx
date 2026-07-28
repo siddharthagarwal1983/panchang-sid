@@ -81,9 +81,15 @@ export const Route = createFileRoute("/")({
         content: "Daily Hindu almanac timings calculated for your local sunrise, no account needed.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/` },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Today's Panchang — Tithi, Fasting & Muhurta" },
+      {
+        name: "twitter:description",
+        content: "Daily Hindu almanac timings calculated for your local sunrise, no account needed.",
+      },
     ],
-    links: [{ rel: "canonical", href: "https://panchanga.lovable.app/" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
     scripts: [
       ldJson([
         {

@@ -22,7 +22,7 @@ import {
 const TITLE = "Choghadiya Muhurat Today — Local Times | Panchanga";
 const DESCRIPTION =
   "Today's Choghadiya muhurat — Amrit, Shubh, Labh, Chal, Rog, Kaal and Udveg windows calculated from your own local sunrise and sunset, not India time.";
-const URL = "https://panchanga.lovable.app/muhurat/choghadiya";
+const URL = `${SITE_URL}/muhurat/choghadiya`;
 
 const FAQS: FaqItem[] = [
   {
@@ -56,6 +56,9 @@ export const Route = createFileRoute("/muhurat/choghadiya")({
       { property: "og:description", content: DESCRIPTION },
       { property: "og:url", content: URL },
       { property: "og:type", content: "article" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: TITLE },
+      { name: "twitter:description", content: DESCRIPTION },
     ],
     links: [{ rel: "canonical", href: URL }],
     scripts: [
