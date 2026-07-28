@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BellRing, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
 import { scanFestivals, type FestivalCategory } from "@/lib/panchang/festivals";
@@ -46,10 +46,33 @@ const CATEGORY_FOR: Record<ReminderKey, FestivalCategory | "purnima" | "amavasya
   festivals: "major",
 };
 
+const INITIAL_VISIBLE = 5;
+const LOAD_MORE_STEP = 10;
+
 function RemindersPage() {
   const { prefs, city, hydrated, setPrefs, toggleReminder, removeCustomReminder } = usePrefs();
-  const [now] = useState(() => new Date());
+  const [now, setNow] = useState(() => new Date());
+  const [visible, setVisible] = useState(INITIAL_VISIBLE);
   const { permission, request } = useReminderNotifications();
+
+  // Roll the list over as soon as midnight passes in the selected timezone.
+  useEffect(() => {
+    const currentKey = dayKey(toCalendarDay(now, city.tz));
+    const id = window.setInterval(() => {
+      const next = new Date();
+      if (dayKey(toCalendarDay(next, city.tz)) !== currentKey) {
+        setNow(next);
+        setVisible(INITIAL_VISIBLE);
+      }
+    }, 30_000);
+    return () => window.clearInterval(id);
+  }, [now, city.tz]);
+
+  // Selected timezone changed -> recompute from the current moment.
+  useEffect(() => {
+    setNow(new Date());
+    setVisible(INITIAL_VISIBLE);
+  }, [city.tz]);
 
   const pinned = useMemo(() => {
     if (!hydrated) return [];
@@ -57,10 +80,11 @@ function RemindersPage() {
     return prefs.custom.filter((c) => c.date >= today);
   }, [hydrated, now, city.tz, prefs.custom]);
 
-  const upcoming = useMemo(() => {
+  const matches = useMemo(() => {
     if (!hydrated) return [];
     const start = toCalendarDay(now, city.tz);
-    const scan = scanFestivals(start, 100, city);
+    const days = Math.min(730, Math.max(120, visible * 30));
+    const scan = scanFestivals(start, days, city);
     const wanted = new Set(
       OPTIONS.filter((o) => prefs.reminders[o.key]).map((o) => CATEGORY_FOR[o.key]),
     );
@@ -71,9 +95,10 @@ function RemindersPage() {
           (f) => wanted.has(f.category) || wanted.has(f.id as never),
         ),
       }))
-      .filter((e) => e.items.length > 0)
-      .slice(0, 5);
-  }, [hydrated, now, city, prefs.reminders]);
+      .filter((e) => e.items.length > 0);
+  }, [hydrated, now, city, prefs.reminders, visible]);
+
+  const upcoming = useMemo(() => matches.slice(0, visible), [matches, visible]);
 
   return (
     <main className="mx-auto max-w-md">
@@ -190,6 +215,14 @@ function RemindersPage() {
               </li>
             )}
           </ul>
+          {matches.length > upcoming.length && (
+            <button
+              onClick={() => setVisible((v) => v + LOAD_MORE_STEP)}
+              className="mt-3 w-full rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-secondary"
+            >
+              Load more
+            </button>
+          )}
         </section>
       </div>
     </main>
