@@ -8,7 +8,7 @@ import { scanFestivals } from "@/lib/panchang/festivals";
 import { FESTIVAL_DETAILS } from "@/lib/panchang/festivalDetails";
 import { formatLongDate } from "@/lib/panchang/tz";
 
-const YEARS = ["2025", "2026"] as const;
+const YEARS = ["2026", "2027"] as const;
 
 const BASE_URL = "https://panchanga.lovable.app";
 
