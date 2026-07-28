@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Bell,
   BellRing,
@@ -454,6 +454,12 @@ function TodayPage() {
                     />
                   ))}
               </div>
+              <Link
+                to="/muhurat/choghadiya"
+                className="mt-2 inline-block px-1 text-xs text-primary underline-offset-2 hover:underline"
+              >
+                See all 16 Choghadiya windows →
+              </Link>
             </section>
           )}
 
