@@ -49,6 +49,13 @@ const CATEGORY_FOR: Record<ReminderKey, FestivalCategory | "purnima" | "amavasya
 const INITIAL_VISIBLE = 5;
 const LOAD_MORE_STEP = 10;
 
+/** True when `prev` (YYYY-MM-DD) is the calendar day immediately before `key`. */
+function isPreviousDay(prev: string, key: string) {
+  const a = Date.parse(`${prev}T00:00:00Z`);
+  const b = Date.parse(`${key}T00:00:00Z`);
+  return b - a === 86_400_000;
+}
+
 function RemindersPage() {
   const { prefs, city, hydrated, setPrefs, toggleReminder, removeCustomReminder } = usePrefs();
   const [now, setNow] = useState(() => new Date());
