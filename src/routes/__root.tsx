@@ -121,6 +121,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         crossOrigin: "anonymous",
       },
       {
+        // Brand wordmark in the header — above the fold on every route.
+        rel: "preload",
+        as: "font",
+        type: "font/woff2",
+        href: "/fonts/wordmark-400.woff2",
+        crossOrigin: "anonymous",
+      },
+      {
         rel: "stylesheet",
         href: "/fonts/fonts.css",
       },
