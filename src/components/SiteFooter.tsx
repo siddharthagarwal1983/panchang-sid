@@ -44,8 +44,8 @@ export function SiteFooter() {
           <h2 className="label-caps text-muted-foreground">Festivals</h2>
           <ul className="mt-2 space-y-1.5">
             <li>
-              <Link to="/festivals/$year" params={{ year: "2025" }} className="hover:text-primary">
-                Festivals 2025
+              <Link to="/festivals/$year" params={{ year: "2027" }} className="hover:text-primary">
+                Festivals 2027
               </Link>
             </li>
             <li>
