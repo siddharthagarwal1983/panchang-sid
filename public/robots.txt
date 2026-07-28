@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
 
+# Machine-only endpoints: JSON APIs and OAuth flows, not indexable pages.
+Disallow: /mcp
+Disallow: /.mcp/
+Disallow: /.lovable/
+Disallow: /.well-known/
+
 Sitemap: https://panchanga.lovable.app/sitemap.xml
