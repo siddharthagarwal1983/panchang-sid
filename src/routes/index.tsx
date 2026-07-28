@@ -140,9 +140,14 @@ function TodayPage() {
   // Scanning ~120 days of panchang is expensive, so it runs in small idle-time
   // chunks after first paint instead of blocking hydration.
   const [upcoming, setUpcoming] = useState<{ date: CalendarDay; festival: Festival }[]>([]);
-  const upcomingKey = `${hydrated}:${date.year}-${date.month}-${date.day}:${city.id}`;
+  const upcomingKey = `${hydrated}:${isSignedIn}:${date.year}-${date.month}-${date.day}:${city.id}`;
   useEffect(() => {
-    if (!hydrated) return;
+    // The upcoming list is behind the sign-in gate, so skip the scan entirely
+    // for signed-out visitors.
+    if (!hydrated || !isSignedIn) {
+      setUpcoming([]);
+      return;
+    }
     let cancelled = false;
     const out: { date: CalendarDay; festival: Festival }[] = [];
     let offset = 1;
