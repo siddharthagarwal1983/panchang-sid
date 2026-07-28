@@ -5,6 +5,8 @@ export type City = {
   lat: number;
   lon: number;
   tz: string;
+  /** Metres above sea level; refines sunrise/sunset by a few seconds. */
+  elevation?: number;
 };
 
 export const CITIES: City[] = [
