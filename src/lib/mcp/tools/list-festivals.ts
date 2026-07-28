@@ -35,7 +35,7 @@ export default defineTool({
             name: f.name,
             note: f.note,
             category: f.category,
-            significance: FESTIVAL_DETAILS[f.id]?.significance ?? null,
+            about: FESTIVAL_DETAILS[f.id]?.about ?? null,
           })),
       );
 
