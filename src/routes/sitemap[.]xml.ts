@@ -1,32 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
+import {
+  SITEMAP_ENTRIES,
+  assertSitemapExcludesMachineRoutes,
+} from "@/lib/seo/sitemap-entries";
 
 const BASE_URL = "https://panchanga.lovable.app";
-
-interface SitemapEntry {
-  path: string;
-  changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
-  priority?: string;
-}
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const entries: SitemapEntry[] = [
-          { path: "/", changefreq: "daily", priority: "1.0" },
-          { path: "/calendar", changefreq: "daily", priority: "0.9" },
-          { path: "/tithi-today", changefreq: "daily", priority: "0.9" },
-          { path: "/muhurat/choghadiya", changefreq: "daily", priority: "0.8" },
-          { path: "/festivals/2026", changefreq: "monthly", priority: "0.8" },
-          { path: "/festivals/2027", changefreq: "monthly", priority: "0.8" },
-          { path: "/reminders", changefreq: "monthly", priority: "0.6" },
-          { path: "/settings", changefreq: "monthly", priority: "0.4" },
-          { path: "/auth", changefreq: "yearly", priority: "0.3" },
-          { path: "/feedback", changefreq: "monthly", priority: "0.4" },
-          { path: "/privacy", changefreq: "yearly", priority: "0.3" },
-          { path: "/terms", changefreq: "yearly", priority: "0.3" },
-        ];
+        // Runtime safety net; the same check also gates the build (vite.config.ts).
+        assertSitemapExcludesMachineRoutes();
+        const entries = SITEMAP_ENTRIES;
         // Machine-only endpoints (/mcp, /.mcp/*, /.well-known/*, /.lovable/*) are
         // deliberately excluded: they return JSON or 401 and are not indexable
         // pages. Listing them produced crawl errors. They are blocked in robots.txt.
