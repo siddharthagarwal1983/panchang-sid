@@ -242,6 +242,16 @@ function ChoghadiyaPage() {
             for tithi, nakshatra, Rahu Kalam and Abhijit Muhurta.
           </p>
         </section>
+
+        <FaqSection items={FAQS} heading="Auspicious times FAQ" />
+
+        <p className="px-1 text-xs text-muted-foreground">
+          See also{" "}
+          <Link to="/tithi-today" className="text-primary underline-offset-2 hover:underline">
+            tithi today
+          </Link>
+          .
+        </p>
       </div>
     </main>
   );
