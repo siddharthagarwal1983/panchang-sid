@@ -6,9 +6,20 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
+import { assertSitemapExcludesMachineRoutes } from "./src/lib/seo/sitemap-entries";
+
+// Fails the build when the sitemap lists a route matching the exclude list
+// (machine-only endpoints, dynamic $params, splats).
+const sitemapGuard = {
+  name: "sitemap-exclude-guard",
+  apply: "build" as const,
+  buildStart() {
+    assertSitemapExcludesMachineRoutes();
+  },
+};
 
 export default defineConfig({
-  plugins: [mcpPlugin()],
+  plugins: [sitemapGuard, mcpPlugin()],
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
