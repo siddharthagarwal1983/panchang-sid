@@ -26,14 +26,10 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/feedback", changefreq: "monthly", priority: "0.4" },
           { path: "/privacy", changefreq: "yearly", priority: "0.3" },
           { path: "/terms", changefreq: "yearly", priority: "0.3" },
-          { path: "/mcp", changefreq: "yearly", priority: "0.3" },
-          { path: "/.mcp/list-tools", changefreq: "yearly", priority: "0.3" },
-          { path: "/.mcp/invoke-tool/get_panchang", changefreq: "yearly", priority: "0.3" },
-          { path: "/.mcp/invoke-tool/list_festivals", changefreq: "yearly", priority: "0.3" },
-          { path: "/.mcp/invoke-tool/get_my_settings", changefreq: "yearly", priority: "0.3" },
-          { path: "/.well-known/oauth-protected-resource", changefreq: "yearly", priority: "0.3" },
-          { path: "/.lovable/oauth/consent", changefreq: "yearly", priority: "0.3" },
         ];
+        // Machine-only endpoints (/mcp, /.mcp/*, /.well-known/*, /.lovable/*) are
+        // deliberately excluded: they return JSON or 401 and are not indexable
+        // pages. Listing them produced crawl errors. They are blocked in robots.txt.
 
         const urls = entries.map((e) =>
           [
