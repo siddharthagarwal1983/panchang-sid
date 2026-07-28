@@ -1,12 +1,16 @@
-import {
-  Body,
-  EclipticGeoMoon,
-  Observer,
-  SearchRiseSet,
-  SunPosition,
-} from "astronomy-engine";
+import { Body, Observer, SearchRiseSet } from "astronomy-engine";
 
 import type { City } from "./cities";
+import {
+  apparentMoonLongitude,
+  apparentSunLongitude,
+  lahiriTrueAyanamsa,
+  norm360,
+  siderealMoonLongitude,
+  siderealSunLongitude,
+  tithiAngle,
+  tithiNumberAt,
+} from "./ephemeris";
 import {
   FIXED_KARANAS,
   MASA_NAMES,
@@ -18,40 +22,18 @@ import {
   YOGA_NAMES,
   tithiLabel,
 } from "./names";
-import {
-  type CalendarDay,
-  addDays,
-  weekdayIndex,
-  zonedToUtc,
-} from "./tz";
+import { type CalendarDay, addDays, weekdayIndex, zonedToUtc } from "./tz";
 
 const DAY_MS = 86_400_000;
+const MIN_MS = 60_000;
 
-function norm360(x: number): number {
-  return ((x % 360) + 360) % 360;
-}
-
-/** Lahiri (Chitrapaksha) ayanamsa in degrees, linear approximation. */
-export function ayanamsa(date: Date): number {
-  const years = (date.getTime() - Date.UTC(2000, 0, 1, 12)) / (365.25 * DAY_MS);
-  return 23.853 + 0.013972 * years;
-}
-
-export function sunLongitude(date: Date): number {
-  return norm360(SunPosition(date).elon);
-}
-
-export function moonLongitude(date: Date): number {
-  return norm360(EclipticGeoMoon(date).lon);
-}
-
-export function siderealSun(date: Date): number {
-  return norm360(sunLongitude(date) - ayanamsa(date));
-}
-
-export function siderealMoon(date: Date): number {
-  return norm360(moonLongitude(date) - ayanamsa(date));
-}
+/** Lahiri (Chitrapaksha) ayanamsa in degrees, Swiss Ephemeris compatible. */
+export const ayanamsa = lahiriTrueAyanamsa;
+export const sunLongitude = apparentSunLongitude;
+export const moonLongitude = apparentMoonLongitude;
+export const siderealSun = siderealSunLongitude;
+export const siderealMoon = siderealMoonLongitude;
+export { tithiNumberAt };
 
 /**
  * Find the instant between `start` and `end` where `fn` (a continuously
@@ -68,16 +50,8 @@ function bisect(fn: (d: Date) => number, target: number, start: Date, end: Date)
   return new Date((lo + hi) / 2);
 }
 
-type Segment = {
-  index: number;
-  start: Date;
-  end: Date;
-};
+type Segment = { index: number; start: Date; end: Date };
 
-/**
- * Given an angle function and a segment size in degrees, resolve the segment
- * containing `at` plus its start/end instants.
- */
 function resolveSegment(
   angleAt: (d: Date) => number,
   size: number,
@@ -98,21 +72,17 @@ function resolveSegment(
   const fromStart = unwrap(index * size);
   const searchBack = new Date(at.getTime() - spanDays * 1.8 * DAY_MS);
   const searchFwd = new Date(at.getTime() + spanDays * 1.8 * DAY_MS);
-  const start = bisect(fromStart, 0, searchBack, at);
-  const end = bisect(fromStart, size, at, searchFwd);
-  return { index, start, end };
+  return {
+    index,
+    start: bisect(fromStart, 0, searchBack, at),
+    end: bisect(fromStart, size, at, searchFwd),
+  };
 }
 
-const tithiAngle = (d: Date) => norm360(moonLongitude(d) - sunLongitude(d));
 const nakshatraAngle = (d: Date) => siderealMoon(d);
 const yogaAngle = (d: Date) => norm360(siderealSun(d) + siderealMoon(d));
 
-export type Element = {
-  index: number;
-  name: string;
-  start: Date;
-  end: Date;
-};
+export type Element = { index: number; name: string; start: Date; end: Date };
 
 export function getTithi(at: Date): Element & { number: number; paksha: "Shukla" | "Krishna" } {
   const seg = resolveSegment(tithiAngle, 12, at, 12.19);
@@ -158,11 +128,21 @@ export type LunarMonth = {
   purnimantaIndex: number;
   amanta: string;
   purnimanta: string;
+  /** True when the lunation contains no solar ingress — an intercalary month. */
+  adhika: boolean;
 };
 
+/**
+ * Adhika (leap) masa: a lunation in which the Sun never enters a new rashi.
+ * Kshaya masa (two ingresses in one lunation) is the mirror case and is
+ * reported through `adhika === false` with the month simply advancing twice.
+ */
 export function getLunarMonth(at: Date, paksha: "Shukla" | "Krishna"): LunarMonth {
   const nm = previousNewMoon(at);
+  const nextNm = previousNewMoon(new Date(nm.getTime() + 31 * DAY_MS));
   const rashi = Math.floor(siderealSun(nm) / 30);
+  const nextRashi = Math.floor(siderealSun(nextNm) / 30);
+  const adhika = rashi === nextRashi;
   const amantaIndex = (rashi + 1) % 12;
   const purnimantaIndex = paksha === "Krishna" ? (amantaIndex + 1) % 12 : amantaIndex;
   return {
@@ -170,10 +150,16 @@ export function getLunarMonth(at: Date, paksha: "Shukla" | "Krishna"): LunarMont
     purnimantaIndex,
     amanta: MASA_NAMES[amantaIndex],
     purnimanta: MASA_NAMES[purnimantaIndex],
+    adhika,
   };
 }
 
-export type Muhurta = { name: string; start: Date; end: Date; kind: "inauspicious" | "auspicious" };
+export type Muhurta = {
+  name: string;
+  start: Date;
+  end: Date;
+  kind: "inauspicious" | "auspicious" | "window";
+};
 
 const RAHU_SEQ = [8, 2, 7, 5, 6, 4, 3]; // Sun..Sat, 1-indexed eighth of the day
 const YAMA_SEQ = [5, 4, 3, 2, 1, 7, 6];
@@ -187,6 +173,85 @@ function slice(sunrise: Date, sunset: Date, part: number): { start: Date; end: D
   };
 }
 
+export type Interval = { start: Date; end: Date };
+
+/**
+ * The canonical day-boundary windows every nirnaya (festival decision) rule
+ * is evaluated against, all derived from the local solar day.
+ */
+export type DayWindows = {
+  sunrise: Date;
+  sunset: Date;
+  nextSunrise: Date;
+  /** 3rd of five equal parts of the daytime. */
+  madhyahna: Interval;
+  /** Sunset to two muhurtas (96 min) after sunset. */
+  pradosha: Interval;
+  /** Middle 1/15th of the night, centred on local solar midnight. */
+  nishita: Interval;
+};
+
+export function buildWindows(sunrise: Date, sunset: Date, nextSunrise: Date): DayWindows {
+  const dayLen = sunset.getTime() - sunrise.getTime();
+  const nightLen = nextSunrise.getTime() - sunset.getTime();
+  const midnight = sunset.getTime() + nightLen / 2;
+  const nishitaHalf = nightLen / 30;
+  return {
+    sunrise,
+    sunset,
+    nextSunrise,
+    madhyahna: {
+      start: new Date(sunrise.getTime() + (dayLen * 2) / 5),
+      end: new Date(sunrise.getTime() + (dayLen * 3) / 5),
+    },
+    pradosha: { start: sunset, end: new Date(sunset.getTime() + 96 * MIN_MS) },
+    nishita: { start: new Date(midnight - nishitaHalf), end: new Date(midnight + nishitaHalf) },
+  };
+}
+
+function observerFor(city: City): Observer {
+  return new Observer(city.lat, city.lon, city.elevation ?? 0);
+}
+
+function sunriseAfter(city: City, from: Date): Date | null {
+  const t = SearchRiseSet(Body.Sun, observerFor(city), +1, from, 2);
+  return t ? t.date : null;
+}
+
+/**
+ * How much of `[window]` the given tithi number occupies, in minutes.
+ * Sampled finely — a tithi boundary crosses a window at most twice.
+ */
+export function tithiCoverage(target: number, window: Interval): number {
+  const steps = 48;
+  const span = window.end.getTime() - window.start.getTime();
+  if (span <= 0) return 0;
+  const step = span / steps;
+  let hits = 0;
+  for (let i = 0; i < steps; i++) {
+    const t = new Date(window.start.getTime() + step * (i + 0.5));
+    if (tithiNumberAt(t) === target) hits++;
+  }
+  return (hits / steps) * (span / MIN_MS);
+}
+
+export type TithiSpan = {
+  /** "vriddhi" — the tithi touches two consecutive sunrises. */
+  /** "kshaya" — the next tithi begins and ends between two sunrises. */
+  kind: "normal" | "vriddhi" | "kshaya";
+  /** Tithi number skipped entirely between the two sunrises, if any. */
+  skipped: number | null;
+};
+
+export function classifyTithiSpan(sunrise: Date, nextSunrise: Date): TithiSpan {
+  const t0 = tithiNumberAt(sunrise);
+  const t1 = tithiNumberAt(nextSunrise);
+  const diff = (t1 - t0 + 30) % 30;
+  if (diff === 0) return { kind: "vriddhi", skipped: null };
+  if (diff >= 2) return { kind: "kshaya", skipped: (t0 % 30) + 1 };
+  return { kind: "normal", skipped: null };
+}
+
 export type DayPanchang = {
   date: CalendarDay;
   city: City;
@@ -195,7 +260,9 @@ export type DayPanchang = {
   moonrise: Date | null;
   moonset: Date | null;
   reference: Date;
+  windows: DayWindows | null;
   tithi: ReturnType<typeof getTithi>;
+  tithiSpan: TithiSpan;
   nextTithi: { number: number; name: string; paksha: string };
   nakshatra: Element;
   yoga: Element;
@@ -213,18 +280,20 @@ export type DayPanchang = {
 };
 
 export function computeDayPanchang(date: CalendarDay, city: City): DayPanchang {
-  const observer = new Observer(city.lat, city.lon, 0);
+  const observer = observerFor(city);
   const localMidnight = zonedToUtc(date.year, date.month, date.day, 0, 0, city.tz);
 
   const sunriseT = SearchRiseSet(Body.Sun, observer, +1, localMidnight, 2);
   const sunrise = sunriseT ? sunriseT.date : null;
   const sunsetT = sunrise ? SearchRiseSet(Body.Sun, observer, -1, sunrise, 2) : null;
   const sunset = sunsetT ? sunsetT.date : null;
+  const nextSunrise = sunset ? sunriseAfter(city, sunset) : null;
   const moonriseT = SearchRiseSet(Body.Moon, observer, +1, localMidnight, 2);
   const moonsetT = SearchRiseSet(Body.Moon, observer, -1, localMidnight, 2);
 
   // Panchang elements are read at sunrise, the traditional start of the day.
   const reference = sunrise ?? new Date(localMidnight.getTime() + 6 * 3600_000);
+  const windows = sunrise && sunset && nextSunrise ? buildWindows(sunrise, sunset, nextSunrise) : null;
 
   const tithi = getTithi(reference);
   const nakshatra = getNakshatra(reference);
@@ -234,6 +303,10 @@ export function computeDayPanchang(date: CalendarDay, city: City): DayPanchang {
   const nextTithiNumber = (tithi.number % 30) + 1;
   const nextLabel = tithiLabel(nextTithiNumber);
   const month = getLunarMonth(reference, tithi.paksha);
+  const tithiSpan =
+    sunrise && nextSunrise
+      ? classifyTithiSpan(sunrise, nextSunrise)
+      : { kind: "normal" as const, skipped: null };
 
   const muhurtas: Muhurta[] = [];
   if (sunrise && sunset) {
@@ -255,11 +328,18 @@ export function computeDayPanchang(date: CalendarDay, city: City): DayPanchang {
       },
     );
   }
+  if (windows) {
+    muhurtas.push(
+      { name: "Madhyahna", kind: "window", ...windows.madhyahna },
+      { name: "Pradosha", kind: "window", ...windows.pradosha },
+      { name: "Nishita", kind: "window", ...windows.nishita },
+    );
+  }
 
   const sunSid = siderealSun(reference);
   const moonSid = siderealMoon(reference);
   const ritu = RITU_NAMES[Math.floor(month.amantaIndex / 2) % 6];
-  const samvat = date.year + 57 - (month.amantaIndex >= 9 && tithi.paksha === "Shukla" ? 0 : 0);
+  const samvat = date.year + 57;
 
   return {
     date,
@@ -269,7 +349,9 @@ export function computeDayPanchang(date: CalendarDay, city: City): DayPanchang {
     moonrise: moonriseT ? moonriseT.date : null,
     moonset: moonsetT ? moonsetT.date : null,
     reference,
+    windows,
     tithi,
+    tithiSpan,
     nextTithi: { number: nextTithiNumber, name: nextLabel.name, paksha: nextLabel.paksha },
     nakshatra,
     yoga,
@@ -287,15 +369,19 @@ export function computeDayPanchang(date: CalendarDay, city: City): DayPanchang {
   };
 }
 
-/** Lightweight per-day summary used by the month grid and reminder scans. */
+/** Lightweight per-day summary used by the month grid and festival scans. */
 export type DaySummary = {
   date: CalendarDay;
   sunrise: Date | null;
+  windows: DayWindows | null;
   tithiNumber: number;
   tithiName: string;
+  tithiEnd: Date;
   paksha: "Shukla" | "Krishna";
+  tithiSpan: TithiSpan;
   amantaIndex: number;
   purnimantaIndex: number;
+  adhikaMasa: boolean;
   nakshatra: string;
   sunRashiIndex: number;
 };
@@ -307,20 +393,32 @@ export function computeDaySummary(date: CalendarDay, city: City): DaySummary {
   const key = `${city.id}|${city.lat}|${city.lon}|${city.tz}|${date.year}-${date.month}-${date.day}`;
   const cached = summaryCache.get(key);
   if (cached) return cached;
-  const observer = new Observer(city.lat, city.lon, 0);
+  const observer = observerFor(city);
   const localMidnight = zonedToUtc(date.year, date.month, date.day, 0, 0, city.tz);
   const sunriseT = SearchRiseSet(Body.Sun, observer, +1, localMidnight, 2);
-  const reference = sunriseT ? sunriseT.date : new Date(localMidnight.getTime() + 6 * 3600_000);
+  const sunrise = sunriseT ? sunriseT.date : null;
+  const reference = sunrise ?? new Date(localMidnight.getTime() + 6 * 3600_000);
+  const sunsetT = SearchRiseSet(Body.Sun, observer, -1, reference, 2);
+  const sunset = sunsetT ? sunsetT.date : null;
+  const nextSunrise = sunset ? sunriseAfter(city, sunset) : null;
+  const windows = sunrise && sunset && nextSunrise ? buildWindows(sunrise, sunset, nextSunrise) : null;
   const tithi = getTithi(reference);
   const month = getLunarMonth(reference, tithi.paksha);
   const summary: DaySummary = {
     date,
-    sunrise: sunriseT ? sunriseT.date : null,
+    sunrise,
+    windows,
     tithiNumber: tithi.number,
     tithiName: tithi.name,
+    tithiEnd: tithi.end,
     paksha: tithi.paksha,
+    tithiSpan:
+      sunrise && nextSunrise
+        ? classifyTithiSpan(sunrise, nextSunrise)
+        : { kind: "normal", skipped: null },
     amantaIndex: month.amantaIndex,
     purnimantaIndex: month.purnimantaIndex,
+    adhikaMasa: month.adhika,
     nakshatra: getNakshatra(reference).name,
     sunRashiIndex: Math.floor(siderealSun(reference) / 30),
   };

@@ -100,6 +100,9 @@ const MUHURTA: Record<string, Entry> = {
   Yamaganda: { dev: "यमगण्ड", en: "Avoid travel & signings" },
   "Gulika Kalam": { dev: "गुलिक काल", en: "Avoid lasting commitments" },
   "Abhijit Muhurta": { dev: "अभिजित मुहूर्त", en: "Best time for anything new" },
+  Madhyahna: { dev: "मध्याह्न", en: "Midday window (Ganesh Chaturthi etc.)" },
+  Pradosha: { dev: "प्रदोष", en: "Evening window (Diwali, Pradosh vrat)" },
+  Nishita: { dev: "निशीथ", en: "Midnight window (Janmashtami, Shivratri)" },
 };
 
 const GENERIC: Record<string, Entry> = {
