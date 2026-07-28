@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { FestivalDay } from "@/lib/panchang/festivals";
 
 import { AppHeader } from "@/components/AppHeader";
+import { SignInGate } from "@/components/SignInGate";
 import { scanFestivals } from "@/lib/panchang/festivals";
 import { MASA_NAMES } from "@/lib/panchang/names";
 import { dayKey, formatLongDate, toCalendarDay, weekdayIndex, type CalendarDay } from "@/lib/panchang/tz";
@@ -201,9 +202,14 @@ function CalendarPage() {
           </p>
         )}
 
-        <section>
-          <h2 className="label-caps px-1">Festivals this month</h2>
-          <ul className="mt-3 space-y-2">
+        <SignInGate
+          next="/calendar"
+          title="Sign in to see this month's festivals"
+          description="The full list of major festivals for the month is available once you sign in."
+        >
+          <section>
+            <h2 className="label-caps px-1">Festivals this month</h2>
+            <ul className="mt-3 space-y-2">
             {scan
               .filter((e) => e.festivals.some((f) => f.category === "major"))
               .map((e) => (
@@ -226,13 +232,14 @@ function CalendarPage() {
                   </span>
                 </li>
               ))}
-            {hydrated && scan.every((e) => !e.festivals.some((f) => f.category === "major")) && (
-              <li className="text-center text-sm text-muted-foreground">
-                No major festivals this month.
-              </li>
-            )}
-          </ul>
-        </section>
+              {hydrated && scan.every((e) => !e.festivals.some((f) => f.category === "major")) && (
+                <li className="text-center text-sm text-muted-foreground">
+                  No major festivals this month.
+                </li>
+              )}
+            </ul>
+          </section>
+        </SignInGate>
       </div>
     </main>
   );
