@@ -3,6 +3,7 @@ import { BellRing, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
+import { SignInGate } from "@/components/SignInGate";
 import { scanFestivals, type FestivalCategory } from "@/lib/panchang/festivals";
 import { dayKey, formatLongDate, toCalendarDay } from "@/lib/panchang/tz";
 import { usePrefs, type ReminderKey } from "@/lib/prefs";
@@ -220,32 +221,36 @@ function RemindersPage() {
           </section>
         )}
 
-        <section>
-          <h2 className="label-caps px-1">Upcoming</h2>
-          <ul className="mt-3 space-y-2">
-            {upcoming.map((entry) => (
-              <li key={`${entry.date.year}-${entry.date.month}-${entry.date.day}`} className="panel px-4 py-3">
-                <p className="text-sm">
-                  {entry.items.map((i) => i.name).join(" · ")}
-                </p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{formatLongDate(entry.date)}</p>
-              </li>
-            ))}
-            {hydrated && upcoming.length === 0 && (
-              <li className="text-center text-sm text-muted-foreground">
-                Turn on an observance above to see upcoming dates.
-              </li>
+        <SignInGate
+          next="/reminders"
+          title="Sign in to see upcoming dates"
+          description="Your upcoming ekadashi, vrat and festival dates are available once you sign in."
+        >
+          <section>
+            <h2 className="label-caps px-1">Upcoming</h2>
+            <ul className="mt-3 space-y-2">
+              {upcoming.map((entry) => (
+                <li key={`${entry.date.year}-${entry.date.month}-${entry.date.day}`} className="panel px-4 py-3">
+                  <p className="text-sm">{entry.items.map((i) => i.name).join(" · ")}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">{formatLongDate(entry.date)}</p>
+                </li>
+              ))}
+              {hydrated && upcoming.length === 0 && (
+                <li className="text-center text-sm text-muted-foreground">
+                  Turn on an observance above to see upcoming dates.
+                </li>
+              )}
+            </ul>
+            {matches.length > upcoming.length && (
+              <button
+                onClick={() => setVisible((v) => v + LOAD_MORE_STEP)}
+                className="mt-3 w-full rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-secondary"
+              >
+                Load more
+              </button>
             )}
-          </ul>
-          {matches.length > upcoming.length && (
-            <button
-              onClick={() => setVisible((v) => v + LOAD_MORE_STEP)}
-              className="mt-3 w-full rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-secondary"
-            >
-              Load more
-            </button>
-          )}
-        </section>
+          </section>
+        </SignInGate>
       </div>
     </main>
   );
