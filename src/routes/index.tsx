@@ -16,6 +16,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
 import { AddToCalendar } from "@/components/AddToCalendar";
+import { FaqSection, type FaqItem } from "@/components/FaqSection";
 import { FestivalModal, type FestivalSheetItem } from "@/components/FestivalModal";
 import { MoonGlyph } from "@/components/MoonGlyph";
 import { computeDayPanchang, type Muhurta } from "@/lib/panchang/core";
@@ -37,6 +38,30 @@ import {
 } from "@/lib/panchang/tz";
 import { usePrefs } from "@/lib/prefs";
 import { useReminderNotifications } from "@/lib/useReminderNotifications";
+import { SITE_URL, faqPageSchema, ldJson } from "@/lib/seo/schema";
+
+const FAQS: FaqItem[] = [
+  {
+    q: "What is today's panchang?",
+    a: "Panchang is the Hindu almanac for a day, made of five limbs: tithi (lunar day), vaara (weekday), nakshatra (lunar mansion), yoga and karana. Panchanga computes all five at your local sunrise, along with sunrise, sunset, moonrise and moonset.",
+  },
+  {
+    q: "Why does this app show a different date than Indian calendars?",
+    a: "Tithi and nakshatra are read at local sunrise. Sunrise where you live can be 10 to 14 hours behind India, so the tithi at that moment is often the previous one — which means a festival or fast can fall a day earlier or later than an India-printed calendar.",
+  },
+  {
+    q: "What are Rahu Kalam and Abhijit Muhurta?",
+    a: "Abhijit Muhurta is the auspicious window around local solar noon, good for starting new work. Rahu Kalam, Yamaganda and Gulika Kalam are inauspicious windows, each about 90 minutes long, whose position depends on the weekday and the length of your day from sunrise to sunset.",
+  },
+  {
+    q: "Do I need an account to use Panchanga?",
+    a: "No. Pick your location and everything is calculated on your device. Signing in only syncs your saved location, reminders and preferences across devices.",
+  },
+  {
+    q: "How accurate are the timings?",
+    a: "Panchanga uses drik ganita — the true computed positions of the sun and moon — with the Lahiri (Chitrapaksha) ayanamsa. Timings can differ by a few minutes from almanacs that follow vakya methods or a different ayanamsa.",
+  },
+];
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -59,6 +84,22 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://panchanga.lovable.app/" }],
+    scripts: [
+      ldJson([
+        {
+          "@type": "WebApplication",
+          name: "Panchanga",
+          url: `${SITE_URL}/`,
+          applicationCategory: "LifestyleApplication",
+          operatingSystem: "Any",
+          description:
+            "Daily Hindu panchang — tithi, nakshatra, fasting days, festivals and muhurta windows calculated for your own local sunrise.",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+          publisher: { "@id": `${SITE_URL}/#organization` },
+        },
+        faqPageSchema(FAQS),
+      ]),
+    ],
   }),
   component: TodayPage,
 });
@@ -516,6 +557,19 @@ function TodayPage() {
           <p className="px-1 text-center text-xs leading-relaxed text-muted-foreground">
             Computed for {city.name}, {city.state} using drik ganita with the Lahiri ayanamsa.
             Timings may differ by a few minutes from your family almanac.
+          </p>
+
+          <FaqSection items={FAQS} heading="Panchang FAQ" />
+
+          <p className="px-1 text-center text-xs text-muted-foreground">
+            More detail:{" "}
+            <Link to="/tithi-today" className="text-primary underline-offset-2 hover:underline">
+              tithi today
+            </Link>{" "}
+            ·{" "}
+            <Link to="/muhurat/choghadiya" className="text-primary underline-offset-2 hover:underline">
+              auspicious times
+            </Link>
           </p>
         </div>
       )}

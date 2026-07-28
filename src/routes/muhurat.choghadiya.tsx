@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
+import { FaqSection, type FaqItem } from "@/components/FaqSection";
 import {
   CHOGHADIYA_META,
   computeChoghadiya,
@@ -10,11 +11,41 @@ import {
 } from "@/lib/panchang/choghadiya";
 import { addDays, formatLongDate, formatTime, toCalendarDay, tzAbbr } from "@/lib/panchang/tz";
 import { usePrefs } from "@/lib/prefs";
+import {
+  SITE_URL,
+  articleSchema,
+  breadcrumbSchema,
+  faqPageSchema,
+  ldJson,
+} from "@/lib/seo/schema";
 
 const TITLE = "Choghadiya Muhurat Today — Local Times | Panchanga";
 const DESCRIPTION =
   "Today's Choghadiya muhurat — Amrit, Shubh, Labh, Chal, Rog, Kaal and Udveg windows calculated from your own local sunrise and sunset, not India time.";
 const URL = "https://panchanga.lovable.app/muhurat/choghadiya";
+
+const FAQS: FaqItem[] = [
+  {
+    q: "What is Choghadiya?",
+    a: "Choghadiya divides the daytime (sunrise to sunset) and the night (sunset to next sunrise) into eight equal parts each. Every part is ruled by a planet and carries a quality — Amrit, Shubh, Labh, Chal, Udveg, Rog or Kaal — used to pick an auspicious time for daily work.",
+  },
+  {
+    q: "Which Choghadiya is best?",
+    a: "Amrit, Shubh and Labh are auspicious. Chal is neutral and fine for travel and routine work. Udveg, Rog and Kaal are avoided for new beginnings.",
+  },
+  {
+    q: "What is the auspicious time today?",
+    a: "The auspicious windows today are the Amrit, Shubh and Labh choghadiya listed above, plus Abhijit Muhurta around local solar noon. The page highlights the window happening right now so you can see at a glance whether the current time is favourable.",
+  },
+  {
+    q: "Which times should I avoid today?",
+    a: "Avoid Rog, Kaal and Udveg choghadiya for new beginnings, along with Rahu Kalam, Yamaganda and Gulika Kalam shown on the home screen. These are traditionally used for routine or maintenance work rather than launches, travel or signing agreements.",
+  },
+  {
+    q: "Why do Choghadiya timings differ from Indian calendars?",
+    a: "Choghadiya windows are derived from local sunrise and sunset. Outside India the sun rises at a different clock time, so the windows shift. Panchanga computes them for the coordinates you select.",
+  },
+];
 
 export const Route = createFileRoute("/muhurat/choghadiya")({
   head: () => ({
@@ -28,58 +59,18 @@ export const Route = createFileRoute("/muhurat/choghadiya")({
     ],
     links: [{ rel: "canonical", href: URL }],
     scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@graph": [
-            {
-              "@type": "Article",
-              headline: "Choghadiya Muhurat — day and night windows for your location",
-              description: DESCRIPTION,
-              mainEntityOfPage: URL,
-              inLanguage: "en",
-              publisher: { "@id": "https://panchanga.lovable.app/#organization" },
-            },
-            {
-              "@type": "BreadcrumbList",
-              itemListElement: [
-                { "@type": "ListItem", position: 1, name: "Home", item: "https://panchanga.lovable.app/" },
-                { "@type": "ListItem", position: 2, name: "Choghadiya Muhurat", item: URL },
-              ],
-            },
-            {
-              "@type": "FAQPage",
-              mainEntity: [
-                {
-                  "@type": "Question",
-                  name: "What is Choghadiya?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Choghadiya divides the daytime (sunrise to sunset) and the night (sunset to next sunrise) into eight equal parts each. Every part is ruled by a planet and carries a quality — Amrit, Shubh, Labh, Chal, Udveg, Rog or Kaal — used to pick an auspicious time for daily work.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Which Choghadiya is best?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Amrit, Shubh and Labh are auspicious. Chal is neutral and fine for travel and routine work. Udveg, Rog and Kaal are avoided for new beginnings.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Why do Choghadiya timings differ from Indian calendars?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Choghadiya windows are derived from local sunrise and sunset. Outside India the sun rises at a different clock time, so the windows shift. Panchanga computes them for the coordinates you select.",
-                  },
-                },
-              ],
-            },
-          ],
+      ldJson([
+        articleSchema({
+          headline: "Choghadiya Muhurat — day and night windows for your location",
+          description: DESCRIPTION,
+          url: URL,
         }),
-      },
+        breadcrumbSchema([
+          { name: "Home", url: `${SITE_URL}/` },
+          { name: "Choghadiya Muhurat", url: URL },
+        ]),
+        faqPageSchema(FAQS),
+      ]),
     ],
   }),
   component: ChoghadiyaPage,
@@ -251,6 +242,16 @@ function ChoghadiyaPage() {
             for tithi, nakshatra, Rahu Kalam and Abhijit Muhurta.
           </p>
         </section>
+
+        <FaqSection items={FAQS} heading="Auspicious times FAQ" />
+
+        <p className="px-1 text-xs text-muted-foreground">
+          See also{" "}
+          <Link to="/tithi-today" className="text-primary underline-offset-2 hover:underline">
+            tithi today
+          </Link>
+          .
+        </p>
       </div>
     </main>
   );
