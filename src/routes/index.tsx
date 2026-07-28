@@ -19,6 +19,7 @@ import { AddToCalendar } from "@/components/AddToCalendar";
 import { FestivalModal, type FestivalSheetItem } from "@/components/FestivalModal";
 import { MoonGlyph } from "@/components/MoonGlyph";
 import { SignInGate } from "@/components/SignInGate";
+import { useAuth } from "@/lib/auth";
 import { computeDayPanchang, type Muhurta } from "@/lib/panchang/core";
 import { tzLabel } from "@/lib/panchang/cities";
 import { resolveFestivals, scanFestivals, type Festival } from "@/lib/panchang/festivals";
