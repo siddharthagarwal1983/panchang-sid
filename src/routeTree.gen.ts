@@ -22,6 +22,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MuhuratChoghadiyaRouteImport } from './routes/muhurat.choghadiya'
 import { Route as FestivalsYearRouteImport } from './routes/festivals.$year'
+import { Route as CompareEphemerisRouteImport } from './routes/compare.ephemeris'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
@@ -92,6 +93,11 @@ const FestivalsYearRoute = FestivalsYearRouteImport.update({
   path: '/festivals/$year',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompareEphemerisRoute = CompareEphemerisRouteImport.update({
+  id: '/compare/ephemeris',
+  path: '/compare/ephemeris',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
     id: '/.well-known/oauth-protected-resource',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/tithi-today': typeof TithiTodayRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/compare/ephemeris': typeof CompareEphemerisRoute
   '/festivals/$year': typeof FestivalsYearRoute
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/tithi-today': typeof TithiTodayRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/compare/ephemeris': typeof CompareEphemerisRoute
   '/festivals/$year': typeof FestivalsYearRoute
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -169,6 +177,7 @@ export interface FileRoutesById {
   '/tithi-today': typeof TithiTodayRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/compare/ephemeris': typeof CompareEphemerisRoute
   '/festivals/$year': typeof FestivalsYearRoute
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/tithi-today'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/compare/ephemeris'
     | '/festivals/$year'
     | '/muhurat/choghadiya'
     | '/.lovable/oauth/consent'
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/tithi-today'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/compare/ephemeris'
     | '/festivals/$year'
     | '/muhurat/choghadiya'
     | '/.lovable/oauth/consent'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/tithi-today'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/compare/ephemeris'
     | '/festivals/$year'
     | '/muhurat/choghadiya'
     | '/.lovable/oauth/consent'
@@ -248,6 +260,7 @@ export interface RootRouteChildren {
   TithiTodayRoute: typeof TithiTodayRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  CompareEphemerisRoute: typeof CompareEphemerisRoute
   FestivalsYearRoute: typeof FestivalsYearRoute
   MuhuratChoghadiyaRoute: typeof MuhuratChoghadiyaRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
@@ -347,6 +360,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FestivalsYearRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/compare/ephemeris': {
+      id: '/compare/ephemeris'
+      path: '/compare/ephemeris'
+      fullPath: '/compare/ephemeris'
+      preLoaderRoute: typeof CompareEphemerisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
       path: '/.well-known/oauth-protected-resource'
@@ -393,6 +413,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  CompareEphemerisRoute: CompareEphemerisRoute,
   FestivalsYearRoute: FestivalsYearRoute,
   MuhuratChoghadiyaRoute: MuhuratChoghadiyaRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,

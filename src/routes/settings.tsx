@@ -1,5 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { MessageSquare, Shield, FileText } from "lucide-react";
+import { MessageSquare, Shield, FileText, Scale } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
@@ -105,6 +105,13 @@ function SettingsPage() {
             Calculations run on your device. Sign in only if you want your settings and reminders
             synced across devices.
           </p>
+          <div className="mt-3">
+            <SettingsLink
+              to="/compare/ephemeris"
+              icon={Scale}
+              label="Compare with Swiss Ephemeris"
+            />
+          </div>
         </section>
 
         <FaqSection items={FAQS} heading="Panchang FAQ" />
