@@ -49,7 +49,7 @@ const LUNAR_RULES: LunarRule[] = [
   { id: "durga-ashtami", name: "Durga Ashtami", note: "Maha Ashtami", category: "major", month: 6, tithi: 8, window: "udaya" },
   { id: "maha-navami", name: "Maha Navami", note: "Ayudha Puja", category: "major", month: 6, tithi: 9, window: "udaya" },
   { id: "dussehra", name: "Vijayadashami", note: "Dussehra", category: "major", month: 6, tithi: 10, window: "madhyahna" },
-  { id: "sharad-purnima", name: "Sharad Purnima", note: "Kojagari Purnima", category: "major", month: 6, tithi: 15, window: "nishita" },
+  { id: "sharad-purnima", name: "Sharad Purnima", note: "Kojagari Purnima", category: "major", month: 6, tithi: 15, window: "pradosha" },
   { id: "karva-chauth", name: "Karva Chauth", note: "Kartika Krishna Chaturthi", category: "major", month: 6, tithi: 19, window: "udaya" },
   { id: "dhanteras", name: "Dhanteras", note: "Dhantrayodashi", category: "major", month: 6, tithi: 28, window: "pradosha" },
   { id: "naraka", name: "Naraka Chaturdashi", note: "Chhoti Diwali", category: "major", month: 6, tithi: 29, window: "udaya" },
@@ -119,7 +119,20 @@ export function resolveFestivals(date: CalendarDay, city: City): Festival[] {
 
   for (const rule of LUNAR_RULES) {
     const score = ruleScore(summary, rule);
-    if (score <= 0) continue;
+    if (score <= 0) {
+      // Safety net: if the window never opens on any nearby day, fall back to
+      // the sunrise-tithi day so the observance is never dropped.
+      const udayaMatch =
+        rule.window !== "udaya" &&
+        !summary.adhikaMasa &&
+        rule.month === summary.amantaIndex &&
+        rule.tithi === summary.tithiNumber &&
+        ruleScore(previous, rule) <= 0 &&
+        ruleScore(next, rule) <= 0;
+      if (!udayaMatch) continue;
+      out.push({ id: rule.id, name: rule.name, note: rule.note, category: rule.category, window: "udaya" });
+      continue;
+    }
     if (rule.window !== "udaya") {
       // Keep the day with the greatest coverage; ties go to the earlier day.
       if (ruleScore(previous, rule) >= score) continue;
