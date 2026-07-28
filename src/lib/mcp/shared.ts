@@ -45,7 +45,7 @@ export async function loadPrefs(ctx: ToolContext): Promise<StoredPrefs> {
     .select("prefs")
     .eq("user_id", ctx.getUserId())
     .maybeSingle();
-  return ((data?.prefs ?? {}) as StoredPrefs) ?? {};
+  return (data?.prefs ?? {}) as StoredPrefs;
 }
 
 function isPlace(value: unknown): value is City {
