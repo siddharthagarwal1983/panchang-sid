@@ -70,18 +70,20 @@
   /* Fallbacks below Marcellus/Karla must cover Latin Extended Additional
      (ā ī ū ṅ ñ ṭ ḍ ṇ ś ṣ ṛ ṁ ḥ) so IAST diacritics never render as tofu. */
   --font-display:
-    "Marcellus", "Noto Serif", "Iowan Old Style", "Times New Roman", "Nimbus Roman",
+    "Marcellus", "Panchanga Serif", "Noto Serif", "Iowan Old Style", "Times New Roman", "Nimbus Roman",
     "Liberation Serif", Georgia, serif;
   --font-sans:
-    "Karla", "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Karla", "Panchanga Serif", "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", ui-sans-serif, system-ui, "Liberation Sans", sans-serif;
   /* Verified with fontTools: Marcellus and Karla ship ā ī ū ś but have NO
      glyph for ṅ ṁ ṇ ṛ ṣ ṭ ḍ ḥ. Per-glyph fallback keeps those readable, but
      inside the "Panchāṅga" wordmark it makes the ṅ visibly a different
-     typeface. The wordmark therefore uses Noto Serif, which covers the whole
-     IAST set in one family, so every letter matches on iOS and Android. */
+     typeface. The wordmark therefore uses "Panchanga Serif" — a ~9KB subset
+     of Noto Serif covering Basic Latin plus the whole IAST set in one family,
+     so every letter matches on iOS and Android. Falling back to full Noto
+     Serif would pull its 182KB latin-ext file into the LCP path. */
   --font-wordmark:
-    "Noto Serif", "Iowan Old Style", "Times New Roman", "Nimbus Roman",
+    "Panchanga Serif", "Noto Serif", "Iowan Old Style", "Times New Roman", "Nimbus Roman",
     "Liberation Serif", Georgia, serif;
 }
 
