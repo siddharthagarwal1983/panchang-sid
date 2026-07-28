@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { MessageSquare, Shield, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -124,6 +124,7 @@ function SettingsPage() {
 
 function AccountCard() {
   const { user, profile, signOut, updateDisplayName } = useAuth();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [saved, setSaved] = useState(false);
 
