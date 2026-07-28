@@ -67,7 +67,7 @@ export const Route = createFileRoute("/muhurat/choghadiya")({
         }),
         breadcrumbSchema([
           { name: "Home", url: `${SITE_URL}/` },
-          { name: "Choghadiya Muhurat", item: URL, url: URL } as never,
+          { name: "Choghadiya Muhurat", url: URL },
         ]),
         faqPageSchema(FAQS),
       ]),
