@@ -20,8 +20,7 @@ import { FestivalModal, type FestivalSheetItem } from "@/components/FestivalModa
 import { MoonGlyph } from "@/components/MoonGlyph";
 import { computeDayPanchang, type Muhurta } from "@/lib/panchang/core";
 import { tzLabel } from "@/lib/panchang/cities";
-import { festivalsForSummary, scanFestivals, type Festival } from "@/lib/panchang/festivals";
-import { computeDaySummary } from "@/lib/panchang/core";
+import { resolveFestivals, scanFestivals, type Festival } from "@/lib/panchang/festivals";
 import { fastingStatus, gloss, muhurtaTerm, pakshaTerm, term, tithiTerm } from "@/lib/panchang/lang";
 import { vratGuide } from "@/lib/panchang/vrat";
 import type { CalendarEvent } from "@/lib/calendar-export";
@@ -132,10 +131,7 @@ function TodayPage() {
   const festivals = useMemo(
     () =>
       hydrated
-        ? festivalsForSummary(
-            computeDaySummary(date, city),
-            computeDaySummary(addDays(date, -1), city),
-          ).filter((f) => f.category === "major")
+        ? resolveFestivals(date, city).filter((f) => f.category === "major")
         : [],
     [hydrated, date.year, date.month, date.day, city],
   );
@@ -592,12 +588,15 @@ function MuhurtaTile({
   hour12: boolean;
 }) {
   const good = muhurta.kind === "auspicious";
+  const neutral = muhurta.kind === "window";
   const severe = muhurta.name === "Rahu Kalam";
-  const tone = good
-    ? "border-auspicious/40 bg-auspicious/10 text-auspicious"
-    : severe
-      ? "border-avoid/45 bg-avoid/10 text-avoid"
-      : "border-caution/45 bg-caution/10 text-caution";
+  const tone = neutral
+    ? "border-primary/35 bg-primary/10 text-primary"
+    : good
+      ? "border-auspicious/40 bg-auspicious/10 text-auspicious"
+      : severe
+        ? "border-avoid/45 bg-avoid/10 text-avoid"
+        : "border-caution/45 bg-caution/10 text-caution";
   const title = muhurtaTerm(muhurta.name, script === "english" ? "iast" : script);
   const description = gloss(muhurta.name);
 
@@ -612,7 +611,7 @@ function MuhurtaTile({
   return (
     <div className={`rounded-xl border px-3.5 py-3 ${tone} ${active ? "ring-1 ring-current" : ""}`}>
       <div className="flex items-center gap-1.5">
-        {good ? (
+        {good || neutral ? (
           <Sparkles className="size-3.5 shrink-0" />
         ) : (
           <ShieldAlert className="size-3.5 shrink-0" />
