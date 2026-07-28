@@ -2,9 +2,7 @@ import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 
 import { computeDayPanchang } from "@/lib/panchang/core";
-import { festivalsForSummary } from "@/lib/panchang/festivals";
-import { computeDaySummary } from "@/lib/panchang/core";
-import { addDays } from "@/lib/panchang/tz";
+import { resolveFestivals } from "@/lib/panchang/festivals";
 
 import { isoTime, locationSchema, notAuthenticated, resolveCity, resolveDate } from "../shared";
 
@@ -23,8 +21,7 @@ export default defineTool({
     const city = await resolveCity(input, ctx);
     const day = resolveDate(input.date, city.tz);
     const p = computeDayPanchang(day, city);
-    const previous = computeDaySummary(addDays(day, -1), city);
-    const festivals = festivalsForSummary(computeDaySummary(day, city), previous);
+    const festivals = resolveFestivals(day, city);
 
     const result = {
       date: `${day.year}-${String(day.month).padStart(2, "0")}-${String(day.day).padStart(2, "0")}`,
@@ -38,7 +35,13 @@ export default defineTool({
       nakshatra: { name: p.nakshatra.name, ends: isoTime(p.nakshatra.end, city.tz) },
       yoga: { name: p.yoga.name, ends: isoTime(p.yoga.end, city.tz) },
       karana: { name: p.karana.name, ends: isoTime(p.karana.end, city.tz) },
-      lunar_month: { amanta: p.month.amanta, purnimanta: p.month.purnimanta },
+      lunar_month: { amanta: p.month.amanta, purnimanta: p.month.purnimanta, adhika: p.month.adhika },
+      tithi_span: p.tithiSpan,
+      windows: p.windows && {
+        madhyahna: { start: isoTime(p.windows.madhyahna.start, city.tz), end: isoTime(p.windows.madhyahna.end, city.tz) },
+        pradosha: { start: isoTime(p.windows.pradosha.start, city.tz), end: isoTime(p.windows.pradosha.end, city.tz) },
+        nishita: { start: isoTime(p.windows.nishita.start, city.tz), end: isoTime(p.windows.nishita.end, city.tz) },
+      },
       ritu: p.ritu,
       moon_rashi: p.moonRashi,
       sun_rashi: p.sunRashi,
@@ -48,7 +51,13 @@ export default defineTool({
         start: isoTime(m.start, city.tz),
         end: isoTime(m.end, city.tz),
       })),
-      festivals: festivals.map((f) => ({ id: f.id, name: f.name, note: f.note, category: f.category })),
+      festivals: festivals.map((f) => ({
+        id: f.id,
+        name: f.name,
+        note: f.note,
+        category: f.category,
+        rule: f.window ?? "udaya",
+      })),
     };
 
     return {
