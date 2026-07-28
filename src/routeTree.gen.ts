@@ -19,6 +19,7 @@ import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MuhuratChoghadiyaRouteImport } from './routes/muhurat.choghadiya'
 import { Route as FestivalsYearRouteImport } from './routes/festivals.$year'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
@@ -75,6 +76,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MuhuratChoghadiyaRoute = MuhuratChoghadiyaRouteImport.update({
+  id: '/muhurat/choghadiya',
+  path: '/muhurat/choghadiya',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FestivalsYearRoute = FestivalsYearRouteImport.update({
   id: '/festivals/$year',
   path: '/festivals/$year',
@@ -118,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/festivals/$year': typeof FestivalsYearRoute
+  '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -135,6 +142,7 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/festivals/$year': typeof FestivalsYearRoute
+  '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -153,6 +161,7 @@ export interface FileRoutesById {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/festivals/$year': typeof FestivalsYearRoute
+  '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -172,6 +181,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/festivals/$year'
+    | '/muhurat/choghadiya'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesByTo: FileRoutesByTo
@@ -189,6 +199,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/festivals/$year'
+    | '/muhurat/choghadiya'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
   id:
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/festivals/$year'
+    | '/muhurat/choghadiya'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesById: FileRoutesById
@@ -224,6 +236,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   FestivalsYearRoute: typeof FestivalsYearRoute
+  MuhuratChoghadiyaRoute: typeof MuhuratChoghadiyaRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -300,6 +313,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/muhurat/choghadiya': {
+      id: '/muhurat/choghadiya'
+      path: '/muhurat/choghadiya'
+      fullPath: '/muhurat/choghadiya'
+      preLoaderRoute: typeof MuhuratChoghadiyaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/festivals/$year': {
       id: '/festivals/$year'
       path: '/festivals/$year'
@@ -353,6 +373,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   FestivalsYearRoute: FestivalsYearRoute,
+  MuhuratChoghadiyaRoute: MuhuratChoghadiyaRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
