@@ -49,6 +49,13 @@ const CATEGORY_FOR: Record<ReminderKey, FestivalCategory | "purnima" | "amavasya
 const INITIAL_VISIBLE = 5;
 const LOAD_MORE_STEP = 10;
 
+/** True when `prev` (YYYY-MM-DD) is the calendar day immediately before `key`. */
+function isPreviousDay(prev: string, key: string) {
+  const a = Date.parse(`${prev}T00:00:00Z`);
+  const b = Date.parse(`${key}T00:00:00Z`);
+  return b - a === 86_400_000;
+}
+
 function RemindersPage() {
   const { prefs, city, hydrated, setPrefs, toggleReminder, removeCustomReminder } = usePrefs();
   const [now, setNow] = useState(() => new Date());
@@ -88,14 +95,29 @@ function RemindersPage() {
     const wanted = new Set(
       OPTIONS.filter((o) => prefs.reminders[o.key]).map((o) => CATEGORY_FOR[o.key]),
     );
-    return scan
-      .map((entry) => ({
-        date: entry.date,
-        items: entry.festivals.filter(
-          (f) => wanted.has(f.category) || wanted.has(f.id as never),
-        ),
-      }))
-      .filter((e) => e.items.length > 0);
+
+    // Dedupe: an observance may straddle a midnight boundary and be reported on
+    // two consecutive days. Keep the first occurrence only, and never repeat the
+    // exact same observance/date pair.
+    const seen = new Set<string>();
+    const lastDayFor = new Map<string, string>();
+    const out: { key: string; date: (typeof scan)[number]["date"]; items: typeof scan[number]["festivals"] }[] = [];
+
+    for (const entry of scan) {
+      const key = dayKey(entry.date);
+      const items = entry.festivals.filter((f) => {
+        if (!(wanted.has(f.category) || wanted.has(f.id as never))) return false;
+        const pairKey = `${f.id}@${key}`;
+        if (seen.has(pairKey)) return false;
+        const prevDay = lastDayFor.get(f.id);
+        if (prevDay && isPreviousDay(prevDay, key)) return false;
+        seen.add(pairKey);
+        lastDayFor.set(f.id, key);
+        return true;
+      });
+      if (items.length > 0) out.push({ key, date: entry.date, items });
+    }
+    return out;
   }, [hydrated, now, city, prefs.reminders, visible]);
 
   const upcoming = useMemo(() => matches.slice(0, visible), [matches, visible]);
