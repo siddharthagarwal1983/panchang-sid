@@ -51,8 +51,9 @@ function AuthPage() {
 
   useEffect(() => {
     if (!session) return;
-    if (safeNext) window.location.replace(safeNext);
-    else navigate({ to: "/settings" });
+    // Return to the page that triggered the sign-in, without leaving /auth on
+    // the back stack.
+    navigate({ to: safeNext ?? "/settings", replace: true });
   }, [session, navigate, safeNext]);
 
   const withGoogle = async () => {

@@ -72,8 +72,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const signOut = useCallback(async () => {
-    await supabase.auth.signOut();
+    // Drop protected state locally first so nothing can render with stale data
+    // while the network round-trip completes.
     setProfile(null);
+    setSession(null);
+    await supabase.auth.signOut();
   }, []);
 
   const value = useMemo<Ctx>(

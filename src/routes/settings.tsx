@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { MessageSquare, Shield, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -124,6 +124,7 @@ function SettingsPage() {
 
 function AccountCard() {
   const { user, profile, signOut, updateDisplayName } = useAuth();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [saved, setSaved] = useState(false);
 
@@ -181,7 +182,10 @@ function AccountCard() {
           {saved ? "Saved" : "Save"}
         </button>
         <button
-          onClick={() => void signOut()}
+          onClick={async () => {
+            await signOut();
+            navigate({ to: "/", replace: true });
+          }}
           className="rounded-xl border border-border px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-secondary"
         >
           Sign out

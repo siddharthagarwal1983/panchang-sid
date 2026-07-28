@@ -19,6 +19,7 @@ import { AddToCalendar } from "@/components/AddToCalendar";
 import { FestivalModal, type FestivalSheetItem } from "@/components/FestivalModal";
 import { MoonGlyph } from "@/components/MoonGlyph";
 import { SignInGate } from "@/components/SignInGate";
+import { useAuth } from "@/lib/auth";
 import { computeDayPanchang, type Muhurta } from "@/lib/panchang/core";
 import { tzLabel } from "@/lib/panchang/cities";
 import { resolveFestivals, scanFestivals, type Festival } from "@/lib/panchang/festivals";
@@ -109,6 +110,8 @@ function TodayPage() {
   const navigate = useNavigate({ from: "/" });
   const [now, setNow] = useState(() => new Date());
   const [openItem, setOpenItem] = useState<FestivalSheetItem | null>(null);
+  // Used only to skip protected data work; no protected UI reads this.
+  const isSignedIn = Boolean(useAuth().user);
 
   // Keep progress bars and countdowns alive.
   useEffect(() => {
@@ -140,9 +143,14 @@ function TodayPage() {
   // Scanning ~120 days of panchang is expensive, so it runs in small idle-time
   // chunks after first paint instead of blocking hydration.
   const [upcoming, setUpcoming] = useState<{ date: CalendarDay; festival: Festival }[]>([]);
-  const upcomingKey = `${hydrated}:${date.year}-${date.month}-${date.day}:${city.id}`;
+  const upcomingKey = `${hydrated}:${isSignedIn}:${date.year}-${date.month}-${date.day}:${city.id}`;
   useEffect(() => {
-    if (!hydrated) return;
+    // The upcoming list is behind the sign-in gate, so skip the scan entirely
+    // for signed-out visitors.
+    if (!hydrated || !isSignedIn) {
+      setUpcoming([]);
+      return;
+    }
     let cancelled = false;
     const out: { date: CalendarDay; festival: Festival }[] = [];
     let offset = 1;
