@@ -457,24 +457,11 @@ function TodayPage() {
             </div>
           </section>
 
-          {!user ? (
-            <section className="panel px-5 py-6 text-center">
-              <Lock className="mx-auto size-5 text-primary" />
-              <h3 className="mt-2 font-display text-base">Sign in to see the full panchāṅga</h3>
-              <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-                Auspicious windows, nakshatra, yoga, karana, masa details and upcoming festivals are
-                available once you sign in.
-              </p>
-              <Link
-                to="/auth"
-                search={{ next: "/" }}
-                className="mt-4 inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm text-primary-foreground transition-opacity hover:opacity-90"
-              >
-                Sign in
-              </Link>
-            </section>
-          ) : (
-          <>
+          <SignInGate
+            next="/"
+            title="Sign in to see the full panchāṅga"
+            description="Auspicious windows, nakshatra, yoga, karana, masa details and upcoming festivals are available once you sign in."
+          >
           {/* 3. Auspicious vs inauspicious windows. */}
           {panchang.muhurtas.length > 0 && (
             <section>
@@ -564,8 +551,7 @@ function TodayPage() {
               </ul>
             </section>
           )}
-          </>
-          )}
+          </SignInGate>
 
           <p className="px-1 text-center text-xs leading-relaxed text-muted-foreground">
             Computed for {city.name}, {city.state} using drik ganita with the Lahiri ayanamsa.
