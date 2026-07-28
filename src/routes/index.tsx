@@ -5,7 +5,6 @@ import {
   CalendarPlus,
   ChevronLeft,
   ChevronRight,
-  Lock,
   Moon,
   ShieldAlert,
   Sparkles,
@@ -19,7 +18,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { AddToCalendar } from "@/components/AddToCalendar";
 import { FestivalModal, type FestivalSheetItem } from "@/components/FestivalModal";
 import { MoonGlyph } from "@/components/MoonGlyph";
-import { useAuth } from "@/lib/auth";
+import { SignInGate } from "@/components/SignInGate";
 import { computeDayPanchang, type Muhurta } from "@/lib/panchang/core";
 import { tzLabel } from "@/lib/panchang/cities";
 import { resolveFestivals, scanFestivals, type Festival } from "@/lib/panchang/festivals";
@@ -105,7 +104,6 @@ function duration(ms: number): string {
 
 function TodayPage() {
   const { city, prefs, hydrated, addCustomReminder, removeCustomReminder } = usePrefs();
-  const { user } = useAuth();
   const { permission, request } = useReminderNotifications();
   const { d } = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
