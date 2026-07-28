@@ -181,7 +181,10 @@ function AccountCard() {
           {saved ? "Saved" : "Save"}
         </button>
         <button
-          onClick={() => void signOut()}
+          onClick={async () => {
+            await signOut();
+            navigate({ to: "/", replace: true });
+          }}
           className="rounded-xl border border-border px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-secondary"
         >
           Sign out
