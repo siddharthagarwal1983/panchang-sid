@@ -124,6 +124,7 @@ function FestivalYearPage() {
       <div className="px-5 py-5">
         <Link
           to="/"
+          search={{ d: undefined }}
           className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="size-4" />
@@ -193,7 +194,7 @@ function FestivalYearPage() {
           </p>
           <p className="mt-2">
             For live tithi, nakshatra, Rahu Kalam and fasting windows, open{" "}
-            <Link to="/" className="text-primary underline-offset-2 hover:underline">
+            <Link to="/" search={{ d: undefined }} className="text-primary underline-offset-2 hover:underline">
               today's panchang
             </Link>{" "}
             or browse the{" "}
