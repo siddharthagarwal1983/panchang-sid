@@ -7,6 +7,7 @@ import { ScriptToggle } from "@/components/ScriptToggle";
 import { useAuth } from "@/lib/auth";
 import { tzLabel } from "@/lib/panchang/cities";
 import { usePrefs } from "@/lib/prefs";
+import { displayFontClass } from "@/lib/typography";
 
 export function AppHeader({
   title,
@@ -50,7 +51,7 @@ export function AppHeader({
           <div className="min-w-0">
             <h1
               data-testid="app-header-title"
-              className="truncate font-display text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl"
+              className={`truncate ${displayFontClass(title)} text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl`}
             >
               {title}
               {headingSuffix && <span className="sr-only"> {headingSuffix}</span>}
