@@ -8,6 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" ? s.next : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Sign in — Panchanga" },
@@ -29,6 +32,15 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const { session } = useAuth();
+  const { next } = Route.useSearch();
+  // Only same-origin relative paths may be used as a post-auth return target.
+  const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : null;
+  const returnUrl =
+    typeof window !== "undefined"
+      ? safeNext
+        ? `${window.location.origin}${safeNext}`
+        : window.location.origin
+      : "";
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,14 +50,16 @@ function AuthPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (session) navigate({ to: "/settings" });
-  }, [session, navigate]);
+    if (!session) return;
+    if (safeNext) window.location.replace(safeNext);
+    else navigate({ to: "/settings" });
+  }, [session, navigate, safeNext]);
 
   const withGoogle = async () => {
     setError(null);
     setBusy(true);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: returnUrl,
     });
     if (result.error) {
       setError(result.error.message ?? "Google sign-in failed.");
@@ -66,7 +80,7 @@ function AuthPage() {
         email,
         password,
         options: {
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: returnUrl,
           data: name ? { display_name: name } : undefined,
         },
       });

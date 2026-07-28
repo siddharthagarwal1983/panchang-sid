@@ -112,6 +112,7 @@ function AccountCard() {
         </p>
         <Link
           to="/auth"
+          search={{ next: undefined }}
           className="mt-3 flex w-full items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm text-primary-foreground transition-opacity hover:opacity-90"
         >
           Sign in

@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "sdk_version": "0.25.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://onfmqaehmofihizomguc.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "panchanga-mcp",
+      "version": "0.1.0",
+      "title": "Panchāṅga"
+    },
+    "tools": [
+      {
+        "name": "get_panchang",
+        "title": "Get panchang for a date",
+        "description": "Daily Hindu panchang — tithi, nakshatra, yoga, karana, sunrise/sunset, muhurtas and festivals — computed at local sunrise for a place. Defaults to today and the location saved in the signed-in user's account.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "Calendar date as YYYY-MM-DD. Defaults to today."
+            },
+            "latitude": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90,
+              "description": "Latitude of the place. Omit to use the location saved in the user's account."
+            },
+            "longitude": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180,
+              "description": "Longitude of the place."
+            },
+            "timezone": {
+              "type": "string",
+              "description": "IANA timezone of the place, e.g. America/New_York."
+            },
+            "place_name": {
+              "type": "string",
+              "description": "Display name for the place, e.g. Edison, NJ."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_festivals",
+        "title": "List upcoming festivals",
+        "description": "List Hindu festivals and vrat days over a date range, with dates recalculated for the local sunrise of a place instead of India time. Defaults to the next 120 days from today at the user's saved location.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "start_date": {
+              "type": "string",
+              "description": "First date of the range as YYYY-MM-DD. Defaults to today."
+            },
+            "days": {
+              "type": "integer",
+              "description": "How many days to scan, 1-400. Defaults to 120."
+            },
+            "major_only": {
+              "type": "boolean",
+              "description": "Only return major festivals, excluding recurring ekadashi/pradosh/moon days. Defaults to true."
+            },
+            "latitude": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90,
+              "description": "Latitude of the place. Omit to use the location saved in the user's account."
+            },
+            "longitude": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180,
+              "description": "Longitude of the place."
+            },
+            "timezone": {
+              "type": "string",
+              "description": "IANA timezone of the place, e.g. America/New_York."
+            },
+            "place_name": {
+              "type": "string",
+              "description": "Display name for the place, e.g. Edison, NJ."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_my_settings",
+        "title": "Get my panchang settings",
+        "description": "Read the signed-in user's saved Panchanga settings: active location, family location, calendar tradition and which reminders are switched on.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
