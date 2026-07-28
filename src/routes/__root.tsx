@@ -91,12 +91,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
       { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "Panchanga" },
+      { property: "og:site_name", content: "Panchang" },
+      {
+        name: "keywords",
+        content:
+          "panchang, panchanga, panchangam, hindu calendar, tithi today, nakshatra, rahu kaal, choghadiya, muhurat, vrat, ekadashi, hindu festivals",
+      },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#181430" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "apple-mobile-web-app-title", content: "Panchanga" },
+      { name: "apple-mobile-web-app-title", content: "Panchang" },
     ],
     links: [
       {
@@ -132,6 +137,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             {
               "@type": "WebSite",
               name: "Panchāṅga",
+              alternateName: ["Panchang", "Panchanga", "Panchangam"],
               url: "https://panchanga.lovable.app",
               description:
                 "Daily Hindu panchang — tithi, nakshatra, yoga, karana, muhurta and festivals computed for your own location's local sunrise.",
@@ -142,6 +148,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               "@type": "Organization",
               "@id": "https://panchanga.lovable.app/#organization",
               name: "Panchāṅga",
+              alternateName: ["Panchang", "Panchanga"],
               url: "https://panchanga.lovable.app",
               logo: "https://panchanga.lovable.app/app-icon-512.png",
             },

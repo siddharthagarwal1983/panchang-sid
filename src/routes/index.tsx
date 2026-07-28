@@ -95,6 +95,7 @@ export const Route = createFileRoute("/")({
         {
           "@type": "WebApplication",
           name: "Panchanga",
+          alternateName: ["Panchang", "Panchangam", "Panchāṅga"],
           url: `${SITE_URL}/`,
           applicationCategory: "LifestyleApplication",
           operatingSystem: "Any",

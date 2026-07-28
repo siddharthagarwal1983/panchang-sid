@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 
 import { CITIES } from "@/lib/panchang/cities";
 import { placeLabel, reverseGeocode, searchPlaces, type Place } from "@/lib/panchang/geocode";
+import { matchRank, matchesQuery } from "@/lib/search/normalize";
 import { usePrefs } from "@/lib/prefs";
 
 type SearchState =
@@ -71,13 +72,22 @@ export function LocationPicker({
 
   const sections = useMemo(() => {
     if (showingSearch) {
-      return [
-        {
-          title: "Results",
-          icon: <Globe2 className="size-3.5" />,
-          items: state.kind === "done" ? state.results : [],
-        },
-      ];
+      // Local, diacritic-insensitive matches over saved + preset places show
+      // instantly and survive an offline/failed geocode. Typing "zurich"
+      // matches "Zürich" and "bengaluru" matches "Bengalūru".
+      const local = [...prefs.recentPlaces, ...PRESETS]
+        .filter((p, i, arr) => arr.findIndex((o) => o.id === p.id) === i)
+        .filter((p) => matchesQuery(placeLabel(p), query))
+        .sort((a, b) => matchRank(placeLabel(a), query) - matchRank(placeLabel(b), query));
+      const remote = (state.kind === "done" ? state.results : []).filter(
+        (r) => !local.some((l) => l.id === r.id),
+      );
+      const list: { title: string; icon: React.ReactNode; items: Place[] }[] = [];
+      if (local.length)
+        list.push({ title: "Saved & popular", icon: <MapPin className="size-3.5" />, items: local });
+      if (remote.length || !local.length)
+        list.push({ title: "Results", icon: <Globe2 className="size-3.5" />, items: remote });
+      return list;
     }
     const list: { title: string; icon: React.ReactNode; items: Place[] }[] = [];
     if (prefs.recentPlaces.length)
@@ -92,7 +102,7 @@ export function LocationPicker({
       items: PRESETS.filter((p) => !prefs.recentPlaces.some((r) => r.id === p.id)),
     });
     return list;
-  }, [showingSearch, state, prefs.recentPlaces]);
+  }, [showingSearch, state, prefs.recentPlaces, query]);
 
   const flat = useMemo(() => sections.flatMap((s) => s.items), [sections]);
 
