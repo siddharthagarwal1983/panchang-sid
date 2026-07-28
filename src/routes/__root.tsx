@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PrefsProvider } from "../lib/prefs";
 import { AuthProvider } from "../lib/auth";
 import { BottomNav } from "../components/BottomNav";
+import { SiteFooter } from "../components/SiteFooter";
 import { ReminderScheduler } from "../lib/useReminderNotifications";
 
 function NotFoundComponent() {
@@ -179,6 +180,7 @@ function RootComponent() {
           <div className="min-h-screen pb-20">
             {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
             <Outlet />
+            <SiteFooter />
           </div>
           <BottomNav />
           <ReminderScheduler />
