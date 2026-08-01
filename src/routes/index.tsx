@@ -434,6 +434,7 @@ function TodayPage() {
 
           {/* 2. Local solar header — every vrat and parana window hangs off these. */}
           <section className="panel px-4 py-3">
+            <h2 className="label-caps mb-3">Sunrise, sunset and moon timings</h2>
             <div className="grid grid-cols-2 gap-3">
               <SolarCell
                 icon={<Sunrise className="size-4 text-primary" />}
