@@ -44,6 +44,8 @@ export type Prefs = {
   script: ScriptMode;
   reminders: Record<ReminderKey, boolean>;
   reminderTime: string;
+  /** Alert when the Ekadashi parana (fast-breaking) window opens locally. */
+  paranaReminder: boolean;
   custom: CustomReminder[];
 };
 
@@ -67,6 +69,7 @@ const DEFAULTS: Prefs = {
     festivals: true,
   },
   reminderTime: "07:00",
+  paranaReminder: true,
   custom: [],
 };
 
