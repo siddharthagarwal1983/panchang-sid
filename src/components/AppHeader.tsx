@@ -47,9 +47,8 @@ export function AppHeader({
         paddingRight: "max(1rem, var(--sa-right))",
       }}
     >
-      <div className="mx-auto max-w-md">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2 sm:gap-3">
-          <div className="min-w-0">
+        <div className="relative mx-auto flex items-center justify-center pt-1">
+          <div className="z-10 mx-auto text-center">
             <h1
               data-testid="app-header-title"
               className={`${headingSuffix ? "" : "truncate "}${displayFontClass(title)} text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl`}
@@ -67,13 +66,13 @@ export function AppHeader({
               )}
             </h1>
             {subtitle && (
-              <p className="mt-1 truncate text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <p className="mx-auto mt-1 max-w-[90%] truncate text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {subtitle}
               </p>
             )}
           </div>
 
-          <div className="flex shrink-0 items-center gap-1.5 self-center sm:gap-2">
+          <div className="absolute right-0 top-1/2 z-10 flex shrink-0 -translate-y-1/2 items-center gap-1.5 sm:gap-2">
             {showScript && <ScriptToggle />}
             {showLocation && (
               <button
