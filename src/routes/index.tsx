@@ -472,7 +472,7 @@ function TodayPage() {
           {/* 3. Auspicious vs inauspicious windows. */}
           {panchang.muhurtas.length > 0 && (
             <section>
-              <h3 className="label-caps px-1">Windows today</h3>
+              <h2 className="label-caps px-1">Auspicious and inauspicious windows today</h2>
               <div className="mt-2 grid grid-cols-2 gap-3">
                 {[...panchang.muhurtas]
                   .sort((a, b) => (a.kind === b.kind ? 0 : a.kind === "auspicious" ? -1 : 1))
@@ -540,7 +540,7 @@ function TodayPage() {
 
           {upcoming.length > 0 && (
             <section className="panel px-5 py-4">
-              <h3 className="label-caps">Upcoming festivals</h3>
+              <h2 className="label-caps">Upcoming Hindu festivals</h2>
               <ul className="mt-3 space-y-2.5">
                 {upcoming.map((u) => (
                   <li key={`${dayKey(u.date)}:${u.festival.id}`}>

@@ -119,7 +119,7 @@ function FestivalYearPage() {
 
   return (
     <main className="mx-auto max-w-md">
-      <AppHeader title="Festivals" subtitle={`${year} guide`} headingSuffix={`— Hindu festival calendar ${year} in your local time`} />
+      <AppHeader title="Hindu Festivals" subtitle={`${year} guide`} headingSuffix={`— Hindu festival calendar ${year} in your local time`} />
 
       <div className="px-5 py-5">
         <Link

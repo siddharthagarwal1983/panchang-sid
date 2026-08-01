@@ -94,7 +94,7 @@ function CalendarPage() {
   return (
     <main className="mx-auto max-w-md">
       <AppHeader
-        title="Calendar"
+        title="Hindu Calendar"
         headingSuffix="of Hindu festivals and tithis"
         subtitle={masaSpan || "Loading months…"}
       />
