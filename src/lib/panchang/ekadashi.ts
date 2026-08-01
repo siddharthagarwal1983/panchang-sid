@@ -93,13 +93,13 @@ function paranaWindow(day: CalendarDay, city: City) {
   return { date: day, start, end, note };
 }
 
-/** All Ekadashi fasts falling in the given local calendar year. */
-export function ekadashiCalendar(year: number, city: City): EkadashiEntry[] {
+/** Ekadashi fasts starting at `from`, scanning `days` local calendar days. */
+export function scanEkadashi(from: CalendarDay, days: number, city: City): EkadashiEntry[] {
   const entries: EkadashiEntry[] = [];
-  let cursor: CalendarDay = { year, month: 1, day: 1 };
+  let cursor: CalendarDay = from;
   let previousWasEkadashi = false;
 
-  while (cursor.year === year) {
+  for (let i = 0; i < days; i += 1) {
     const near = morningTithiNumber(cursor, city.tz);
     const candidate = [10, 11, 12, 25, 26, 27].includes(near);
     if (candidate) {
@@ -132,4 +132,10 @@ export function ekadashiCalendar(year: number, city: City): EkadashiEntry[] {
   }
 
   return entries;
+}
+
+/** All Ekadashi fasts falling in the given local calendar year. */
+export function ekadashiCalendar(year: number, city: City): EkadashiEntry[] {
+  const isLeap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+  return scanEkadashi({ year, month: 1, day: 1 }, isLeap ? 366 : 365, city);
 }
