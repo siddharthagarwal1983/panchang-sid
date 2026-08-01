@@ -36,6 +36,7 @@ export function AppHeader({
     setPickerOpen(true);
   };
   const initial = (profile?.display_name || user?.email || "?").trim().charAt(0).toUpperCase();
+  const isWordmark = title.startsWith("Panch");
 
   return (
     <header
