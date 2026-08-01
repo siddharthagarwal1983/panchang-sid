@@ -251,7 +251,6 @@ function TodayPage() {
     <main className="mx-auto max-w-md">
       <AppHeader
         title="Panchāṅga"
-        headingSuffix="— Today’s Tithi, Nakshatra & Muhurta"
         showLocation
         showScript
       />
