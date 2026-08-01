@@ -47,8 +47,10 @@ export function AppHeader({
         paddingRight: "max(1rem, var(--sa-right))",
       }}
     >
-        <div className="relative mx-auto flex items-center justify-center pt-1">
-          <div className="z-10 mx-auto text-center">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 pt-1">
+          <div aria-hidden="true" />
+
+          <div className="text-center">
             <h1
               data-testid="app-header-title"
               className={`${headingSuffix ? "" : "truncate "}${displayFontClass(title)} text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl`}
@@ -72,7 +74,7 @@ export function AppHeader({
             )}
           </div>
 
-          <div className="absolute right-0 top-1/2 z-10 flex shrink-0 -translate-y-1/2 items-center gap-1.5 sm:gap-2">
+          <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2">
             {showScript && <ScriptToggle />}
             {showLocation && (
               <button
