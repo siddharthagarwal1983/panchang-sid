@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { scanFestivals } from "./panchang/festivals";
+import { scanEkadashi, type EkadashiEntry } from "./panchang/ekadashi";
 import { toCalendarDay, dayKey } from "./panchang/tz";
 import { usePrefs, type ReminderKey } from "./prefs";
 
 const FIRED_KEY = "panchang.lastNotified.v1";
 const CUSTOM_FIRED_KEY = "panchang.customNotified.v1";
+const PARANA_FIRED_KEY = "panchang.paranaNotified.v1";
 
 const MATCHERS: Record<ReminderKey, (id: string, category: string) => boolean> = {
   ekadashi: (_id, c) => c === "ekadashi",
