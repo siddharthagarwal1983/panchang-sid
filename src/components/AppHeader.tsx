@@ -51,10 +51,14 @@ export function AppHeader({
           <div className="min-w-0">
             <h1
               data-testid="app-header-title"
-              className={`truncate ${displayFontClass(title)} text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl`}
+              className={`${headingSuffix ? "" : "truncate "}${displayFontClass(title)} text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl`}
             >
               {title}
-              {headingSuffix && <span className="sr-only"> {headingSuffix}</span>}
+              {headingSuffix && (
+                <span className="block text-[13px] font-normal leading-snug text-muted-foreground">
+                  {headingSuffix}
+                </span>
+              )}
             </h1>
             {subtitle && (
               <p className="mt-1 truncate text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">

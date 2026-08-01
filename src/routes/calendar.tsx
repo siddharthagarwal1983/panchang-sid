@@ -25,7 +25,7 @@ export const Route = createFileRoute("/calendar")({
         content: "Browse tithis and festivals month by month, calculated for your US city.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://panchanga.lovable.app/calendar" }],
+    links: [{ rel: "canonical", href: "https://indianpanchang.com/calendar" }],
   }),
   component: CalendarPage,
 });
@@ -94,7 +94,7 @@ function CalendarPage() {
   return (
     <main className="mx-auto max-w-md">
       <AppHeader
-        title="Calendar"
+        title="Hindu Calendar"
         headingSuffix="of Hindu festivals and tithis"
         subtitle={masaSpan || "Loading months…"}
       />

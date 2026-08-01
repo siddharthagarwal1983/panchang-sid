@@ -25,7 +25,7 @@ export const Route = createFileRoute("/reminders")({
         content: "Choose the observances you keep and see every upcoming date.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://panchanga.lovable.app/reminders" }],
+    links: [{ rel: "canonical", href: "https://indianpanchang.com/reminders" }],
   }),
   component: RemindersPage,
 });

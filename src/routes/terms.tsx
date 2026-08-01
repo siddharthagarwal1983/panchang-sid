@@ -21,7 +21,7 @@ export const Route = createFileRoute("/terms")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "https://panchanga.lovable.app/terms" }],
+    links: [{ rel: "canonical", href: "https://indianpanchang.com/terms" }],
   }),
   component: TermsPage,
 });
