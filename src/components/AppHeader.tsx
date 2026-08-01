@@ -53,11 +53,6 @@ export function AppHeader({
               data-testid="app-header-title"
               className={`${headingSuffix ? "" : "truncate "}${displayFontClass(title)} text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl`}
             >
-              {isWordmark && (
-                <span aria-hidden="true" className="mr-1.5 font-wordmark text-primary">
-                  ॐ
-                </span>
-              )}
               {title}
               {headingSuffix && (
                 <span className="block text-[13px] font-normal leading-snug text-muted-foreground">
@@ -72,7 +67,16 @@ export function AppHeader({
             )}
           </div>
 
-          <div aria-hidden="true" />
+          {isWordmark && (
+            <div className="flex items-center justify-center">
+              <span aria-hidden="true" className="font-wordmark text-2xl text-primary min-[360px]:text-3xl">
+                ॐ
+              </span>
+            </div>
+          )}
+
+          {isWordmark ? null : <div aria-hidden="true" />}
+
 
 
           <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2">
