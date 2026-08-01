@@ -152,7 +152,6 @@ export function AppHeader({
           </>
         )}
         {children}
-      </div>
       {showLocation && (
         <LocationPicker
           open={pickerOpen}
