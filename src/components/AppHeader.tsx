@@ -36,6 +36,7 @@ export function AppHeader({
     setPickerOpen(true);
   };
   const initial = (profile?.display_name || user?.email || "?").trim().charAt(0).toUpperCase();
+  const isWordmark = title.startsWith("Panch");
 
   return (
     <header
@@ -53,6 +54,11 @@ export function AppHeader({
               data-testid="app-header-title"
               className={`${headingSuffix ? "" : "truncate "}${displayFontClass(title)} text-xl leading-[1.45] tracking-tight min-[360px]:text-2xl`}
             >
+              {isWordmark && (
+                <span aria-hidden="true" className="mr-1.5 font-wordmark text-primary">
+                  ॐ
+                </span>
+              )}
               {title}
               {headingSuffix && (
                 <span className="block text-[13px] font-normal leading-snug text-muted-foreground">

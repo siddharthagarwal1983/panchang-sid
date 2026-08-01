@@ -14,7 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PrefsProvider } from "../lib/prefs";
 import { AuthProvider } from "../lib/auth";
 import { BottomNav } from "../components/BottomNav";
-import { ReminderScheduler } from "../lib/useReminderNotifications";
+import { ParanaScheduler, ReminderScheduler } from "../lib/useReminderNotifications";
 
 function NotFoundComponent() {
   return (
@@ -197,6 +197,7 @@ function RootComponent() {
           </div>
           <BottomNav />
           <ReminderScheduler />
+          <ParanaScheduler />
         </PrefsProvider>
       </AuthProvider>
     </QueryClientProvider>

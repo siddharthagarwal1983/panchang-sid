@@ -5,8 +5,10 @@ import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { SignInGate } from "@/components/SignInGate";
 import { useAuth } from "@/lib/auth";
+import { scanEkadashi } from "@/lib/panchang/ekadashi";
 import { scanFestivals, type FestivalCategory } from "@/lib/panchang/festivals";
 import { dayKey, formatLongDate, toCalendarDay } from "@/lib/panchang/tz";
+import { formatTime } from "@/lib/panchang/tz";
 import { usePrefs, type ReminderKey } from "@/lib/prefs";
 import { useReminderNotifications } from "@/lib/useReminderNotifications";
 
@@ -126,6 +128,15 @@ function RemindersPage() {
 
   const upcoming = useMemo(() => matches.slice(0, visible), [matches, visible]);
 
+  // Next Ekadashi whose parana window is still ahead, in the selected city.
+  const nextParana = useMemo(() => {
+    if (!hydrated || !prefs.paranaReminder) return null;
+    const start = toCalendarDay(now, city.tz);
+    return (
+      scanEkadashi(start, 30, city).find((e) => !e.parana.end || e.parana.end > now) ?? null
+    );
+  }, [hydrated, prefs.paranaReminder, now, city]);
+
   return (
     <main className="mx-auto max-w-md">
       <AppHeader title="Reminders" subtitle={`Alerts at ${prefs.reminderTime} local time`} />
@@ -173,6 +184,43 @@ function RemindersPage() {
             onChange={(e) => setPrefs({ reminderTime: e.target.value })}
             className="rounded-lg border border-input bg-secondary/50 px-3 py-2 text-sm tabular-nums"
           />
+        </section>
+
+        <section className="panel px-5 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <span className="min-w-0">
+              <span className="block text-sm">Ekadashi parana window</span>
+              <span className="block text-xs text-muted-foreground">
+                Alert when it&apos;s time to break the fast in {city.name}
+              </span>
+            </span>
+            <button
+              role="switch"
+              aria-checked={prefs.paranaReminder}
+              aria-label="Ekadashi parana window"
+              onClick={() => setPrefs({ paranaReminder: !prefs.paranaReminder })}
+              className={`relative h-6 w-11 shrink-0 rounded-full border border-border transition-colors ${
+                prefs.paranaReminder ? "bg-primary" : "bg-secondary"
+              }`}
+            >
+              <span
+                className={`absolute top-0.5 size-4.5 rounded-full bg-background transition-all ${
+                  prefs.paranaReminder ? "left-[1.4rem]" : "left-0.5"
+                }`}
+              />
+            </button>
+          </div>
+          {nextParana && (
+            <p className="mt-3 rounded-xl border border-border px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+              Next: <span className="text-foreground">{nextParana.name}</span> fast on{" "}
+              {formatLongDate(nextParana.date)} · parana {formatLongDate(nextParana.parana.date)}{" "}
+              <span className="tabular-nums text-foreground">
+                {nextParana.parana.start
+                  ? `${formatTime(nextParana.parana.start, city.tz, prefs.hour12)} – ${formatTime(nextParana.parana.end, city.tz, prefs.hour12)}`
+                  : "after sunrise"}
+              </span>
+            </p>
+          )}
         </section>
 
         <section className="panel px-5 py-4">

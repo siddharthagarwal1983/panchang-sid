@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { scanFestivals } from "./panchang/festivals";
+import { scanEkadashi, type EkadashiEntry } from "./panchang/ekadashi";
 import { toCalendarDay, dayKey } from "./panchang/tz";
 import { usePrefs, type ReminderKey } from "./prefs";
 
 const FIRED_KEY = "panchang.lastNotified.v1";
 const CUSTOM_FIRED_KEY = "panchang.customNotified.v1";
+const PARANA_FIRED_KEY = "panchang.paranaNotified.v1";
 
 const MATCHERS: Record<ReminderKey, (id: string, category: string) => boolean> = {
   ekadashi: (_id, c) => c === "ekadashi",
@@ -95,6 +97,67 @@ export function ReminderScheduler() {
     const id = window.setInterval(tick, 60_000);
     return () => window.clearInterval(id);
   }, [hydrated, city, prefs.reminderTime, prefs.reminders, prefs.custom]);
+
+  return null;
+}
+
+/**
+ * Alerts when the Ekadashi parana (fast-breaking) window opens, using the
+ * sunrise and Dwadashi end of the user's currently selected city.
+ */
+export function ParanaScheduler() {
+  const { prefs, city, hydrated } = usePrefs();
+
+  useEffect(() => {
+    if (!hydrated || !prefs.paranaReminder) return;
+    if (typeof window === "undefined" || !("Notification" in window)) return;
+
+    let scannedFor = "";
+    let entries: EkadashiEntry[] = [];
+
+    const tick = () => {
+      if (Notification.permission !== "granted") return;
+      const now = new Date();
+      const today = toCalendarDay(now, city.tz);
+      const key = dayKey(today);
+
+      // Rescan once per local day: cheap enough (a ~45 day tithi prefilter).
+      if (scannedFor !== key) {
+        entries = scanEkadashi(today, 45, city);
+        scannedFor = key;
+      }
+
+      let fired: string[] = [];
+      try {
+        fired = JSON.parse(window.localStorage.getItem(PARANA_FIRED_KEY) ?? "[]") as string[];
+      } catch {
+        fired = [];
+      }
+
+      for (const e of entries) {
+        const paranaKey = `parana:${dayKey(e.parana.date)}`;
+        if (fired.includes(paranaKey)) continue;
+        const start = e.parana.start;
+        const end = e.parana.end;
+        if (!start || now < start) continue;
+        if (end && now > end) continue;
+        new Notification(`${e.name} parana window is open`, {
+          body: `Break the fast in ${city.name} now${end ? ` — until ${end.toLocaleTimeString([], { timeZone: city.tz, hour: "numeric", minute: "2-digit" })}` : ""}. ${e.parana.note}`,
+          tag: paranaKey,
+        });
+        fired = [...fired, paranaKey];
+      }
+
+      window.localStorage.setItem(
+        PARANA_FIRED_KEY,
+        JSON.stringify(fired.filter((k) => k.slice(7) >= key)),
+      );
+    };
+
+    tick();
+    const id = window.setInterval(tick, 60_000);
+    return () => window.clearInterval(id);
+  }, [hydrated, city, prefs.paranaReminder]);
 
   return null;
 }
