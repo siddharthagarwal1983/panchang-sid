@@ -5,7 +5,7 @@ import {
   assertSitemapExcludesMachineRoutes,
 } from "@/lib/seo/sitemap-entries";
 
-const BASE_URL = "https://panchanga.lovable.app";
+const BASE_URL = "https://indianpanchang.com";
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {

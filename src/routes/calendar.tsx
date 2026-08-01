@@ -25,7 +25,7 @@ export const Route = createFileRoute("/calendar")({
         content: "Browse tithis and festivals month by month, calculated for your US city.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://panchanga.lovable.app/calendar" }],
+    links: [{ rel: "canonical", href: "https://indianpanchang.com/calendar" }],
   }),
   component: CalendarPage,
 });

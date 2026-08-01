@@ -1,6 +1,6 @@
 import type { FaqItem } from "@/components/FaqSection";
 
-export const SITE_URL = "https://panchanga.lovable.app";
+export const SITE_URL = "https://indianpanchang.com";
 export const ORG_ID = `${SITE_URL}/#organization`;
 
 /** schema.org FAQPage node built from the same items rendered on the page. */
