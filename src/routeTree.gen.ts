@@ -20,6 +20,7 @@ import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VratsEkadashiRouteImport } from './routes/vrats.ekadashi'
 import { Route as MuhuratChoghadiyaRouteImport } from './routes/muhurat.choghadiya'
 import { Route as FestivalsYearRouteImport } from './routes/festivals.$year'
 import { Route as CompareEphemerisRouteImport } from './routes/compare.ephemeris'
@@ -83,6 +84,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VratsEkadashiRoute = VratsEkadashiRouteImport.update({
+  id: '/vrats/ekadashi',
+  path: '/vrats/ekadashi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MuhuratChoghadiyaRoute = MuhuratChoghadiyaRouteImport.update({
   id: '/muhurat/choghadiya',
   path: '/muhurat/choghadiya',
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/compare/ephemeris': typeof CompareEphemerisRoute
   '/festivals/$year': typeof FestivalsYearRoute
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
+  '/vrats/ekadashi': typeof VratsEkadashiRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/compare/ephemeris': typeof CompareEphemerisRoute
   '/festivals/$year': typeof FestivalsYearRoute
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
+  '/vrats/ekadashi': typeof VratsEkadashiRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/compare/ephemeris': typeof CompareEphemerisRoute
   '/festivals/$year': typeof FestivalsYearRoute
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
+  '/vrats/ekadashi': typeof VratsEkadashiRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/compare/ephemeris'
     | '/festivals/$year'
     | '/muhurat/choghadiya'
+    | '/vrats/ekadashi'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesByTo: FileRoutesByTo
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
     | '/compare/ephemeris'
     | '/festivals/$year'
     | '/muhurat/choghadiya'
+    | '/vrats/ekadashi'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
   id:
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/compare/ephemeris'
     | '/festivals/$year'
     | '/muhurat/choghadiya'
+    | '/vrats/ekadashi'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesById: FileRoutesById
@@ -263,6 +275,7 @@ export interface RootRouteChildren {
   CompareEphemerisRoute: typeof CompareEphemerisRoute
   FestivalsYearRoute: typeof FestivalsYearRoute
   MuhuratChoghadiyaRoute: typeof MuhuratChoghadiyaRoute
+  VratsEkadashiRoute: typeof VratsEkadashiRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -346,6 +359,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vrats/ekadashi': {
+      id: '/vrats/ekadashi'
+      path: '/vrats/ekadashi'
+      fullPath: '/vrats/ekadashi'
+      preLoaderRoute: typeof VratsEkadashiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/muhurat/choghadiya': {
       id: '/muhurat/choghadiya'
       path: '/muhurat/choghadiya'
@@ -416,6 +436,7 @@ const rootRouteChildren: RootRouteChildren = {
   CompareEphemerisRoute: CompareEphemerisRoute,
   FestivalsYearRoute: FestivalsYearRoute,
   MuhuratChoghadiyaRoute: MuhuratChoghadiyaRoute,
+  VratsEkadashiRoute: VratsEkadashiRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }

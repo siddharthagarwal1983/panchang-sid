@@ -168,6 +168,10 @@ function TithiTodayPage() {
               <Link to="/muhurat/choghadiya" className="text-primary underline-offset-2 hover:underline">
                 today's auspicious times
               </Link>
+              , plus{" "}
+              <Link to="/vrats/ekadashi" className="text-primary underline-offset-2 hover:underline">
+                Ekadashi dates and parana times
+              </Link>
               .
             </p>
           </>

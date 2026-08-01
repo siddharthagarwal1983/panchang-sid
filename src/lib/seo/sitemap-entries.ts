@@ -31,6 +31,7 @@ export const SITEMAP_ENTRIES: SitemapEntry[] = [
   { path: "/calendar", changefreq: "daily", priority: "0.9" },
   { path: "/tithi-today", changefreq: "daily", priority: "0.9" },
   { path: "/muhurat/choghadiya", changefreq: "daily", priority: "0.8" },
+  { path: "/vrats/ekadashi", changefreq: "weekly", priority: "0.8" },
   { path: "/festivals/2026", changefreq: "monthly", priority: "0.8" },
   { path: "/festivals/2027", changefreq: "monthly", priority: "0.8" },
   { path: "/reminders", changefreq: "monthly", priority: "0.6" },
