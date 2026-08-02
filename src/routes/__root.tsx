@@ -46,6 +46,26 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
+  // A stale deploy leaves the browser asking for chunk filenames that no longer
+  // exist ("Failed to fetch dynamically imported module"). Reload once to pick
+  // up the new asset manifest instead of showing a blank screen.
+  useEffect(() => {
+    const message = String(error?.message ?? "");
+    const isStaleChunk =
+      /dynamically imported module|Importing a module script failed|ChunkLoadError/i.test(
+        message,
+      );
+    if (!isStaleChunk || typeof window === "undefined") return;
+    const KEY = "stale-chunk-reloaded";
+    if (sessionStorage.getItem(KEY)) return;
+    sessionStorage.setItem(KEY, "1");
+    window.location.reload();
+  }, [error]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") sessionStorage.removeItem("stale-chunk-reloaded");
+  }, []);
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
