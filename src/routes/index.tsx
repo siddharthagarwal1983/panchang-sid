@@ -293,11 +293,7 @@ function TodayPage() {
 
   return (
     <main className="mx-auto max-w-md">
-      <AppHeader
-        title="Panchāṅga — Today's Tithi and Muhurta"
-        showLocation
-        showScript
-      />
+      <AppHeader title="Panchāṅga" showLocation showScript />
 
       <div className="px-5 pt-3">
         <p className="flex items-start gap-2 rounded-xl border border-primary/30 bg-primary/10 px-3 py-2 text-[12px] leading-snug text-primary">
