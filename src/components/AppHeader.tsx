@@ -116,6 +116,7 @@ export function AppHeader({
           <>
           <button
             onClick={() => openPicker(isFamily ? "family" : "mine")}
+            aria-label={`Change location — currently ${city.name}, ${city.state}`}
             className="mt-2.5 flex w-full min-w-0 items-center gap-1.5 text-left"
           >
             <MapPin className="size-3.5 shrink-0 text-primary" />

@@ -585,6 +585,7 @@ function TodayPage() {
                   <li key={`${dayKey(u.date)}:${u.festival.id}`}>
                     <button
                       onClick={() => navigate({ search: { d: dayKey(u.date) } })}
+                      aria-label={`View panchang for ${u.festival.name} on ${formatLongDate(u.date)}`}
                       className="flex w-full items-center justify-between gap-3 text-left text-sm"
                     >
                       <span className="font-display text-base text-gold">{u.festival.name}</span>

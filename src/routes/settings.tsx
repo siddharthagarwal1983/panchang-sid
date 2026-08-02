@@ -184,7 +184,7 @@ function AccountCard() {
         <button
           onClick={async () => {
             await signOut();
-            navigate({ to: "/", replace: true });
+            navigate({ to: "/", search: { d: undefined }, replace: true });
           }}
           className="rounded-xl border border-border px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-secondary"
         >

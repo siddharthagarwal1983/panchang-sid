@@ -140,6 +140,8 @@ function CalendarPage() {
               <button
                 key={key}
                 onClick={() => setSelected(isSelected ? null : key)}
+                aria-pressed={isSelected}
+                aria-label={`${formatLongDate(entry.date)} — ${entry.summary.paksha} paksha tithi ${entry.summary.tithiNumber > 15 ? entry.summary.tithiNumber - 15 : entry.summary.tithiNumber}${entry.festivals.length > 0 ? `, ${entry.festivals.map((f) => f.name).join(", ")}` : ""}`}
                 className={`flex aspect-square flex-col items-center justify-center rounded-lg border text-sm transition-colors ${
                   isSelected
                     ? "border-primary bg-primary/15"

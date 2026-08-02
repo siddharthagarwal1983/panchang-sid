@@ -52,7 +52,7 @@ export function SignInGate({ next, title, description, skeletonRows = 3, childre
     return (
       <section className="panel px-5 py-6 text-center">
         <Lock className="mx-auto size-5 text-primary" />
-        <h3 className="mt-2 font-display text-base">{title}</h3>
+        <h2 className="mt-2 font-display text-base">{title}</h2>
         <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{description}</p>
         <Link
           to="/auth"
