@@ -2,6 +2,26 @@ import type { FaqItem } from "@/components/FaqSection";
 
 export const SITE_URL = "https://indianpanchang.com";
 export const ORG_ID = `${SITE_URL}/#organization`;
+export const SITE_ID = `${SITE_URL}/#website`;
+/** Absolute image used for Article/Event `image` (Google requires absolute URLs). */
+export const SITE_IMAGE = `${SITE_URL}/app-icon-512.png`;
+/** Static dates keep SSR and hydration output identical. */
+export const SITE_PUBLISHED = "2026-01-01";
+export const SITE_MODIFIED = "2026-08-02";
+
+export const ORG_NODE = {
+  "@type": "Organization",
+  "@id": ORG_ID,
+  name: "Panchāṅga",
+  alternateName: ["Panchang", "Panchanga"],
+  url: SITE_URL,
+  logo: {
+    "@type": "ImageObject",
+    url: SITE_IMAGE,
+    width: 512,
+    height: 512,
+  },
+};
 
 /** schema.org FAQPage node built from the same items rendered on the page. */
 export function faqPageSchema(items: FaqItem[]) {
@@ -31,16 +51,27 @@ export function articleSchema({
   headline,
   description,
   url,
+  datePublished = SITE_PUBLISHED,
+  dateModified = SITE_MODIFIED,
+  image = SITE_IMAGE,
 }: {
   headline: string;
   description: string;
   url: string;
+  datePublished?: string;
+  dateModified?: string;
+  image?: string;
 }) {
   return {
     "@type": "Article",
     headline,
     description,
-    mainEntityOfPage: url,
+    image: [image],
+    datePublished,
+    dateModified,
+    isAccessibleForFree: true,
+    author: { "@id": ORG_ID },
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
     inLanguage: "en",
     publisher: { "@id": ORG_ID },
   };
@@ -61,6 +92,8 @@ export function eventSchema({
   endDate,
   url,
   locationName,
+  address,
+  image = SITE_IMAGE,
 }: {
   name: string;
   description: string;
@@ -69,18 +102,36 @@ export function eventSchema({
   endDate?: string;
   url: string;
   locationName: string;
+  address?: { addressLocality: string; addressRegion?: string; addressCountry: string };
+  image?: string;
 }) {
   return {
     "@type": "Event",
     name,
     description,
     startDate,
-    ...(endDate ? { endDate } : {}),
+    endDate: endDate ?? startDate,
     eventStatus: "https://schema.org/EventScheduled",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-    location: { "@type": "Place", name: locationName },
+    location: {
+      "@type": "Place",
+      name: locationName,
+      address: address
+        ? { "@type": "PostalAddress", ...address }
+        : { "@type": "PostalAddress", addressCountry: "US" },
+    },
+    image: [image],
     url,
     isAccessibleForFree: true,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      url,
+      validFrom: SITE_PUBLISHED,
+    },
+    performer: { "@id": ORG_ID },
     organizer: { "@id": ORG_ID },
   };
 }
@@ -148,11 +199,15 @@ export function webPageSchema({
 }) {
   return {
     "@type": "WebPage",
+    "@id": url,
     name,
     description,
     url,
     inLanguage: "en",
-    isPartOf: { "@id": SITE_URL },
+    isPartOf: { "@id": SITE_ID },
+    primaryImageOfPage: { "@type": "ImageObject", url: SITE_IMAGE },
+    datePublished: SITE_PUBLISHED,
+    dateModified: SITE_MODIFIED,
     ...(about ? { about } : {}),
   };
 }
