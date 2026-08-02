@@ -68,6 +68,19 @@ export const Route = createFileRoute("/vrats/ekadashi")({
           { name: "Ekadashi dates and parana", url: URL },
         ]),
         faqPageSchema(FAQS),
+        itemListSchema({
+          name: `Ekadashi fasting dates ${new Date().getUTCFullYear()}`,
+          description:
+            "Every Ekadashi vrat of the year with its parana (fast-breaking) window.",
+          items: ekadashiEventNodes(new Date().getUTCFullYear()),
+        }),
+        definedTermSchema({
+          name: "Ekadashi",
+          alternateName: ["Ekadasi", "Ekadashi vrat"],
+          description:
+            "The eleventh tithi of each lunar fortnight, observed as a grain-free fast that is broken during the parana window the following morning.",
+          url: URL,
+        }),
       ]),
     ],
   }),
