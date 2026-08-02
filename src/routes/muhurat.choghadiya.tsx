@@ -15,8 +15,11 @@ import {
   SITE_URL,
   articleSchema,
   breadcrumbSchema,
+  definedTermSchema,
   faqPageSchema,
+  itemListSchema,
   ldJson,
+  webPageSchema,
 } from "@/lib/seo/schema";
 
 const TITLE = "Choghadiya Muhurat Today — Local Times | Panchanga";
@@ -73,6 +76,30 @@ export const Route = createFileRoute("/muhurat/choghadiya")({
           { name: "Choghadiya Muhurat", url: URL },
         ]),
         faqPageSchema(FAQS),
+        webPageSchema({
+          name: TITLE,
+          description: DESCRIPTION,
+          url: URL,
+          about: definedTermSchema({
+            name: "Choghadiya Muhurat",
+            alternateName: ["Choghadiya", "Chogadia", "Muhurat", "Muhurta"],
+            description:
+              "Eight day and eight night time windows derived from local sunrise and sunset, each ruled by a planet and rated auspicious, neutral or inauspicious for starting work.",
+            url: URL,
+          }),
+        }),
+        itemListSchema({
+          name: "Choghadiya windows",
+          description:
+            "The eight choghadiya periods, their ruling planet and traditional quality.",
+          items: Object.values(CHOGHADIYA_META).map((meta) => ({
+            "@type": "DefinedTerm",
+            name: meta.name,
+            alternateName: [meta.devanagari],
+            description: `Ruled by ${meta.lord} · traditionally ${meta.quality}.`,
+            url: URL,
+          })),
+        }),
       ]),
     ],
   }),
