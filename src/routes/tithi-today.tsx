@@ -11,8 +11,10 @@ import {
   SITE_URL,
   articleSchema,
   breadcrumbSchema,
+  definedTermSchema,
   faqPageSchema,
   ldJson,
+  webPageSchema,
 } from "@/lib/seo/schema";
 
 const TITLE = "Tithi Today — Local Start & End Times | Panchanga";
@@ -69,6 +71,34 @@ export const Route = createFileRoute("/tithi-today")({
           { name: "Tithi today", url: URL },
         ]),
         faqPageSchema(FAQS),
+        webPageSchema({
+          name: TITLE,
+          description: DESCRIPTION,
+          url: URL,
+          about: [
+            definedTermSchema({
+              name: "Tithi",
+              alternateName: ["Lunar day", "Thithi"],
+              description:
+                "A lunar day: the time the moon takes to gain 12° of longitude on the sun. The tithi running at local sunrise names the day in the Hindu calendar.",
+              url: URL,
+            }),
+            definedTermSchema({
+              name: "Paksha",
+              alternateName: ["Shukla paksha", "Krishna paksha"],
+              description:
+                "The lunar fortnight — Shukla paksha waxes from new moon to full moon, Krishna paksha wanes from full moon to new moon.",
+              url: URL,
+            }),
+            definedTermSchema({
+              name: "Nakshatra",
+              alternateName: ["Lunar mansion"],
+              description:
+                "One of 27 sidereal segments of the ecliptic; the nakshatra is the segment the moon occupies at a given moment.",
+              url: `${SITE_URL}/`,
+            }),
+          ],
+        }),
       ]),
     ],
   }),
