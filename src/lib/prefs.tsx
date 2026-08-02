@@ -58,7 +58,7 @@ const DEFAULTS: Prefs = {
   recentPlaces: [],
   hour12: true,
   tradition: "amanta",
-  theme: "night",
+  theme: "day",
   script: "iast",
   reminders: {
     ekadashi: true,
