@@ -7,7 +7,7 @@ import { usePrefs } from "@/lib/prefs";
 import { scanFestivals } from "@/lib/panchang/festivals";
 import { FESTIVAL_DETAILS } from "@/lib/panchang/festivalDetails";
 import { formatLongDate } from "@/lib/panchang/tz";
-import { breadcrumbSchema, itemListSchema, ldJson } from "@/lib/seo/schema";
+import { itemListSchema, ldJson } from "@/lib/seo/schema";
 import { festivalEventNodes } from "@/lib/seo/observance-events";
 
 const YEARS = ["2026", "2027"] as const;
