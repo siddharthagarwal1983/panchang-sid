@@ -10,9 +10,12 @@ import {
   SITE_URL,
   articleSchema,
   breadcrumbSchema,
+  definedTermSchema,
   faqPageSchema,
+  itemListSchema,
   ldJson,
 } from "@/lib/seo/schema";
+import { ekadashiEventNodes } from "@/lib/seo/observance-events";
 
 const TITLE = "Ekadashi 2026 Dates & Parana Times | Panchanga";
 const DESCRIPTION =
