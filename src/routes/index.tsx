@@ -50,12 +50,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Today's tithi with fasting status, local sunrise and sunset, plus Abhijit Muhurta and Rahu Kalam windows for your city.",
+          "Daily Hindu Panchang for the U.S. diaspora — tithi, nakshatra, fasting, festivals, sunrise/sunset and muhurta windows calculated for your local city.",
       },
       { property: "og:title", content: "Today's Panchang — Tithi, Fasting & Muhurta" },
       {
         property: "og:description",
-        content: "Daily Hindu almanac timings calculated for your local sunrise, no account needed.",
+        content:
+          "Accurate daily Panchang tuned to your U.S. timezone. Get tithi, fasting days, festivals, local sunrise/sunset and auspicious muhurta times.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE_URL}/` },
@@ -63,7 +64,8 @@ export const Route = createFileRoute("/")({
       { name: "twitter:title", content: "Today's Panchang — Tithi, Fasting & Muhurta" },
       {
         name: "twitter:description",
-        content: "Daily Hindu almanac timings calculated for your local sunrise, no account needed.",
+        content:
+          "Accurate daily Panchang tuned to your U.S. timezone. Get tithi, fasting days, festivals, local sunrise/sunset and auspicious muhurta times.",
       },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/` }],
