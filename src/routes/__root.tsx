@@ -143,6 +143,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@graph": [
             {
               "@type": "WebSite",
+              "@id": "https://indianpanchang.com/#website",
               name: "Panchāṅga",
               alternateName: ["Panchang", "Panchanga", "Panchangam"],
               url: "https://indianpanchang.com",
@@ -157,7 +158,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               name: "Panchāṅga",
               alternateName: ["Panchang", "Panchanga"],
               url: "https://indianpanchang.com",
-              logo: "https://indianpanchang.com/app-icon-512.png",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://indianpanchang.com/app-icon-512.png",
+                width: 512,
+                height: 512,
+              },
+              image: "https://indianpanchang.com/app-icon-512.png",
             },
           ],
         }),
