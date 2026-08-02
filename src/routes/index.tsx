@@ -38,7 +38,13 @@ import {
 } from "@/lib/panchang/tz";
 import { usePrefs } from "@/lib/prefs";
 import { useReminderNotifications } from "@/lib/useReminderNotifications";
-import { SITE_URL, ldJson } from "@/lib/seo/schema";
+import {
+  SITE_URL,
+  breadcrumbSchema,
+  definedTermSchema,
+  ldJson,
+  webPageSchema,
+} from "@/lib/seo/schema";
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -83,6 +89,42 @@ export const Route = createFileRoute("/")({
           offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
           publisher: { "@id": `${SITE_URL}/#organization` },
         },
+        webPageSchema({
+          name: "Today's Panchang — Tithi, Fasting & Muhurta",
+          description:
+            "Daily Hindu Panchang for the U.S. diaspora — tithi, nakshatra, fasting, festivals, sunrise/sunset and muhurta windows calculated for your local city.",
+          url: `${SITE_URL}/`,
+          about: [
+            definedTermSchema({
+              name: "Panchāṅga",
+              alternateName: ["Panchang", "Panchangam", "Hindu calendar"],
+              description:
+                "The five limbs of the Hindu almanac — tithi, nakshatra, yoga, karana and vara — read at local sunrise.",
+              url: `${SITE_URL}/`,
+            }),
+            definedTermSchema({
+              name: "Tithi",
+              alternateName: ["Lunar day"],
+              description:
+                "A lunar day, the time the moon takes to gain 12° of longitude on the sun.",
+              url: `${SITE_URL}/tithi-today`,
+            }),
+            definedTermSchema({
+              name: "Nakshatra",
+              alternateName: ["Lunar mansion"],
+              description: "One of 27 sidereal segments of the ecliptic occupied by the moon.",
+              url: `${SITE_URL}/`,
+            }),
+            definedTermSchema({
+              name: "Muhurta",
+              alternateName: ["Muhurat", "Choghadiya"],
+              description:
+                "An auspicious or inauspicious time window of the day, derived from local sunrise and sunset.",
+              url: `${SITE_URL}/muhurat/choghadiya`,
+            }),
+          ],
+        }),
+        breadcrumbSchema([{ name: "Home", url: `${SITE_URL}/` }]),
       ]),
     ],
   }),
