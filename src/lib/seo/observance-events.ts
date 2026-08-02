@@ -16,6 +16,11 @@ export const REFERENCE_CITY: City =
   CITIES.find((c) => c.id === DEFAULT_CITY_ID) ?? CITIES[0];
 
 const REFERENCE_LOCATION = `${REFERENCE_CITY.name}, ${REFERENCE_CITY.state}, USA`;
+const REFERENCE_ADDRESS = {
+  addressLocality: REFERENCE_CITY.name,
+  addressRegion: REFERENCE_CITY.state,
+  addressCountry: "US",
+};
 
 function isoDate(day: CalendarDay): string {
   return `${day.year}-${String(day.month).padStart(2, "0")}-${String(day.day).padStart(2, "0")}`;
@@ -45,6 +50,7 @@ export function festivalEventNodes(year: number): unknown[] {
           startDate: isoDate(day.date),
           url,
           locationName: REFERENCE_LOCATION,
+          address: REFERENCE_ADDRESS,
         }),
       );
     }
@@ -69,6 +75,7 @@ export function ekadashiEventNodes(year: number): unknown[] {
       endDate: isoDate(entry.parana.date),
       url,
       locationName: REFERENCE_LOCATION,
+      address: REFERENCE_ADDRESS,
     }),
   );
   ekadashiCache.set(year, nodes);

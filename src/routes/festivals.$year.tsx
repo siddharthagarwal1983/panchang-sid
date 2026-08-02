@@ -7,7 +7,7 @@ import { usePrefs } from "@/lib/prefs";
 import { scanFestivals } from "@/lib/panchang/festivals";
 import { FESTIVAL_DETAILS } from "@/lib/panchang/festivalDetails";
 import { formatLongDate } from "@/lib/panchang/tz";
-import { itemListSchema, ldJson } from "@/lib/seo/schema";
+import { articleSchema, breadcrumbSchema, itemListSchema, ldJson } from "@/lib/seo/schema";
 import { festivalEventNodes } from "@/lib/seo/observance-events";
 
 const YEARS = ["2026", "2027"] as const;
@@ -37,52 +37,16 @@ export const Route = createFileRoute("/festivals/$year")({
     ],
     links: [{ rel: "canonical", href: `${BASE_URL}/festivals/${params.year}` }],
     scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Article",
+      ldJson([
+        articleSchema({
           headline: titleFor(params.year),
           description: descriptionFor(params.year),
-          articleSection: "Hindu festival calendar",
-          about: `Hindu festivals ${params.year}`,
-          inLanguage: "en",
-          isAccessibleForFree: true,
-          mainEntityOfPage: {
-            "@type": "WebPage",
-            "@id": `${BASE_URL}/festivals/${params.year}`,
-          },
-          author: { "@type": "Organization", name: "Panchāṅga", url: BASE_URL },
-          publisher: {
-            "@type": "Organization",
-            name: "Panchāṅga",
-            url: BASE_URL,
-            logo: {
-              "@type": "ImageObject",
-              url: `${BASE_URL}/app-icon-512.png`,
-              width: 512,
-              height: 512,
-            },
-          },
+          url: `${BASE_URL}/festivals/${params.year}`,
         }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Panchāṅga", item: BASE_URL },
-            {
-              "@type": "ListItem",
-              position: 2,
-              name: `Hindu festival calendar ${params.year}`,
-              item: `${BASE_URL}/festivals/${params.year}`,
-            },
-          ],
-        }),
-      },
-      ldJson([
+        breadcrumbSchema([
+          { name: "Home", url: `${BASE_URL}/` },
+          { name: `Hindu festival calendar ${params.year}`, url: `${BASE_URL}/festivals/${params.year}` },
+        ]),
         itemListSchema({
           name: `Hindu festivals ${params.year}`,
           description: descriptionFor(params.year),
