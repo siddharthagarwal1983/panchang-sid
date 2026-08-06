@@ -3,6 +3,7 @@ import { Lock } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { useAuth } from "@/lib/auth";
+import { trackAuthFunnel } from "@/lib/analytics/auth-funnel";
 
 type Props = {
   /** Path to return to after signing in. Defaults to the current URL. */
@@ -57,6 +58,7 @@ export function SignInGate({ next, title, description, skeletonRows = 3, childre
         <Link
           to="/auth"
           search={{ next: target }}
+          onClick={() => trackAuthFunnel("sign_in_cta_clicked", { source: `gate:${target}` })}
           className="mt-4 inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm text-primary-foreground transition-opacity hover:opacity-90"
         >
           Sign in
