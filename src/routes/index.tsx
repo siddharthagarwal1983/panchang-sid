@@ -306,16 +306,20 @@ function TodayPage() {
       </div>
 
       <div className="flex items-center justify-between gap-2 px-5 py-4">
-        <button
-          onClick={() => go(-1)}
-          aria-label="Previous day"
-          className="rounded-full border border-border p-2 transition-colors hover:bg-secondary"
-        >
-          <ChevronLeft className="size-4" />
-        </button>
+        {isSignedIn ? (
+          <button
+            onClick={() => go(-1)}
+            aria-label="Previous day"
+            className="rounded-full border border-border p-2 transition-colors hover:bg-secondary"
+          >
+            <ChevronLeft className="size-4" />
+          </button>
+        ) : (
+          <span className="size-8" aria-hidden="true" />
+        )}
         <div className="text-center">
           <p className="font-display text-base">{formatLongDate(date)}</p>
-          {!isToday && (
+          {isSignedIn && !isToday && (
             <button
               onClick={() => navigate({ search: { d: undefined } })}
               className="mt-0.5 text-xs text-primary underline-offset-4 hover:underline"
@@ -324,13 +328,17 @@ function TodayPage() {
             </button>
           )}
         </div>
-        <button
-          onClick={() => go(1)}
-          aria-label="Next day"
-          className="rounded-full border border-border p-2 transition-colors hover:bg-secondary"
-        >
-          <ChevronRight className="size-4" />
-        </button>
+        {isSignedIn ? (
+          <button
+            onClick={() => go(1)}
+            aria-label="Next day"
+            className="rounded-full border border-border p-2 transition-colors hover:bg-secondary"
+          >
+            <ChevronRight className="size-4" />
+          </button>
+        ) : (
+          <span className="size-8" aria-hidden="true" />
+        )}
       </div>
 
       {!panchang ? (
