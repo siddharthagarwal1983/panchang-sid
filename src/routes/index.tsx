@@ -613,6 +613,7 @@ function TodayPage() {
             Timings may differ by a few minutes from your family almanac.
           </p>
 
+          {isSignedIn && (
           <p className="px-1 text-center text-xs text-muted-foreground">
             More detail:{" "}
             <Link to="/tithi-today" className="text-primary underline-offset-2 hover:underline">
@@ -627,6 +628,7 @@ function TodayPage() {
               panchang FAQ
             </Link>
           </p>
+          )}
         </div>
       )}
 
