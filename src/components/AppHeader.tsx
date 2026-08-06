@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth";
 import { tzLabel } from "@/lib/panchang/cities";
 import { usePrefs } from "@/lib/prefs";
 import { displayFontClass } from "@/lib/typography";
+import { trackAuthFunnel } from "@/lib/analytics/auth-funnel";
 
 export function AppHeader({
   title,

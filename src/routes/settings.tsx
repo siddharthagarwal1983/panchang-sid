@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth";
 import { usePrefs } from "@/lib/prefs";
 import { useReminderNotifications } from "@/lib/useReminderNotifications";
 import { SITE_URL, faqPageSchema, ldJson } from "@/lib/seo/schema";
+import { trackAuthFunnel } from "@/lib/analytics/auth-funnel";
 
 const FAQS: FaqItem[] = [
   {
