@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth";
 import { usePrefs } from "@/lib/prefs";
 import { useReminderNotifications } from "@/lib/useReminderNotifications";
 import { SITE_URL, faqPageSchema, ldJson } from "@/lib/seo/schema";
+import { trackAuthFunnel } from "@/lib/analytics/auth-funnel";
 
 const FAQS: FaqItem[] = [
   {
@@ -143,6 +144,7 @@ function AccountCard() {
         <Link
           to="/auth"
           search={{ next: undefined }}
+          onClick={() => trackAuthFunnel("sign_in_cta_clicked", { source: "settings" })}
           className="mt-3 flex w-full items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm text-primary-foreground transition-opacity hover:opacity-90"
         >
           Sign in

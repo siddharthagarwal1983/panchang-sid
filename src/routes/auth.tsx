@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { LoaderCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { trackAuthFunnel } from "@/lib/analytics/auth-funnel";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -49,8 +50,30 @@ function AuthPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Funnel: someone reached the sign-in screen. If they leave it without a
+  // session, that visit is recorded as an abandoned sign-in.
+  const signedInRef = useRef(false);
+  signedInRef.current = Boolean(session);
+
+  useEffect(() => {
+    trackAuthFunnel("sign_in_page_viewed");
+    let reported = false;
+    const abandon = () => {
+      if (signedInRef.current || reported) return;
+      reported = true;
+      trackAuthFunnel("sign_in_abandoned");
+    };
+    const onHide = () => abandon();
+    window.addEventListener("pagehide", onHide);
+    return () => {
+      window.removeEventListener("pagehide", onHide);
+      abandon();
+    };
+  }, []);
+
   useEffect(() => {
     if (!session) return;
+    trackAuthFunnel("sign_in_completed");
     // Return to the page that triggered the sign-in, without leaving /auth on
     // the back stack.
     navigate({ to: safeNext ?? "/settings", replace: true });
@@ -59,6 +82,7 @@ function AuthPage() {
   const withGoogle = async () => {
     setError(null);
     setBusy(true);
+    trackAuthFunnel("sign_in_attempted", { method: "google" });
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: returnUrl,
     });
@@ -77,6 +101,7 @@ function AuthPage() {
     setMessage(null);
     setBusy(true);
     if (mode === "signup") {
+      trackAuthFunnel("sign_in_attempted", { method: "email_signup" });
       const { error: err } = await supabase.auth.signUp({
         email,
         password,
@@ -88,6 +113,7 @@ function AuthPage() {
       if (err) setError(err.message);
       else setMessage("Check your inbox to confirm your email, then sign in.");
     } else {
+      trackAuthFunnel("sign_in_attempted", { method: "email_password" });
       const { error: err } = await supabase.auth.signInWithPassword({ email, password });
       if (err) setError(err.message);
     }

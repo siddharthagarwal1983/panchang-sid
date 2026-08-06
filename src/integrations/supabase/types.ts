@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      auth_funnel_events: {
+        Row: {
+          created_at: string
+          event: string
+          id: string
+          method: string | null
+          source: string | null
+          visitor_key: string
+        }
+        Insert: {
+          created_at?: string
+          event: string
+          id?: string
+          method?: string | null
+          source?: string | null
+          visitor_key: string
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          id?: string
+          method?: string | null
+          source?: string | null
+          visitor_key?: string
+        }
+        Relationships: []
+      }
       feedback: {
         Row: {
           category: string
