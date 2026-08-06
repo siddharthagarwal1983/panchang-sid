@@ -8,7 +8,11 @@ const auth = vi.hoisted(() => ({ user: null as unknown, loading: false }));
 vi.mock("@/lib/auth", () => ({ useAuth: () => auth }));
 vi.mock("@tanstack/react-router", () => ({
   useRouterState: () => "/",
-  Link: ({ children, ...rest }: { children: React.ReactNode }) => <a {...rest}>{children}</a>,
+  Link: ({ children, to, onClick }: { children: React.ReactNode; to: string; onClick?: () => void }) => (
+    <a href={to} onClick={onClick}>
+      {children}
+    </a>
+  ),
 }));
 vi.mock("@/lib/analytics/auth-funnel", () => ({ trackAuthFunnel: vi.fn() }));
 
