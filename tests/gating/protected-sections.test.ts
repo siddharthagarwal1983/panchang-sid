@@ -12,7 +12,7 @@ const calendar = readFileSync("src/routes/calendar.tsx", "utf8");
 /** Extract the source between a marker and its closing `)}` of a `{isSignedIn && (` block. */
 function signedInBlocks(source: string): string[] {
   const blocks: string[] = [];
-  const re = /isSignedIn \? \(|isSignedIn && \(/g;
+  const re = /isSignedIn[^()]*(?:\? \(|&& \()/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(source))) {
     let depth = 1;
