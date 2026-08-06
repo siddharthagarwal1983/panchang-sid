@@ -5,6 +5,7 @@ import type { FestivalDay } from "@/lib/panchang/festivals";
 
 import { AppHeader } from "@/components/AppHeader";
 import { SignInGate } from "@/components/SignInGate";
+import { useAuth } from "@/lib/auth";
 import { scanFestivals } from "@/lib/panchang/festivals";
 import { MASA_NAMES } from "@/lib/panchang/names";
 import { dayKey, formatLongDate, toCalendarDay, weekdayIndex, type CalendarDay } from "@/lib/panchang/tz";
@@ -34,6 +35,7 @@ const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
 
 function CalendarPage() {
   const { city, prefs, hydrated } = usePrefs();
+  const isSignedIn = Boolean(useAuth().user);
   const [now] = useState(() => new Date());
   const today = useMemo(() => toCalendarDay(now, city.tz), [now, city.tz]);
   const [cursor, setCursor] = useState({ year: today.year, month: today.month });
@@ -168,7 +170,7 @@ function CalendarPage() {
       </div>
 
       <div className="space-y-4 px-5 py-6">
-        {selectedEntry ? (
+        {isSignedIn && selectedEntry ? (
           <section className="panel px-5 py-4">
             <p className="font-display text-lg">{formatLongDate(selectedEntry.date)}</p>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -200,7 +202,9 @@ function CalendarPage() {
           </section>
         ) : (
           <p className="text-center text-xs text-muted-foreground">
-            Tap any date for its tithi, nakshatra and observances.
+            {isSignedIn
+              ? "Tap any date for its tithi, nakshatra and observances."
+              : "Dots mark festival days. Sign in to open a date's tithi, nakshatra and observances."}
           </p>
         )}
 
