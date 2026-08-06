@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { LoaderCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
 import { lovable } from "@/integrations/lovable/index";
@@ -52,23 +52,21 @@ function AuthPage() {
 
   // Funnel: someone reached the sign-in screen. If they leave it without a
   // session, that visit is recorded as an abandoned sign-in.
+  const signedInRef = useRef(false);
+  signedInRef.current = Boolean(session);
+
   useEffect(() => {
     trackAuthFunnel("sign_in_page_viewed");
-    let completed = false;
     let reported = false;
     const abandon = () => {
-      if (completed || reported) return;
+      if (signedInRef.current || reported) return;
       reported = true;
       trackAuthFunnel("sign_in_abandoned");
     };
     const onHide = () => abandon();
     window.addEventListener("pagehide", onHide);
-    const unsub = supabase.auth.onAuthStateChange((_e, s) => {
-      if (s) completed = true;
-    });
     return () => {
       window.removeEventListener("pagehide", onHide);
-      unsub.data.subscription.unsubscribe();
       abandon();
     };
   }, []);
