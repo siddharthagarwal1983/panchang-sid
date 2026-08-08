@@ -44,9 +44,36 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+// Google picked https://panchanga.lovable.app/ as the canonical for the site,
+// splitting indexing across hosts. Send every duplicate host to the custom
+// domain with a permanent redirect so only one origin is indexable.
+const CANONICAL_HOST = "indianpanchang.com";
+const DUPLICATE_HOSTS = new Set(["panchanga.lovable.app", "www.indianpanchang.com"]);
+// Machine-only endpoints (MCP / OAuth discovery) must keep responding on their host.
+const NO_REDIRECT_PREFIXES = ["/mcp", "/.mcp", "/.well-known", "/.lovable", "/api"];
+
+function canonicalHostRedirect(request: Request): Response | undefined {
+  let url: URL;
+  try {
+    url = new URL(request.url);
+  } catch {
+    return undefined;
+  }
+  if (!DUPLICATE_HOSTS.has(url.hostname)) return undefined;
+  if (NO_REDIRECT_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(`${p}/`))) {
+    return undefined;
+  }
+  url.protocol = "https:";
+  url.hostname = CANONICAL_HOST;
+  url.port = "";
+  return new Response(null, { status: 301, headers: { location: url.toString() } });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      const redirect = canonicalHostRedirect(request);
+      if (redirect) return redirect;
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);

@@ -48,6 +48,7 @@ export const Route = createFileRoute("/settings")({
         content:
           "Personalise city, time format, theme and notifications, plus panchang FAQs and legal information.",
       },
+      { name: "robots", content: "noindex, follow" },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/settings` }],
     scripts: [ldJson([faqPageSchema(FAQS)])],

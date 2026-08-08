@@ -26,6 +26,7 @@ export const Route = createFileRoute("/reminders")({
         property: "og:description",
         content: "Choose the observances you keep and see every upcoming date.",
       },
+      { name: "robots", content: "noindex, follow" },
     ],
     links: [{ rel: "canonical", href: "https://indianpanchang.com/reminders" }],
   }),

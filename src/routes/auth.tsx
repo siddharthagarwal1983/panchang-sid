@@ -25,7 +25,10 @@ export const Route = createFileRoute("/auth")({
         property: "og:description",
         content: "Sync your panchang settings and reminders across your devices.",
       },
+      // Account-only utility page: no unique content for search results.
+      { name: "robots", content: "noindex, follow" },
     ],
+    links: [{ rel: "canonical", href: "https://indianpanchang.com/auth" }],
   }),
   component: AuthPage,
 });
