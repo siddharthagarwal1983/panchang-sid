@@ -34,6 +34,28 @@ export const SITEMAP_ENTRIES: SitemapEntry[] = [
   { path: "/vrats/ekadashi", changefreq: "weekly", priority: "0.8" },
   { path: "/festivals/2026", changefreq: "monthly", priority: "0.8" },
   { path: "/festivals/2027", changefreq: "monthly", priority: "0.8" },
+  { path: "/vrats/ekadashi/parana", changefreq: "daily", priority: "0.9" },
+  ...[2026, 2027].flatMap((year) => [
+    { path: `/vrats/ekadashi/${year}`, changefreq: "weekly" as const, priority: "0.8" },
+    ...[
+      "january",
+      "february",
+      "march",
+      "april",
+      "may",
+      "june",
+      "july",
+      "august",
+      "september",
+      "october",
+      "november",
+      "december",
+    ].map((month) => ({
+      path: `/vrats/ekadashi/${year}/${month}`,
+      changefreq: "monthly" as const,
+      priority: "0.6",
+    })),
+  ]),
   // /auth, /settings, /reminders and /feedback are account-only utility pages
   // marked noindex — keeping them out of the sitemap avoids "Excluded by
   // noindex" reports and concentrates crawl budget on content pages.
