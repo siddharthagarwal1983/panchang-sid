@@ -44,6 +44,40 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+// Static font files under /fonts are content-hashed (or version-pinned subsets)
+// and never change in place, so they can be cached for a year. fonts.css itself
+// is a small manifest — cache it for a day and let it revalidate.
+function withStaticAssetCaching(request: Request, response: Response): Response {
+  if (request.method !== "GET" && request.method !== "HEAD") return response;
+  if (!response.ok) return response;
+  if (response.headers.has("cache-control")) return response;
+
+  let pathname: string;
+  try {
+    pathname = new URL(request.url).pathname;
+  } catch {
+    return response;
+  }
+
+  let cacheControl: string | undefined;
+  if (/^\/fonts\/.+\.woff2?$/.test(pathname)) {
+    cacheControl = "public, max-age=31536000, immutable";
+  } else if (pathname === "/fonts/fonts.css") {
+    cacheControl = "public, max-age=86400, stale-while-revalidate=604800";
+  } else if (/^\/(favicon\.(ico|png)|app-icon-\d+\.png|manifest\.webmanifest)$/.test(pathname)) {
+    cacheControl = "public, max-age=604800";
+  }
+  if (!cacheControl) return response;
+
+  const headers = new Headers(response.headers);
+  headers.set("cache-control", cacheControl);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 // Google picked https://panchanga.lovable.app/ as the canonical for the site,
 // splitting indexing across hosts. Send every duplicate host to the custom
 // domain with a permanent redirect so only one origin is indexable.
@@ -76,7 +110,8 @@ export default {
       if (redirect) return redirect;
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      const normalized = await normalizeCatastrophicSsrResponse(response);
+      return withStaticAssetCaching(request, normalized);
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {
