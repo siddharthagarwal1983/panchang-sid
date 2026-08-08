@@ -29,6 +29,7 @@ import { Route as VratsEkadashiIndexRouteImport } from './routes/vrats.ekadashi.
 import { Route as VratsEkadashiParanaRouteImport } from './routes/vrats.ekadashi.parana'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
+import { Route as VratsEkadashiYearIndexRouteImport } from './routes/vrats.ekadashi.$year.index'
 
 const TithiTodayRoute = TithiTodayRouteImport.update({
   id: '/tithi-today',
@@ -133,6 +134,11 @@ const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VratsEkadashiYearIndexRoute = VratsEkadashiYearIndexRouteImport.update({
+  id: '/vrats/ekadashi/$year/',
+  path: '/vrats/ekadashi/$year/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
   '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
+  '/vrats/ekadashi/$year/': typeof VratsEkadashiYearIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
   '/vrats/ekadashi': typeof VratsEkadashiIndexRoute
+  '/vrats/ekadashi/$year': typeof VratsEkadashiYearIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -200,6 +208,7 @@ export interface FileRoutesById {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
   '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
+  '/vrats/ekadashi/$year/': typeof VratsEkadashiYearIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -224,6 +233,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/vrats/ekadashi/parana'
     | '/vrats/ekadashi/'
+    | '/vrats/ekadashi/$year/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -246,6 +256,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/vrats/ekadashi/parana'
     | '/vrats/ekadashi'
+    | '/vrats/ekadashi/$year'
   id:
     | '__root__'
     | '/'
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/vrats/ekadashi/parana'
     | '/vrats/ekadashi/'
+    | '/vrats/ekadashi/$year/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -291,6 +303,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   VratsEkadashiParanaRoute: typeof VratsEkadashiParanaRoute
   VratsEkadashiIndexRoute: typeof VratsEkadashiIndexRoute
+  VratsEkadashiYearIndexRoute: typeof VratsEkadashiYearIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -435,6 +448,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vrats/ekadashi/$year/': {
+      id: '/vrats/ekadashi/$year/'
+      path: '/vrats/ekadashi/$year'
+      fullPath: '/vrats/ekadashi/$year/'
+      preLoaderRoute: typeof VratsEkadashiYearIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -460,6 +480,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   VratsEkadashiParanaRoute: VratsEkadashiParanaRoute,
   VratsEkadashiIndexRoute: VratsEkadashiIndexRoute,
+  VratsEkadashiYearIndexRoute: VratsEkadashiYearIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
