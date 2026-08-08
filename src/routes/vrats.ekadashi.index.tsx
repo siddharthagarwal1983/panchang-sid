@@ -122,6 +122,42 @@ function EkadashiPage() {
       <div className="space-y-4 px-5 py-5">
         <section className="panel px-5 py-5">
           <p className="text-xs leading-relaxed text-muted-foreground">
+            Looking for{" "}
+            <Link
+              to="/vrats/ekadashi/parana"
+              className="text-primary underline-offset-2 hover:underline"
+            >
+              Ekadashi parana time today or tomorrow
+            </Link>
+            , or a single month like{" "}
+            <Link
+              to="/vrats/ekadashi/$year/$month"
+              params={{ year: String(year), month: "april" }}
+              className="text-primary underline-offset-2 hover:underline"
+            >
+              Ekadashi in April {year}
+            </Link>
+            ? Full year lists:{" "}
+            <Link
+              to="/vrats/ekadashi/$year"
+              params={{ year: "2026" }}
+              className="text-primary underline-offset-2 hover:underline"
+            >
+              Ekadashi 2026
+            </Link>{" "}
+            ·{" "}
+            <Link
+              to="/vrats/ekadashi/$year"
+              params={{ year: "2027" }}
+              className="text-primary underline-offset-2 hover:underline"
+            >
+              Ekadashi 2027
+            </Link>
+            .
+          </p>
+        </section>
+        <section className="panel px-5 py-5">
+          <p className="text-xs leading-relaxed text-muted-foreground">
             Each fast below is the Ekadashi tithi running at sunrise in {city.name}. Parana is the
             next morning, after sunrise, within Dwadashi and after Hari Vasara has passed — shown
             here in your local time.
