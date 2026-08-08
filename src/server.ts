@@ -45,8 +45,7 @@ function isH3SwallowedErrorBody(body: string): boolean {
 }
 
 // Static font files under /fonts are content-hashed (or version-pinned subsets)
-// and never change in place, so they can be cached for a year. fonts.css itself
-// is a small manifest — cache it for a day and let it revalidate.
+// and never change in place, so they can be cached for a year.
 function withStaticAssetCaching(request: Request, response: Response): Response {
   if (request.method !== "GET" && request.method !== "HEAD") return response;
   if (!response.ok) return response;
