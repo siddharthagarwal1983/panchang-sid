@@ -125,11 +125,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         rel: "preload",
-        as: "style",
-        href: "/fonts/fonts.css",
-      },
-      {
-        rel: "preload",
         as: "font",
         type: "font/woff2",
         href: "/fonts/wEO_EBrOk8hQLDvIAF81VvoK.woff2",
@@ -142,10 +137,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         type: "font/woff2",
         href: "/fonts/wordmark-400.woff2",
         crossOrigin: "anonymous",
-      },
-      {
-        rel: "stylesheet",
-        href: "/fonts/fonts.css",
       },
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "apple-touch-icon", href: "/app-icon-192.png" },
