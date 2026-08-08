@@ -12,11 +12,19 @@ import {
   Sunset,
   UtensilsCrossed,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
-import { AddToCalendar } from "@/components/AddToCalendar";
-import { FestivalModal, type FestivalSheetItem } from "@/components/FestivalModal";
+import type { FestivalSheetItem } from "@/components/FestivalModal";
+
+// Both pull in dialog/ICS/festival-detail code that only matters after an
+// interaction, so keep them out of the initial (LCP) bundle.
+const AddToCalendar = lazy(() =>
+  import("@/components/AddToCalendar").then((m) => ({ default: m.AddToCalendar })),
+);
+const FestivalModal = lazy(() =>
+  import("@/components/FestivalModal").then((m) => ({ default: m.FestivalModal })),
+);
 import { MoonGlyph } from "@/components/MoonGlyph";
 import { SignInGate } from "@/components/SignInGate";
 import { useAuth } from "@/lib/auth";
