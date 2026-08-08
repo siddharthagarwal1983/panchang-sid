@@ -15,6 +15,7 @@ export const Route = createFileRoute("/feedback")({
       { property: "og:description", content: "Send feedback, report a bug or suggest a festival for Panchanga." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex, follow" },
     ],
     links: [{ rel: "canonical", href: "https://indianpanchang.com/feedback" }],
   }),
