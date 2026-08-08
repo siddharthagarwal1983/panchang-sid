@@ -60,8 +60,6 @@ function withStaticAssetCaching(request: Request, response: Response): Response 
   let cacheControl: string | undefined;
   if (/^\/fonts\/.+\.woff2?$/.test(pathname)) {
     cacheControl = "public, max-age=31536000, immutable";
-  } else if (pathname === "/fonts/fonts.css") {
-    cacheControl = "public, max-age=86400, stale-while-revalidate=604800";
   } else if (/^\/(favicon\.(ico|png)|app-icon-\d+\.png|manifest\.webmanifest)$/.test(pathname)) {
     cacheControl = "public, max-age=604800";
   }
