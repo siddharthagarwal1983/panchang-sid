@@ -50,8 +50,6 @@ function isH3SwallowedErrorBody(body: string): boolean {
 function withStaticAssetCaching(request: Request, response: Response): Response {
   if (request.method !== "GET" && request.method !== "HEAD") return response;
   if (!response.ok) return response;
-  if (response.headers.has("cache-control")) return response;
-
   let pathname: string;
   try {
     pathname = new URL(request.url).pathname;
