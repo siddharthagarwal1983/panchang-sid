@@ -417,13 +417,15 @@ function TodayPage() {
                   </div>
                 )}
                 <div className="mt-3">
-                  <AddToCalendar
-                    event={eventFor({
-                      id: "vrat",
-                      name: vrat?.label ?? fasting.label,
-                      note: fasting.detail,
-                    })}
-                  />
+                  <Suspense fallback={<div className="h-9" />}>
+                    <AddToCalendar
+                      event={eventFor({
+                        id: "vrat",
+                        name: vrat?.label ?? fasting.label,
+                        note: fasting.detail,
+                      })}
+                    />
+                  </Suspense>
                 </div>
               </div>
             )}
@@ -640,20 +642,27 @@ function TodayPage() {
         </div>
       )}
 
-      <FestivalModal
-        item={openItem}
-        dateLabel={formatLongDate(date)}
-        reminded={openItem ? isReminded(openItem.id) : false}
-        vrat={vrat}
-        formatTime={t}
-        zone={zone}
-        calendarEvent={openItem ? eventFor(openItem) : null}
-        onToggleReminder={() =>
-          openItem &&
-          toggleFestivalReminder({ id: openItem.id, name: openItem.name, note: openItem.note })
-        }
-        onOpenChange={(open) => !open && setOpenItem(null)}
-      />
+      {openItem && (
+        <Suspense fallback={null}>
+          <FestivalModal
+            item={openItem}
+            dateLabel={formatLongDate(date)}
+            reminded={isReminded(openItem.id)}
+            vrat={vrat}
+            formatTime={t}
+            zone={zone}
+            calendarEvent={eventFor(openItem)}
+            onToggleReminder={() =>
+              toggleFestivalReminder({
+                id: openItem.id,
+                name: openItem.name,
+                note: openItem.note,
+              })
+            }
+            onOpenChange={(open) => !open && setOpenItem(null)}
+          />
+        </Suspense>
+      )}
     </main>
   );
 }
