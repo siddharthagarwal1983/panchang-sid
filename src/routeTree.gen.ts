@@ -20,14 +20,17 @@ import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as VratsEkadashiRouteImport } from './routes/vrats.ekadashi'
 import { Route as MuhuratChoghadiyaRouteImport } from './routes/muhurat.choghadiya'
 import { Route as FestivalsYearRouteImport } from './routes/festivals.$year'
 import { Route as CompareEphemerisRouteImport } from './routes/compare.ephemeris'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as VratsEkadashiIndexRouteImport } from './routes/vrats.ekadashi.index'
+import { Route as VratsEkadashiParanaRouteImport } from './routes/vrats.ekadashi.parana'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
+import { Route as VratsEkadashiYearIndexRouteImport } from './routes/vrats.ekadashi.$year.index'
+import { Route as VratsEkadashiYearMonthRouteImport } from './routes/vrats.ekadashi.$year.$month'
 
 const TithiTodayRoute = TithiTodayRouteImport.update({
   id: '/tithi-today',
@@ -84,11 +87,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VratsEkadashiRoute = VratsEkadashiRouteImport.update({
-  id: '/vrats/ekadashi',
-  path: '/vrats/ekadashi',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const MuhuratChoghadiyaRoute = MuhuratChoghadiyaRouteImport.update({
   id: '/muhurat/choghadiya',
   path: '/muhurat/choghadiya',
@@ -116,6 +114,16 @@ const Char91DotmcpChar93ListToolsRoute =
     path: '/.mcp/list-tools',
     getParentRoute: () => rootRouteImport,
   } as any)
+const VratsEkadashiIndexRoute = VratsEkadashiIndexRouteImport.update({
+  id: '/vrats/ekadashi/',
+  path: '/vrats/ekadashi/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VratsEkadashiParanaRoute = VratsEkadashiParanaRouteImport.update({
+  id: '/vrats/ekadashi/parana',
+  path: '/vrats/ekadashi/parana',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -125,6 +133,16 @@ const Char91DotmcpChar93InvokeToolToolRoute =
 const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   id: '/.lovable/oauth/consent',
   path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VratsEkadashiYearIndexRoute = VratsEkadashiYearIndexRouteImport.update({
+  id: '/vrats/ekadashi/$year/',
+  path: '/vrats/ekadashi/$year/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VratsEkadashiYearMonthRoute = VratsEkadashiYearMonthRouteImport.update({
+  id: '/vrats/ekadashi/$year/$month',
+  path: '/vrats/ekadashi/$year/$month',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -145,9 +163,12 @@ export interface FileRoutesByFullPath {
   '/compare/ephemeris': typeof CompareEphemerisRoute
   '/festivals/$year': typeof FestivalsYearRoute
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
-  '/vrats/ekadashi': typeof VratsEkadashiRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
+  '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
+  '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRoute
+  '/vrats/ekadashi/$year/': typeof VratsEkadashiYearIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -166,9 +187,12 @@ export interface FileRoutesByTo {
   '/compare/ephemeris': typeof CompareEphemerisRoute
   '/festivals/$year': typeof FestivalsYearRoute
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
-  '/vrats/ekadashi': typeof VratsEkadashiRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
+  '/vrats/ekadashi': typeof VratsEkadashiIndexRoute
+  '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRoute
+  '/vrats/ekadashi/$year': typeof VratsEkadashiYearIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -188,9 +212,12 @@ export interface FileRoutesById {
   '/compare/ephemeris': typeof CompareEphemerisRoute
   '/festivals/$year': typeof FestivalsYearRoute
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
-  '/vrats/ekadashi': typeof VratsEkadashiRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
+  '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
+  '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRoute
+  '/vrats/ekadashi/$year/': typeof VratsEkadashiYearIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -211,9 +238,12 @@ export interface FileRouteTypes {
     | '/compare/ephemeris'
     | '/festivals/$year'
     | '/muhurat/choghadiya'
-    | '/vrats/ekadashi'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/vrats/ekadashi/parana'
+    | '/vrats/ekadashi/'
+    | '/vrats/ekadashi/$year/$month'
+    | '/vrats/ekadashi/$year/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -232,9 +262,12 @@ export interface FileRouteTypes {
     | '/compare/ephemeris'
     | '/festivals/$year'
     | '/muhurat/choghadiya'
-    | '/vrats/ekadashi'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/vrats/ekadashi/parana'
+    | '/vrats/ekadashi'
+    | '/vrats/ekadashi/$year/$month'
+    | '/vrats/ekadashi/$year'
   id:
     | '__root__'
     | '/'
@@ -253,9 +286,12 @@ export interface FileRouteTypes {
     | '/compare/ephemeris'
     | '/festivals/$year'
     | '/muhurat/choghadiya'
-    | '/vrats/ekadashi'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/vrats/ekadashi/parana'
+    | '/vrats/ekadashi/'
+    | '/vrats/ekadashi/$year/$month'
+    | '/vrats/ekadashi/$year/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -275,9 +311,12 @@ export interface RootRouteChildren {
   CompareEphemerisRoute: typeof CompareEphemerisRoute
   FestivalsYearRoute: typeof FestivalsYearRoute
   MuhuratChoghadiyaRoute: typeof MuhuratChoghadiyaRoute
-  VratsEkadashiRoute: typeof VratsEkadashiRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  VratsEkadashiParanaRoute: typeof VratsEkadashiParanaRoute
+  VratsEkadashiIndexRoute: typeof VratsEkadashiIndexRoute
+  VratsEkadashiYearMonthRoute: typeof VratsEkadashiYearMonthRoute
+  VratsEkadashiYearIndexRoute: typeof VratsEkadashiYearIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -359,13 +398,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vrats/ekadashi': {
-      id: '/vrats/ekadashi'
-      path: '/vrats/ekadashi'
-      fullPath: '/vrats/ekadashi'
-      preLoaderRoute: typeof VratsEkadashiRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/muhurat/choghadiya': {
       id: '/muhurat/choghadiya'
       path: '/muhurat/choghadiya'
@@ -401,6 +433,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vrats/ekadashi/': {
+      id: '/vrats/ekadashi/'
+      path: '/vrats/ekadashi'
+      fullPath: '/vrats/ekadashi/'
+      preLoaderRoute: typeof VratsEkadashiIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vrats/ekadashi/parana': {
+      id: '/vrats/ekadashi/parana'
+      path: '/vrats/ekadashi/parana'
+      fullPath: '/vrats/ekadashi/parana'
+      preLoaderRoute: typeof VratsEkadashiParanaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
       path: '/.mcp/invoke-tool/$tool'
@@ -413,6 +459,20 @@ declare module '@tanstack/react-router' {
       path: '/.lovable/oauth/consent'
       fullPath: '/.lovable/oauth/consent'
       preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vrats/ekadashi/$year/': {
+      id: '/vrats/ekadashi/$year/'
+      path: '/vrats/ekadashi/$year'
+      fullPath: '/vrats/ekadashi/$year/'
+      preLoaderRoute: typeof VratsEkadashiYearIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vrats/ekadashi/$year/$month': {
+      id: '/vrats/ekadashi/$year/$month'
+      path: '/vrats/ekadashi/$year/$month'
+      fullPath: '/vrats/ekadashi/$year/$month'
+      preLoaderRoute: typeof VratsEkadashiYearMonthRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -436,9 +496,12 @@ const rootRouteChildren: RootRouteChildren = {
   CompareEphemerisRoute: CompareEphemerisRoute,
   FestivalsYearRoute: FestivalsYearRoute,
   MuhuratChoghadiyaRoute: MuhuratChoghadiyaRoute,
-  VratsEkadashiRoute: VratsEkadashiRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  VratsEkadashiParanaRoute: VratsEkadashiParanaRoute,
+  VratsEkadashiIndexRoute: VratsEkadashiIndexRoute,
+  VratsEkadashiYearMonthRoute: VratsEkadashiYearMonthRoute,
+  VratsEkadashiYearIndexRoute: VratsEkadashiYearIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
