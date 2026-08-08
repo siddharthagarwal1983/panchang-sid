@@ -45,7 +45,7 @@ const FAQS: FaqItem[] = [
   },
 ];
 
-export const Route = createFileRoute("/vrats/ekadashi")({
+export const Route = createFileRoute("/vrats/ekadashi/")({
   head: () => ({
     meta: [
       { title: TITLE },
