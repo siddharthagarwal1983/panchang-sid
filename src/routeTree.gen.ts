@@ -26,6 +26,7 @@ import { Route as CompareEphemerisRouteImport } from './routes/compare.ephemeris
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as VratsEkadashiIndexRouteImport } from './routes/vrats.ekadashi.index'
+import { Route as VratsEkadashiParanaRouteImport } from './routes/vrats.ekadashi.parana'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
@@ -116,6 +117,11 @@ const VratsEkadashiIndexRoute = VratsEkadashiIndexRouteImport.update({
   path: '/vrats/ekadashi/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VratsEkadashiParanaRoute = VratsEkadashiParanaRouteImport.update({
+  id: '/vrats/ekadashi/parana',
+  path: '/vrats/ekadashi/parana',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -147,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
   '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
 }
 export interface FileRoutesByTo {
@@ -168,6 +175,7 @@ export interface FileRoutesByTo {
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
   '/vrats/ekadashi': typeof VratsEkadashiIndexRoute
 }
 export interface FileRoutesById {
@@ -190,6 +198,7 @@ export interface FileRoutesById {
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
   '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
 }
 export interface FileRouteTypes {
@@ -213,6 +222,7 @@ export interface FileRouteTypes {
     | '/muhurat/choghadiya'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/vrats/ekadashi/parana'
     | '/vrats/ekadashi/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -234,6 +244,7 @@ export interface FileRouteTypes {
     | '/muhurat/choghadiya'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/vrats/ekadashi/parana'
     | '/vrats/ekadashi'
   id:
     | '__root__'
@@ -255,6 +266,7 @@ export interface FileRouteTypes {
     | '/muhurat/choghadiya'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/vrats/ekadashi/parana'
     | '/vrats/ekadashi/'
   fileRoutesById: FileRoutesById
 }
@@ -277,6 +289,7 @@ export interface RootRouteChildren {
   MuhuratChoghadiyaRoute: typeof MuhuratChoghadiyaRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  VratsEkadashiParanaRoute: typeof VratsEkadashiParanaRoute
   VratsEkadashiIndexRoute: typeof VratsEkadashiIndexRoute
 }
 
@@ -401,6 +414,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VratsEkadashiIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vrats/ekadashi/parana': {
+      id: '/vrats/ekadashi/parana'
+      path: '/vrats/ekadashi/parana'
+      fullPath: '/vrats/ekadashi/parana'
+      preLoaderRoute: typeof VratsEkadashiParanaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
       path: '/.mcp/invoke-tool/$tool'
@@ -438,6 +458,7 @@ const rootRouteChildren: RootRouteChildren = {
   MuhuratChoghadiyaRoute: MuhuratChoghadiyaRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  VratsEkadashiParanaRoute: VratsEkadashiParanaRoute,
   VratsEkadashiIndexRoute: VratsEkadashiIndexRoute,
 }
 export const routeTree = rootRouteImport
