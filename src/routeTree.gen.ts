@@ -30,6 +30,7 @@ import { Route as VratsEkadashiParanaRouteImport } from './routes/vrats.ekadashi
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as VratsEkadashiYearIndexRouteImport } from './routes/vrats.ekadashi.$year.index'
+import { Route as VratsEkadashiYearMonthRouteImport } from './routes/vrats.ekadashi.$year.$month'
 
 const TithiTodayRoute = TithiTodayRouteImport.update({
   id: '/tithi-today',
@@ -139,6 +140,11 @@ const VratsEkadashiYearIndexRoute = VratsEkadashiYearIndexRouteImport.update({
   path: '/vrats/ekadashi/$year/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VratsEkadashiYearMonthRoute = VratsEkadashiYearMonthRouteImport.update({
+  id: '/vrats/ekadashi/$year/$month',
+  path: '/vrats/ekadashi/$year/$month',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
   '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
+  '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRoute
   '/vrats/ekadashi/$year/': typeof VratsEkadashiYearIndexRoute
 }
 export interface FileRoutesByTo {
@@ -184,6 +191,7 @@ export interface FileRoutesByTo {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
   '/vrats/ekadashi': typeof VratsEkadashiIndexRoute
+  '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRoute
   '/vrats/ekadashi/$year': typeof VratsEkadashiYearIndexRoute
 }
 export interface FileRoutesById {
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
   '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
+  '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRoute
   '/vrats/ekadashi/$year/': typeof VratsEkadashiYearIndexRoute
 }
 export interface FileRouteTypes {
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/vrats/ekadashi/parana'
     | '/vrats/ekadashi/'
+    | '/vrats/ekadashi/$year/$month'
     | '/vrats/ekadashi/$year/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/vrats/ekadashi/parana'
     | '/vrats/ekadashi'
+    | '/vrats/ekadashi/$year/$month'
     | '/vrats/ekadashi/$year'
   id:
     | '__root__'
@@ -279,6 +290,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/vrats/ekadashi/parana'
     | '/vrats/ekadashi/'
+    | '/vrats/ekadashi/$year/$month'
     | '/vrats/ekadashi/$year/'
   fileRoutesById: FileRoutesById
 }
@@ -303,6 +315,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   VratsEkadashiParanaRoute: typeof VratsEkadashiParanaRoute
   VratsEkadashiIndexRoute: typeof VratsEkadashiIndexRoute
+  VratsEkadashiYearMonthRoute: typeof VratsEkadashiYearMonthRoute
   VratsEkadashiYearIndexRoute: typeof VratsEkadashiYearIndexRoute
 }
 
@@ -455,6 +468,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VratsEkadashiYearIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vrats/ekadashi/$year/$month': {
+      id: '/vrats/ekadashi/$year/$month'
+      path: '/vrats/ekadashi/$year/$month'
+      fullPath: '/vrats/ekadashi/$year/$month'
+      preLoaderRoute: typeof VratsEkadashiYearMonthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -480,6 +500,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   VratsEkadashiParanaRoute: VratsEkadashiParanaRoute,
   VratsEkadashiIndexRoute: VratsEkadashiIndexRoute,
+  VratsEkadashiYearMonthRoute: VratsEkadashiYearMonthRoute,
   VratsEkadashiYearIndexRoute: VratsEkadashiYearIndexRoute,
 }
 export const routeTree = rootRouteImport
