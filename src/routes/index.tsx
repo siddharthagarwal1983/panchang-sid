@@ -12,11 +12,19 @@ import {
   Sunset,
   UtensilsCrossed,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
-import { AddToCalendar } from "@/components/AddToCalendar";
-import { FestivalModal, type FestivalSheetItem } from "@/components/FestivalModal";
+import type { FestivalSheetItem } from "@/components/FestivalModal";
+
+// Both pull in dialog/ICS/festival-detail code that only matters after an
+// interaction, so keep them out of the initial (LCP) bundle.
+const AddToCalendar = lazy(() =>
+  import("@/components/AddToCalendar").then((m) => ({ default: m.AddToCalendar })),
+);
+const FestivalModal = lazy(() =>
+  import("@/components/FestivalModal").then((m) => ({ default: m.FestivalModal })),
+);
 import { MoonGlyph } from "@/components/MoonGlyph";
 import { SignInGate } from "@/components/SignInGate";
 import { useAuth } from "@/lib/auth";
@@ -409,13 +417,15 @@ function TodayPage() {
                   </div>
                 )}
                 <div className="mt-3">
-                  <AddToCalendar
-                    event={eventFor({
-                      id: "vrat",
-                      name: vrat?.label ?? fasting.label,
-                      note: fasting.detail,
-                    })}
-                  />
+                  <Suspense fallback={<div className="h-9" />}>
+                    <AddToCalendar
+                      event={eventFor({
+                        id: "vrat",
+                        name: vrat?.label ?? fasting.label,
+                        note: fasting.detail,
+                      })}
+                    />
+                  </Suspense>
                 </div>
               </div>
             )}
@@ -632,20 +642,27 @@ function TodayPage() {
         </div>
       )}
 
-      <FestivalModal
-        item={openItem}
-        dateLabel={formatLongDate(date)}
-        reminded={openItem ? isReminded(openItem.id) : false}
-        vrat={vrat}
-        formatTime={t}
-        zone={zone}
-        calendarEvent={openItem ? eventFor(openItem) : null}
-        onToggleReminder={() =>
-          openItem &&
-          toggleFestivalReminder({ id: openItem.id, name: openItem.name, note: openItem.note })
-        }
-        onOpenChange={(open) => !open && setOpenItem(null)}
-      />
+      {openItem && (
+        <Suspense fallback={null}>
+          <FestivalModal
+            item={openItem}
+            dateLabel={formatLongDate(date)}
+            reminded={isReminded(openItem.id)}
+            vrat={vrat}
+            formatTime={t}
+            zone={zone}
+            calendarEvent={eventFor(openItem)}
+            onToggleReminder={() =>
+              toggleFestivalReminder({
+                id: openItem.id,
+                name: openItem.name,
+                note: openItem.note,
+              })
+            }
+            onOpenChange={(open) => !open && setOpenItem(null)}
+          />
+        </Suspense>
+      )}
     </main>
   );
 }
