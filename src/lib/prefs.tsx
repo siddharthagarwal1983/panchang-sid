@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazy";
 
 import { useAuth } from "./auth";
 import { CITIES, DEFAULT_CITY_ID, cityForTimeZone, findCity, type City } from "./panchang/cities";
@@ -152,6 +152,7 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     if (!hydrated || !userId || cloudLoadedFor === userId) return;
     let cancelled = false;
     void (async () => {
+      const supabase = await getSupabase();
       const { data } = await supabase
         .from("user_settings")
         .select("prefs")
@@ -182,7 +183,9 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!hydrated || !userId || cloudLoadedFor !== userId) return;
     const id = window.setTimeout(() => {
-      void supabase.from("user_settings").upsert({ user_id: userId, prefs });
+      void getSupabase().then((supabase) =>
+        supabase.from("user_settings").upsert({ user_id: userId, prefs }),
+      );
     }, 600);
     return () => window.clearTimeout(id);
   }, [prefs, hydrated, userId, cloudLoadedFor]);
