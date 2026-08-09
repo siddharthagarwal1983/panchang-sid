@@ -3,7 +3,7 @@ import { SITE_URL } from "./schema";
 /**
  * Single source of truth for canonical URLs.
  *
- * The app is reachable on several hosts (panchanga.lovable.app, preview
+ * The app is reachable on several hosts (the platform preview/publish hosts, preview
  * subdomains, www.indianpanchang.com), so every page must advertise the same
  * absolute canonical origin or Google will pick a duplicate host itself.
  */

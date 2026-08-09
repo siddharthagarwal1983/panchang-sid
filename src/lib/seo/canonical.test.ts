@@ -13,6 +13,8 @@ function pageRouteFiles(): string[] {
   return readdirSync(ROUTES_DIR).filter((f) => f.endsWith(".tsx") && !EXEMPT.has(f));
 }
 
+const DUPLICATE_HOST = ["lovable", "app"].join(".");
+
 describe("canonical strategy", () => {
   it("builds absolute URLs on the custom domain", () => {
     expect(canonicalUrl("/")).toBe("https://indianpanchang.com/");
@@ -36,8 +38,8 @@ describe("canonical strategy", () => {
         else if (/\.(ts|tsx)$/.test(entry.name) && entry.name !== "routeTree.gen.ts") {
           const src = readFileSync(p, "utf8");
           // src/server.ts owns the duplicate-host redirect list.
-          if (p.endsWith("src/server.ts")) continue;
-          if (src.includes("lovable.app")) offenders.push(p);
+          if (p.endsWith("src/server.ts") || p.endsWith("canonical.test.ts")) continue;
+          if (src.includes(DUPLICATE_HOST)) offenders.push(p);
         }
       }
     };
