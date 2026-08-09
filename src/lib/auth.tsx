@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazy";
 
 export type Profile = {
   id: string;
@@ -35,21 +35,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
-      setSession(next);
-      if (!next) setProfile(null);
-    });
-    supabase.auth.getSession().then(({ data }) => {
+    let unsubscribe: (() => void) | undefined;
+    let cancelled = false;
+    void (async () => {
+      const supabase = await getSupabase();
+      if (cancelled) return;
+      const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
+        setSession(next);
+        if (!next) setProfile(null);
+      });
+      unsubscribe = () => sub.subscription.unsubscribe();
+      const { data } = await supabase.auth.getSession();
+      if (cancelled) return;
       setSession(data.session);
       setLoading(false);
-    });
-    return () => sub.subscription.unsubscribe();
+    })();
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
   }, []);
 
   const userId = session?.user.id ?? null;
 
   const refreshProfile = useCallback(async () => {
     if (!userId) return;
+    const supabase = await getSupabase();
     const { data } = await supabase
       .from("profiles")
       .select("id, display_name, avatar_url")
@@ -65,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateDisplayName = useCallback(
     async (name: string) => {
       if (!userId) return;
+      const supabase = await getSupabase();
       await supabase.from("profiles").upsert({ id: userId, display_name: name });
       await refreshProfile();
     },
@@ -76,6 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // while the network round-trip completes.
     setProfile(null);
     setSession(null);
+    const supabase = await getSupabase();
     await supabase.auth.signOut();
   }, []);
 
