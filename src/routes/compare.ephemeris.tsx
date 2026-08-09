@@ -6,6 +6,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { compareEngines, formatLongitude } from "@/lib/panchang/compare";
 import { formatLongDate, formatTimeWithDay, toCalendarDay, tzAbbr, zonedToUtc } from "@/lib/panchang/tz";
 import { usePrefs } from "@/lib/prefs";
+import { canonicalLink, canonicalOgUrl } from "@/lib/seo/canonical";
 
 const TITLE = "Ephemeris Comparison — astronomy-engine vs Swiss Ephemeris | Panchanga";
 const DESCRIPTION =
@@ -23,7 +24,9 @@ export const Route = createFileRoute("/compare/ephemeris")({
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESCRIPTION },
       { name: "robots", content: "noindex" },
+      canonicalOgUrl("/compare/ephemeris"),
     ],
+    links: [canonicalLink("/compare/ephemeris")],
   }),
   component: ComparePage,
 });
