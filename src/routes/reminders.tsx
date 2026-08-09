@@ -24,8 +24,11 @@ export const Route = createFileRoute("/reminders")({
       { property: "og:title", content: "Vrat & Festival Reminders — Panchanga" },
       {
         property: "og:description",
-        content: "Choose the observances you keep and see every upcoming date.",
+        content:
+          "Choose the vrats and festivals you keep — Ekadashi, Purnima, Amavasya, Sankashti, Pradosh — and see every upcoming date in your local timezone.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, follow" },
     ],
     links: [{ rel: "canonical", href: "https://indianpanchang.com/reminders" }],
