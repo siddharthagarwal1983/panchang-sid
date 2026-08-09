@@ -232,11 +232,27 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // First launch: silently ask the device where we are, so panchang defaults to
-  // the user's real city instead of an Indian default.
+  // We never prompt for location on load — an unprompted permission dialog is
+  // confusing and gets denied. The first-launch city comes from the browser
+  // timezone (no permission needed) and the precise fix only happens when the
+  // user taps "Use my current location" in the location picker.
+  // The one exception: permission was already granted on an earlier visit, so
+  // reading it shows no dialog at all.
   useEffect(() => {
     if (!hydrated || prefs.autoLocated) return;
-    void detectMyLocation();
+    if (typeof navigator === "undefined" || !navigator.permissions?.query) return;
+    let cancelled = false;
+    void navigator.permissions
+      .query({ name: "geolocation" as PermissionName })
+      .then((status) => {
+        if (!cancelled && status.state === "granted") void detectMyLocation();
+      })
+      .catch(() => {
+        /* Permissions API unsupported — stay silent and wait for a tap. */
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [hydrated, prefs.autoLocated, detectMyLocation]);
 
   const toggleReminder = useCallback((key: ReminderKey) => {
