@@ -11,6 +11,7 @@ import { dayKey, formatLongDate, toCalendarDay } from "@/lib/panchang/tz";
 import { formatTime } from "@/lib/panchang/tz";
 import { usePrefs, type ReminderKey } from "@/lib/prefs";
 import { useReminderNotifications } from "@/lib/useReminderNotifications";
+import { canonicalLink, canonicalOgUrl } from "@/lib/seo/canonical";
 
 export const Route = createFileRoute("/reminders")({
   head: () => ({
@@ -27,11 +28,13 @@ export const Route = createFileRoute("/reminders")({
         content:
           "Choose the vrats and festivals you keep — Ekadashi, Purnima, Amavasya, Sankashti, Pradosh — and see every upcoming date in your local timezone.",
       },
+      canonicalOgUrl("/reminders"),
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, follow" },
+      canonicalOgUrl("/reminders"),
     ],
-    links: [{ rel: "canonical", href: "https://indianpanchang.com/reminders" }],
+    links: [canonicalLink("/reminders")],
   }),
   component: RemindersPage,
 });

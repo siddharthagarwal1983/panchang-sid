@@ -10,6 +10,7 @@ import { scanFestivals } from "@/lib/panchang/festivals";
 import { MASA_NAMES } from "@/lib/panchang/names";
 import { dayKey, formatLongDate, toCalendarDay, weekdayIndex, type CalendarDay } from "@/lib/panchang/tz";
 import { usePrefs } from "@/lib/prefs";
+import { canonicalLink, canonicalOgUrl } from "@/lib/seo/canonical";
 
 export const Route = createFileRoute("/calendar")({
   head: () => ({
@@ -25,8 +26,9 @@ export const Route = createFileRoute("/calendar")({
         property: "og:description",
         content: "Browse tithis and festivals month by month, calculated for your US city.",
       },
+      canonicalOgUrl("/calendar"),
     ],
-    links: [{ rel: "canonical", href: "https://indianpanchang.com/calendar" }],
+    links: [canonicalLink("/calendar")],
   }),
   component: CalendarPage,
 });
