@@ -23,8 +23,11 @@ export const Route = createFileRoute("/auth")({
       { property: "og:title", content: "Sign in — Panchanga" },
       {
         property: "og:description",
-        content: "Sync your panchang settings and reminders across your devices.",
+        content:
+          "Sign in with Google or email to sync your city, vrat reminders and festival preferences across every device you use.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       // Account-only utility page: no unique content for search results.
       { name: "robots", content: "noindex, follow" },
     ],

@@ -48,6 +48,8 @@ export const Route = createFileRoute("/settings")({
         content:
           "Personalise city, time format, theme and notifications, plus panchang FAQs and legal information.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, follow" },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/settings` }],
