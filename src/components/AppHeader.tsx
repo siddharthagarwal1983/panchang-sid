@@ -1,8 +1,12 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { Home, MapPin, Pencil, UserRound } from "lucide-react";
-import { useState } from "react";
+import { Suspense, lazy, useState } from "react";
 
-import { LocationPicker } from "@/components/LocationPicker";
+// The picker (city list + geocoding + dialog UI) is only needed once the user
+// opens it, so it is fetched on demand instead of in the header bundle.
+const LocationPicker = lazy(() =>
+  import("@/components/LocationPicker").then((m) => ({ default: m.LocationPicker })),
+);
 import { ScriptToggle } from "@/components/ScriptToggle";
 import { useAuth } from "@/lib/auth";
 import { tzLabel } from "@/lib/panchang/cities";
@@ -162,12 +166,14 @@ export function AppHeader({
           </>
         )}
         {children}
-      {showLocation && (
-        <LocationPicker
-          open={pickerOpen}
-          target={pickerTarget}
-          onClose={() => setPickerOpen(false)}
-        />
+      {showLocation && pickerOpen && (
+        <Suspense fallback={null}>
+          <LocationPicker
+            open={pickerOpen}
+            target={pickerTarget}
+            onClose={() => setPickerOpen(false)}
+          />
+        </Suspense>
       )}
     </header>
   );
