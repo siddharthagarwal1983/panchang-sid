@@ -5,6 +5,7 @@ import { ArrowLeft, CheckCircle, Send } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { useAuth } from "@/lib/auth";
 import { submitFeedback } from "@/lib/feedback.functions";
+import { canonicalLink, canonicalOgUrl } from "@/lib/seo/canonical";
 
 export const Route = createFileRoute("/feedback")({
   head: () => ({
@@ -13,11 +14,12 @@ export const Route = createFileRoute("/feedback")({
       { name: "description", content: "Send feedback, report a bug or suggest a festival for Panchanga." },
       { property: "og:title", content: "Feedback — Panchanga" },
       { property: "og:description", content: "Send feedback, report a bug or suggest a festival for Panchanga." },
+      canonicalOgUrl("/feedback"),
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, follow" },
     ],
-    links: [{ rel: "canonical", href: "https://indianpanchang.com/feedback" }],
+    links: [canonicalLink("/feedback")],
   }),
   component: FeedbackPage,
 });

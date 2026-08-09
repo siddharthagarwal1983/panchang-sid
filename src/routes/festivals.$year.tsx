@@ -9,10 +9,11 @@ import { FESTIVAL_DETAILS } from "@/lib/panchang/festivalDetails";
 import { formatLongDate } from "@/lib/panchang/tz";
 import { articleSchema, breadcrumbSchema, itemListSchema, ldJson } from "@/lib/seo/schema";
 import { festivalEventNodes } from "@/lib/seo/observance-events";
+import { CANONICAL_ORIGIN, canonicalLink, canonicalOgUrl } from "@/lib/seo/canonical";
 
 const YEARS = ["2026", "2027"] as const;
 
-const BASE_URL = "https://indianpanchang.com";
+const BASE_URL = CANONICAL_ORIGIN;
 
 function titleFor(year: string) {
   return `Hindu Festival Calendar ${year} — Local Dates | Panchanga`;
@@ -34,8 +35,9 @@ export const Route = createFileRoute("/festivals/$year")({
       { property: "og:description", content: descriptionFor(params.year) },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
+      canonicalOgUrl(`/festivals/${params.year}`),
     ],
-    links: [{ rel: "canonical", href: `${BASE_URL}/festivals/${params.year}` }],
+    links: [canonicalLink(`/festivals/${params.year}`)],
     scripts: [
       ldJson([
         articleSchema({

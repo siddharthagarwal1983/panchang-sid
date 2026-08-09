@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 
 import { AppHeader } from "@/components/AppHeader";
+import { canonicalLink, canonicalOgUrl } from "@/lib/seo/canonical";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -10,10 +11,11 @@ export const Route = createFileRoute("/privacy")({
       { name: "description", content: "How Panchanga collects, uses and stores your information." },
       { property: "og:title", content: "Privacy Policy — Panchanga" },
       { property: "og:description", content: "How Panchanga collects, uses and stores your information." },
+      canonicalOgUrl("/privacy"),
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "https://indianpanchang.com/privacy" }],
+    links: [canonicalLink("/privacy")],
   }),
   component: PrivacyPage,
 });

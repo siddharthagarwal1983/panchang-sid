@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 
 import { AppHeader } from "@/components/AppHeader";
+import { canonicalLink, canonicalOgUrl } from "@/lib/seo/canonical";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -18,10 +19,11 @@ export const Route = createFileRoute("/terms")({
         content:
           "The rules for using Panchanga's panchang timings, festival dates and reminder features.",
       },
+      canonicalOgUrl("/terms"),
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "https://indianpanchang.com/terms" }],
+    links: [canonicalLink("/terms")],
   }),
   component: TermsPage,
 });
