@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazy";
 
 export type AuthFunnelEvent =
   | "sign_in_cta_clicked"
@@ -33,14 +33,15 @@ export function trackAuthFunnel(
   opts: { method?: string; source?: string } = {},
 ): void {
   if (typeof window === "undefined") return;
-  void supabase
-    .from("auth_funnel_events")
-    .insert({
-      event,
-      method: opts.method ?? null,
-      source: opts.source ?? null,
-      visitor_key: visitorKey(),
-    })
+  void getSupabase()
+    .then((supabase) =>
+      supabase.from("auth_funnel_events").insert({
+        event,
+        method: opts.method ?? null,
+        source: opts.source ?? null,
+        visitor_key: visitorKey(),
+      }),
+    )
     .then(
       () => undefined,
       () => undefined,

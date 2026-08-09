@@ -1,7 +1,9 @@
 import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
-import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
+// Lazy variant of the generated attacher: same bearer-token behaviour, but the
+// Supabase client is dynamically imported so it stays out of the startup bundle.
+import { attachSupabaseAuth } from "@/lib/supabase-auth-attacher";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
