@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazy";
 
 type OAuthDetails = {
   client?: { name?: string; client_id?: string } | null;
@@ -17,7 +17,12 @@ type OAuthApi = {
   denyAuthorization: (id: string) => Promise<{ data: OAuthDetails | null; error: { message: string } | null }>;
 };
 
-const oauth = () => (supabase.auth as unknown as { oauth: OAuthApi }).oauth;
+// Loaded on demand: beforeLoad/loader are part of the critical bundle, so a
+// static Supabase import here would ship the auth client to every route.
+const oauth = async () => {
+  const supabase = await getSupabase();
+  return (supabase.auth as unknown as { oauth: OAuthApi }).oauth;
+};
 
 export const Route = createFileRoute("/.lovable/oauth/consent")({
   ssr: false,
@@ -26,13 +31,14 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
   }),
   beforeLoad: async ({ search, location }) => {
     if (!search.authorization_id) throw new Error("Missing authorization_id");
+    const supabase = await getSupabase();
     const { data } = await supabase.auth.getSession();
     const next = location.pathname + location.searchStr;
     if (!data.session) throw redirect({ to: "/auth", search: { next } });
   },
   loader: async ({ location }) => {
     const authorizationId = new URLSearchParams(location.search).get("authorization_id")!;
-    const { data, error } = await oauth().getAuthorizationDetails(authorizationId);
+    const { data, error } = await (await oauth()).getAuthorizationDetails(authorizationId);
     if (error) throw new Error(error.message);
     const immediate = data?.redirect_url ?? data?.redirect_to;
     if (immediate && !data?.client) throw redirect({ href: immediate });
@@ -61,8 +67,8 @@ function Consent() {
     setBusy(true);
     setError(null);
     const { data, error: err } = approve
-      ? await oauth().approveAuthorization(authorization_id)
-      : await oauth().denyAuthorization(authorization_id);
+      ? await (await oauth()).approveAuthorization(authorization_id)
+      : await (await oauth()).denyAuthorization(authorization_id);
     if (err) {
       setBusy(false);
       setError(err.message);
