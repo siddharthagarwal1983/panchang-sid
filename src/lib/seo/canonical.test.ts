@@ -24,7 +24,10 @@ describe("canonical strategy", () => {
 
   it("declares a canonical link on every page route", () => {
     const missing = pageRouteFiles().filter(
-      (f) => !readFileSync(join(ROUTES_DIR, f), "utf8").includes('rel: "canonical"'),
+      (f) => {
+        const src = readFileSync(join(ROUTES_DIR, f), "utf8");
+        return !src.includes('rel: "canonical"') && !src.includes("canonicalLink(");
+      },
     );
     expect(missing).toEqual([]);
   });
