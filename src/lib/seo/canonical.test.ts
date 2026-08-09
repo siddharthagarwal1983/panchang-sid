@@ -2,7 +2,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { canonicalUrl } from "@/lib/seo/canonical";
+import { canonicalUrl } from "./canonical";
 
 const ROUTES_DIR = join(process.cwd(), "src/routes");
 
