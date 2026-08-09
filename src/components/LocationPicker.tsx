@@ -233,6 +233,12 @@ export function LocationPicker({
             Use my current location
           </button>
           )}
+          {target === "mine" && !geoError && (
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              Used only on this device to calculate sunrise and tithi for where you are —
+              never stored or shared.
+            </p>
+          )}
           {geoError && <p className="mt-2 text-xs text-muted-foreground">{geoError}</p>}
           <p className="mt-2 hidden text-[11px] text-muted-foreground sm:block">
             Use ↑ ↓ to browse, Enter to select, Esc to close.
