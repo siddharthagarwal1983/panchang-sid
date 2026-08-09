@@ -14,7 +14,6 @@ export const Route = createFileRoute("/privacy")({
       canonicalOgUrl("/privacy"),
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      canonicalOgUrl("/privacy"),
     ],
     links: [canonicalLink("/privacy")],
   }),

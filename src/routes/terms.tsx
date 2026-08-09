@@ -22,7 +22,6 @@ export const Route = createFileRoute("/terms")({
       canonicalOgUrl("/terms"),
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      canonicalOgUrl("/terms"),
     ],
     links: [canonicalLink("/terms")],
   }),

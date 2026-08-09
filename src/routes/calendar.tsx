@@ -26,7 +26,6 @@ export const Route = createFileRoute("/calendar")({
         property: "og:description",
         content: "Browse tithis and festivals month by month, calculated for your US city.",
       },
-      canonicalOgUrl("/calendar"),
     ],
     links: [canonicalLink("/calendar")],
   }),

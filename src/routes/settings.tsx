@@ -54,7 +54,7 @@ export const Route = createFileRoute("/settings")({
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, follow" },
     ],
-    links: [{ rel: "canonical", href: `${SITE_URL}/settings` }],
+    links: [canonicalLink("/settings")],
     scripts: [ldJson([faqPageSchema(FAQS)])],
   }),
   component: SettingsPage,

@@ -32,7 +32,6 @@ export const Route = createFileRoute("/auth")({
       { name: "twitter:card", content: "summary" },
       // Account-only utility page: no unique content for search results.
       { name: "robots", content: "noindex, follow" },
-      canonicalOgUrl("/auth"),
     ],
     links: [canonicalLink("/auth")],
   }),
