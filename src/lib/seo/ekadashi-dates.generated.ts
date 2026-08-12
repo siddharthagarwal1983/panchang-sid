@@ -3,7 +3,7 @@
  * src/lib/panchang/parana-snapshot.ts). Used to validate per-date routes and to
  * build the sitemap without running the ephemeris at request time.
  *
- * Regenerate with: bun tmpscripts/gen.ts (dates shift by at most a day for
+ * Regenerate with: bun scripts/generate-ekadashi-dates.ts (dates shift by at most a day for
  * far-west cities; the page itself recomputes for the visitor's location).
  */
 export type EkadashiDateStub = {
