@@ -3,7 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
 import { FaqSection, type FaqItem } from "@/components/FaqSection";
-import { scanEkadashi, type EkadashiEntry } from "@/lib/panchang/ekadashi";
+import {
+  paranaSnapshot,
+  referenceParanaSnapshot,
+  REFERENCE_CITY,
+} from "@/lib/panchang/parana-snapshot";
 import { addDays, dayKey, formatLongDate, formatTime, toCalendarDay, tzAbbr } from "@/lib/panchang/tz";
 import { usePrefs } from "@/lib/prefs";
 import {
@@ -19,6 +23,33 @@ const TITLE = "Ekadashi Parana Time Today & Tomorrow | Panchanga";
 const DESCRIPTION =
   "Today's and tomorrow's Ekadashi parana time for your city, plus which Ekadashi is today or tomorrow and when the Dwadashi parana window opens and closes.";
 const URL = `${SITE_URL}/vrats/ekadashi/parana`;
+
+/**
+ * Crawlers get concrete dates and times: the meta description is built from the
+ * same reference-city snapshot that is server-rendered on the page.
+ */
+function metaDescription(): string {
+  try {
+    const snap = referenceParanaSnapshot();
+    const todayKey = dayKey(snap.today);
+    const fmt = (d: Date | null) => formatTime(d, snap.city.tz, true);
+    const paranaToday = snap.entries.find((e) => dayKey(e.parana.date) === todayKey);
+    const next = snap.entries.find((e) => dayKey(e.date) >= todayKey);
+    if (paranaToday) {
+      return `Parana time today (${formatLongDate(snap.today)}) is ${fmt(paranaToday.parana.start)}–${fmt(
+        paranaToday.parana.end,
+      )} ET after ${paranaToday.name}. Times recalculate for your own city and sunrise.`;
+    }
+    if (next) {
+      return `Next Ekadashi is ${next.name} on ${formatLongDate(next.date)}, with parana on ${formatLongDate(
+        next.parana.date,
+      )} between ${fmt(next.parana.start)} and ${fmt(next.parana.end)} ET. Times recalculate for your own city.`;
+    }
+  } catch {
+    /* fall through to the static description */
+  }
+  return DESCRIPTION;
+}
 
 const FAQS: FaqItem[] = [
   {
@@ -44,24 +75,26 @@ const FAQS: FaqItem[] = [
 ];
 
 export const Route = createFileRoute("/vrats/ekadashi/parana")({
-  head: () => ({
+  head: () => {
+    const description = metaDescription();
+    return {
     meta: [
       { title: TITLE },
-      { name: "description", content: DESCRIPTION },
+      { name: "description", content: description },
       { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESCRIPTION },
+      { property: "og:description", content: description },
       { property: "og:url", content: URL },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
-      { name: "twitter:description", content: DESCRIPTION },
+      { name: "twitter:description", content: description },
     ],
     links: [{ rel: "canonical", href: URL }],
     scripts: [
       ldJson([
         articleSchema({
           headline: "Ekadashi parana time today and tomorrow",
-          description: DESCRIPTION,
+          description,
           url: URL,
         }),
         breadcrumbSchema([
@@ -79,37 +112,42 @@ export const Route = createFileRoute("/vrats/ekadashi/parana")({
         }),
       ]),
     ],
-  }),
+    };
+  },
   component: ParanaPage,
 });
 
 function ParanaPage() {
   const { city, prefs, hydrated } = usePrefs();
   const now = useMemo(() => new Date(), []);
-  const today = useMemo(() => toCalendarDay(now, city.tz), [now, city.tz]);
-  const [entries, setEntries] = useState<EkadashiEntry[] | null>(null);
+  // Rendered on the server with a reference city so the page ships real dates and
+  // times in its HTML, then swapped for the visitor's own location after hydration.
+  const [snapshot, setSnapshot] = useState(() => referenceParanaSnapshot());
 
   useEffect(() => {
     if (!hydrated) return;
-    setEntries(null);
     const id = window.setTimeout(
-      () => setEntries(scanEkadashi(addDays(today, -3), 50, city)),
+      () => setSnapshot(paranaSnapshot(city, toCalendarDay(new Date(), city.tz))),
       0,
     );
     return () => window.clearTimeout(id);
-  }, [hydrated, today.year, today.month, today.day, city]);
+  }, [hydrated, city]);
 
-  const zone = tzAbbr(now, city.tz);
-  const t = (d: Date | null) => formatTime(d, city.tz, prefs.hour12);
+  const entries = snapshot.entries;
+  const view = snapshot.city;
+  const isReference = view.id === REFERENCE_CITY.id;
+  const today = snapshot.today;
+  const zone = tzAbbr(now, view.tz);
+  const t = (d: Date | null) => formatTime(d, view.tz, prefs.hour12);
   const todayKey = dayKey(today);
-  const tomorrow = addDays(today, 1);
+  const tomorrow = snapshot.tomorrow;
   const tomorrowKey = dayKey(tomorrow);
 
-  const fastToday = entries?.find((e) => dayKey(e.date) === todayKey) ?? null;
-  const fastTomorrow = entries?.find((e) => dayKey(e.date) === tomorrowKey) ?? null;
-  const paranaToday = entries?.find((e) => dayKey(e.parana.date) === todayKey) ?? null;
-  const paranaTomorrow = entries?.find((e) => dayKey(e.parana.date) === tomorrowKey) ?? null;
-  const upcoming = entries?.filter((e) => dayKey(e.date) >= todayKey).slice(0, 3) ?? [];
+  const fastToday = entries.find((e) => dayKey(e.date) === todayKey) ?? null;
+  const fastTomorrow = entries.find((e) => dayKey(e.date) === tomorrowKey) ?? null;
+  const paranaToday = entries.find((e) => dayKey(e.parana.date) === todayKey) ?? null;
+  const paranaTomorrow = entries.find((e) => dayKey(e.parana.date) === tomorrowKey) ?? null;
+  const upcoming = entries.filter((e) => dayKey(e.date) >= todayKey).slice(0, 3);
   const next = upcoming[0] ?? null;
 
   return (
@@ -122,12 +160,13 @@ function ParanaPage() {
       />
 
       <div className="space-y-4 px-5 py-5">
-        {!entries ? (
-          <section className="panel px-5 py-5 text-sm text-muted-foreground">
-            Calculating parana windows for {city.name}…
-          </section>
-        ) : (
-          <>
+        {isReference && (
+          <p className="px-1 text-xs text-muted-foreground">
+            Showing times for {view.name}, {view.state} ({zone || view.tz}). Tap the location pin to
+            recalculate every window for your own city.
+          </p>
+        )}
+        <>
             <section className="panel px-5 py-5">
               <h2 className="text-sm font-semibold text-foreground">
                 Parana time today — {formatLongDate(today)}
@@ -218,8 +257,7 @@ function ParanaPage() {
                 ))}
               </ul>
             </section>
-          </>
-        )}
+        </>
 
         <section className="panel px-5 py-5">
           <h2 className="text-sm font-semibold text-foreground">How the parana window is fixed</h2>
