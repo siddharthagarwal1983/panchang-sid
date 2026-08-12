@@ -31,6 +31,7 @@ import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as VratsEkadashiYearIndexRouteImport } from './routes/vrats.ekadashi.$year.index'
 import { Route as VratsEkadashiYearMonthRouteImport } from './routes/vrats.ekadashi.$year.$month'
+import { Route as VratsEkadashiYearMonthDayRouteImport } from './routes/vrats.ekadashi.$year.$month.$day'
 
 const TithiTodayRoute = TithiTodayRouteImport.update({
   id: '/tithi-today',
@@ -145,6 +146,12 @@ const VratsEkadashiYearMonthRoute = VratsEkadashiYearMonthRouteImport.update({
   path: '/vrats/ekadashi/$year/$month',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VratsEkadashiYearMonthDayRoute =
+  VratsEkadashiYearMonthDayRouteImport.update({
+    id: '/$day',
+    path: '/$day',
+    getParentRoute: () => VratsEkadashiYearMonthRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -167,8 +174,9 @@ export interface FileRoutesByFullPath {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
   '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
-  '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRoute
+  '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRouteWithChildren
   '/vrats/ekadashi/$year/': typeof VratsEkadashiYearIndexRoute
+  '/vrats/ekadashi/$year/$month/$day': typeof VratsEkadashiYearMonthDayRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -191,8 +199,9 @@ export interface FileRoutesByTo {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
   '/vrats/ekadashi': typeof VratsEkadashiIndexRoute
-  '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRoute
+  '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRouteWithChildren
   '/vrats/ekadashi/$year': typeof VratsEkadashiYearIndexRoute
+  '/vrats/ekadashi/$year/$month/$day': typeof VratsEkadashiYearMonthDayRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -216,8 +225,9 @@ export interface FileRoutesById {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
   '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
-  '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRoute
+  '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRouteWithChildren
   '/vrats/ekadashi/$year/': typeof VratsEkadashiYearIndexRoute
+  '/vrats/ekadashi/$year/$month/$day': typeof VratsEkadashiYearMonthDayRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -244,6 +254,7 @@ export interface FileRouteTypes {
     | '/vrats/ekadashi/'
     | '/vrats/ekadashi/$year/$month'
     | '/vrats/ekadashi/$year/'
+    | '/vrats/ekadashi/$year/$month/$day'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '/vrats/ekadashi'
     | '/vrats/ekadashi/$year/$month'
     | '/vrats/ekadashi/$year'
+    | '/vrats/ekadashi/$year/$month/$day'
   id:
     | '__root__'
     | '/'
@@ -292,6 +304,7 @@ export interface FileRouteTypes {
     | '/vrats/ekadashi/'
     | '/vrats/ekadashi/$year/$month'
     | '/vrats/ekadashi/$year/'
+    | '/vrats/ekadashi/$year/$month/$day'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -315,7 +328,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   VratsEkadashiParanaRoute: typeof VratsEkadashiParanaRoute
   VratsEkadashiIndexRoute: typeof VratsEkadashiIndexRoute
-  VratsEkadashiYearMonthRoute: typeof VratsEkadashiYearMonthRoute
+  VratsEkadashiYearMonthRoute: typeof VratsEkadashiYearMonthRouteWithChildren
   VratsEkadashiYearIndexRoute: typeof VratsEkadashiYearIndexRoute
 }
 
@@ -475,8 +488,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VratsEkadashiYearMonthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vrats/ekadashi/$year/$month/$day': {
+      id: '/vrats/ekadashi/$year/$month/$day'
+      path: '/$day'
+      fullPath: '/vrats/ekadashi/$year/$month/$day'
+      preLoaderRoute: typeof VratsEkadashiYearMonthDayRouteImport
+      parentRoute: typeof VratsEkadashiYearMonthRoute
+    }
   }
 }
+
+interface VratsEkadashiYearMonthRouteChildren {
+  VratsEkadashiYearMonthDayRoute: typeof VratsEkadashiYearMonthDayRoute
+}
+
+const VratsEkadashiYearMonthRouteChildren: VratsEkadashiYearMonthRouteChildren =
+  {
+    VratsEkadashiYearMonthDayRoute: VratsEkadashiYearMonthDayRoute,
+  }
+
+const VratsEkadashiYearMonthRouteWithChildren =
+  VratsEkadashiYearMonthRoute._addFileChildren(
+    VratsEkadashiYearMonthRouteChildren,
+  )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -500,7 +534,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   VratsEkadashiParanaRoute: VratsEkadashiParanaRoute,
   VratsEkadashiIndexRoute: VratsEkadashiIndexRoute,
-  VratsEkadashiYearMonthRoute: VratsEkadashiYearMonthRoute,
+  VratsEkadashiYearMonthRoute: VratsEkadashiYearMonthRouteWithChildren,
   VratsEkadashiYearIndexRoute: VratsEkadashiYearIndexRoute,
 }
 export const routeTree = rootRouteImport
