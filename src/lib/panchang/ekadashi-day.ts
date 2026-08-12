@@ -19,11 +19,11 @@ export function ekadashiNearDay(city: City, day: CalendarDay): EkadashiEntry | n
   if (hit !== undefined) return hit;
 
   const entries = scanEkadashi(addDays(day, -2), 5, city);
-  const target = dayKey(day);
+  const target = Date.UTC(day.year, day.month - 1, day.day);
   let best: EkadashiEntry | null = null;
   let bestDelta = Infinity;
   for (const e of entries) {
-    const delta = Math.abs(Number(dayKey(e.date).replace(/-/g, "")) - Number(target.replace(/-/g, "")));
+    const delta = Math.abs(Date.UTC(e.date.year, e.date.month - 1, e.date.day) - target);
     if (delta < bestDelta) {
       best = e;
       bestDelta = delta;
