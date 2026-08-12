@@ -65,9 +65,10 @@ export const SITEMAP_ENTRIES: SitemapEntry[] = [
     changefreq: "monthly" as const,
     priority: "0.7",
   })),
-  // /auth, /settings, /reminders and /feedback are account-only utility pages
+  // /auth, /settings and /reminders are account-only utility pages
   // marked noindex — keeping them out of the sitemap avoids "Excluded by
   // noindex" reports and concentrates crawl budget on content pages.
+  { path: "/feedback", changefreq: "yearly", priority: "0.4" },
   { path: "/privacy", changefreq: "yearly", priority: "0.3" },
   { path: "/terms", changefreq: "yearly", priority: "0.3" },
 ];
