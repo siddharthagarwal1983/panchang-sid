@@ -29,7 +29,11 @@ const iso = (y: number, m: number, d: number) =>
 
 const longDate = (s: EkadashiDateStub) => formatLongDate({ year: s.year, month: s.month, day: s.day });
 
-const titleFor = (s: EkadashiDateStub) => `${s.name} ${longDate(s)} — Parana Time | Panchanga`;
+/** Short date keeps the title under ~60 characters. */
+const shortDate = (s: EkadashiDateStub) =>
+  `${(monthBySlug(s.monthSlug)?.name ?? s.monthSlug).slice(0, 3)} ${s.day}, ${s.year}`;
+
+const titleFor = (s: EkadashiDateStub) => `${s.name} ${shortDate(s)} — Parana Time`;
 
 /** Concrete reference-city times so the snippet carries real numbers. */
 function referenceEntry(s: EkadashiDateStub): EkadashiEntry | null {
