@@ -58,6 +58,13 @@ export const SITEMAP_ENTRIES: SitemapEntry[] = [
       priority: "0.6",
     })),
   ]),
+  // One page per Ekadashi date — these target the date-specific queries
+  // ("kamada ekadashi 2026 parana time") that the hub pages can't rank for.
+  ...EKADASHI_DATE_PATHS.map((path) => ({
+    path,
+    changefreq: "monthly" as const,
+    priority: "0.7",
+  })),
   // /auth, /settings, /reminders and /feedback are account-only utility pages
   // marked noindex — keeping them out of the sitemap avoids "Excluded by
   // noindex" reports and concentrates crawl budget on content pages.
