@@ -17,7 +17,7 @@ export const Route = createFileRoute("/feedback")({
       canonicalOgUrl("/feedback"),
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "robots", content: "noindex, follow" },
+      { name: "robots", content: "index, follow" },
     ],
     links: [canonicalLink("/feedback")],
   }),
