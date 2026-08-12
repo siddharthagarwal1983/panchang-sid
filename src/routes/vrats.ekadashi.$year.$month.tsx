@@ -7,6 +7,7 @@ import { ekadashiCalendar, type EkadashiEntry } from "@/lib/panchang/ekadashi";
 import { dayKey, formatLongDate, formatTime, tzAbbr } from "@/lib/panchang/tz";
 import { usePrefs } from "@/lib/prefs";
 import { MONTHS, isEkadashiYear, monthBySlug } from "@/lib/seo/ekadashi-pages";
+import { ekadashiDatesIn } from "@/lib/seo/ekadashi-dates";
 import {
   SITE_URL,
   articleSchema,
@@ -148,6 +149,27 @@ function EkadashiMonthPage() {
                   <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
                     {e.parana.note}
                   </p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {monthMeta && ekadashiDatesIn(Number(year), monthMeta.number).length > 0 && (
+          <section className="panel px-5 py-4">
+            <h2 className="text-sm font-semibold text-foreground">
+              Each fast in {monthName} {year}
+            </h2>
+            <ul className="mt-3 space-y-1.5">
+              {ekadashiDatesIn(Number(year), monthMeta.number).map((s) => (
+                <li key={`${s.month}-${s.day}`}>
+                  <Link
+                    to="/vrats/ekadashi/$year/$month/$day"
+                    params={{ year, month: s.monthSlug, day: String(s.day) }}
+                    className="text-xs text-primary underline-offset-2 hover:underline"
+                  >
+                    {s.name} — {monthName} {s.day}, {s.year} parana time
+                  </Link>
                 </li>
               ))}
             </ul>
