@@ -3,6 +3,8 @@
  * and by the build-time guard in vite.config.ts.
  */
 
+import { EKADASHI_DATE_PATHS } from "./ekadashi-dates";
+
 export interface SitemapEntry {
   path: string;
   changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
