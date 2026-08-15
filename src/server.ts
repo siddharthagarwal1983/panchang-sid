@@ -98,6 +98,35 @@ function canonicalHostRedirect(request: Request): Response | undefined {
   return new Response(null, { status: 301, headers: { location: url.toString() } });
 }
 
+/**
+ * Any host other than the canonical domain (platform preview subdomains, the
+ * publish host when the edge serves it directly, ad-hoc hostnames) must never
+ * be indexed. The redirect above covers known duplicates; this header makes
+ * every remaining non-canonical host explicitly noindex so Google cannot pick
+ * one as the site's canonical.
+ */
+function isNonCanonicalHost(request: Request): boolean {
+  try {
+    const { hostname } = new URL(request.url);
+    if (hostname === CANONICAL_HOST) return false;
+    if (hostname === "localhost" || hostname === "127.0.0.1") return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function withNoindexOnStagingHosts(request: Request, response: Response): Response {
+  if (!isNonCanonicalHost(request)) return response;
+  const headers = new Headers(response.headers);
+  headers.set("x-robots-tag", "noindex, nofollow");
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
@@ -106,7 +135,7 @@ export default {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       const normalized = await normalizeCatastrophicSsrResponse(response);
-      return withStaticAssetCaching(request, normalized);
+      return withNoindexOnStagingHosts(request, withStaticAssetCaching(request, normalized));
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {
