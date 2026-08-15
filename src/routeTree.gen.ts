@@ -25,12 +25,15 @@ import { Route as FestivalsYearRouteImport } from './routes/festivals.$year'
 import { Route as CompareEphemerisRouteImport } from './routes/compare.ephemeris'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as VratsPurnimaIndexRouteImport } from './routes/vrats.purnima.index'
 import { Route as VratsEkadashiIndexRouteImport } from './routes/vrats.ekadashi.index'
+import { Route as VratsAmavasyaIndexRouteImport } from './routes/vrats.amavasya.index'
 import { Route as VratsEkadashiParanaRouteImport } from './routes/vrats.ekadashi.parana'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as VratsEkadashiYearIndexRouteImport } from './routes/vrats.ekadashi.$year.index'
 import { Route as VratsEkadashiYearMonthRouteImport } from './routes/vrats.ekadashi.$year.$month'
+import { Route as VratsAmavasyaYearMonthRouteImport } from './routes/vrats.amavasya.$year.$month'
 import { Route as VratsEkadashiYearMonthDayRouteImport } from './routes/vrats.ekadashi.$year.$month.$day'
 
 const TithiTodayRoute = TithiTodayRouteImport.update({
@@ -115,9 +118,19 @@ const Char91DotmcpChar93ListToolsRoute =
     path: '/.mcp/list-tools',
     getParentRoute: () => rootRouteImport,
   } as any)
+const VratsPurnimaIndexRoute = VratsPurnimaIndexRouteImport.update({
+  id: '/vrats/purnima/',
+  path: '/vrats/purnima/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VratsEkadashiIndexRoute = VratsEkadashiIndexRouteImport.update({
   id: '/vrats/ekadashi/',
   path: '/vrats/ekadashi/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VratsAmavasyaIndexRoute = VratsAmavasyaIndexRouteImport.update({
+  id: '/vrats/amavasya/',
+  path: '/vrats/amavasya/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VratsEkadashiParanaRoute = VratsEkadashiParanaRouteImport.update({
@@ -144,6 +157,11 @@ const VratsEkadashiYearIndexRoute = VratsEkadashiYearIndexRouteImport.update({
 const VratsEkadashiYearMonthRoute = VratsEkadashiYearMonthRouteImport.update({
   id: '/vrats/ekadashi/$year/$month',
   path: '/vrats/ekadashi/$year/$month',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VratsAmavasyaYearMonthRoute = VratsAmavasyaYearMonthRouteImport.update({
+  id: '/vrats/amavasya/$year/$month',
+  path: '/vrats/amavasya/$year/$month',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VratsEkadashiYearMonthDayRoute =
@@ -173,7 +191,10 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
+  '/vrats/amavasya/': typeof VratsAmavasyaIndexRoute
   '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
+  '/vrats/purnima/': typeof VratsPurnimaIndexRoute
+  '/vrats/amavasya/$year/$month': typeof VratsAmavasyaYearMonthRoute
   '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRouteWithChildren
   '/vrats/ekadashi/$year/': typeof VratsEkadashiYearIndexRoute
   '/vrats/ekadashi/$year/$month/$day': typeof VratsEkadashiYearMonthDayRoute
@@ -198,7 +219,10 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
+  '/vrats/amavasya': typeof VratsAmavasyaIndexRoute
   '/vrats/ekadashi': typeof VratsEkadashiIndexRoute
+  '/vrats/purnima': typeof VratsPurnimaIndexRoute
+  '/vrats/amavasya/$year/$month': typeof VratsAmavasyaYearMonthRoute
   '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRouteWithChildren
   '/vrats/ekadashi/$year': typeof VratsEkadashiYearIndexRoute
   '/vrats/ekadashi/$year/$month/$day': typeof VratsEkadashiYearMonthDayRoute
@@ -224,7 +248,10 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/vrats/ekadashi/parana': typeof VratsEkadashiParanaRoute
+  '/vrats/amavasya/': typeof VratsAmavasyaIndexRoute
   '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
+  '/vrats/purnima/': typeof VratsPurnimaIndexRoute
+  '/vrats/amavasya/$year/$month': typeof VratsAmavasyaYearMonthRoute
   '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRouteWithChildren
   '/vrats/ekadashi/$year/': typeof VratsEkadashiYearIndexRoute
   '/vrats/ekadashi/$year/$month/$day': typeof VratsEkadashiYearMonthDayRoute
@@ -251,7 +278,10 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/vrats/ekadashi/parana'
+    | '/vrats/amavasya/'
     | '/vrats/ekadashi/'
+    | '/vrats/purnima/'
+    | '/vrats/amavasya/$year/$month'
     | '/vrats/ekadashi/$year/$month'
     | '/vrats/ekadashi/$year/'
     | '/vrats/ekadashi/$year/$month/$day'
@@ -276,7 +306,10 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/vrats/ekadashi/parana'
+    | '/vrats/amavasya'
     | '/vrats/ekadashi'
+    | '/vrats/purnima'
+    | '/vrats/amavasya/$year/$month'
     | '/vrats/ekadashi/$year/$month'
     | '/vrats/ekadashi/$year'
     | '/vrats/ekadashi/$year/$month/$day'
@@ -301,7 +334,10 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/vrats/ekadashi/parana'
+    | '/vrats/amavasya/'
     | '/vrats/ekadashi/'
+    | '/vrats/purnima/'
+    | '/vrats/amavasya/$year/$month'
     | '/vrats/ekadashi/$year/$month'
     | '/vrats/ekadashi/$year/'
     | '/vrats/ekadashi/$year/$month/$day'
@@ -327,7 +363,10 @@ export interface RootRouteChildren {
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   VratsEkadashiParanaRoute: typeof VratsEkadashiParanaRoute
+  VratsAmavasyaIndexRoute: typeof VratsAmavasyaIndexRoute
   VratsEkadashiIndexRoute: typeof VratsEkadashiIndexRoute
+  VratsPurnimaIndexRoute: typeof VratsPurnimaIndexRoute
+  VratsAmavasyaYearMonthRoute: typeof VratsAmavasyaYearMonthRoute
   VratsEkadashiYearMonthRoute: typeof VratsEkadashiYearMonthRouteWithChildren
   VratsEkadashiYearIndexRoute: typeof VratsEkadashiYearIndexRoute
 }
@@ -446,11 +485,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vrats/purnima/': {
+      id: '/vrats/purnima/'
+      path: '/vrats/purnima'
+      fullPath: '/vrats/purnima/'
+      preLoaderRoute: typeof VratsPurnimaIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/vrats/ekadashi/': {
       id: '/vrats/ekadashi/'
       path: '/vrats/ekadashi'
       fullPath: '/vrats/ekadashi/'
       preLoaderRoute: typeof VratsEkadashiIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vrats/amavasya/': {
+      id: '/vrats/amavasya/'
+      path: '/vrats/amavasya'
+      fullPath: '/vrats/amavasya/'
+      preLoaderRoute: typeof VratsAmavasyaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vrats/ekadashi/parana': {
@@ -486,6 +539,13 @@ declare module '@tanstack/react-router' {
       path: '/vrats/ekadashi/$year/$month'
       fullPath: '/vrats/ekadashi/$year/$month'
       preLoaderRoute: typeof VratsEkadashiYearMonthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vrats/amavasya/$year/$month': {
+      id: '/vrats/amavasya/$year/$month'
+      path: '/vrats/amavasya/$year/$month'
+      fullPath: '/vrats/amavasya/$year/$month'
+      preLoaderRoute: typeof VratsAmavasyaYearMonthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vrats/ekadashi/$year/$month/$day': {
@@ -533,7 +593,10 @@ const rootRouteChildren: RootRouteChildren = {
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   VratsEkadashiParanaRoute: VratsEkadashiParanaRoute,
+  VratsAmavasyaIndexRoute: VratsAmavasyaIndexRoute,
   VratsEkadashiIndexRoute: VratsEkadashiIndexRoute,
+  VratsPurnimaIndexRoute: VratsPurnimaIndexRoute,
+  VratsAmavasyaYearMonthRoute: VratsAmavasyaYearMonthRoute,
   VratsEkadashiYearMonthRoute: VratsEkadashiYearMonthRouteWithChildren,
   VratsEkadashiYearIndexRoute: VratsEkadashiYearIndexRoute,
 }
