@@ -6,5 +6,6 @@ Disallow: /mcp
 Disallow: /.mcp/
 Disallow: /.lovable/
 Disallow: /.well-known/
+Disallow: /admin/
 
 Sitemap: https://indianpanchang.com/sitemap.xml

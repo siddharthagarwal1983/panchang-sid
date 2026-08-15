@@ -22,6 +22,7 @@ export const SITEMAP_EXCLUDE_PATTERNS: RegExp[] = [
   /^\/\.well-known(\/|$)/,
   /^\/\.lovable(\/|$)/,
   /^\/api(\/|$)/,
+  /^\/admin(\/|$)/,
   /^\/sitemap\.xml$/,
   /^\/not-found$/,
   /\$/, // un-substituted dynamic params
