@@ -109,7 +109,7 @@ function SearchConsolePage() {
   if (authLoading) {
     return (
       <main className="mx-auto max-w-md p-4">
-        <AppHeader />
+        <AppHeader title="Search Console" />
         <p className="mt-8 text-sm text-muted-foreground">Loading…</p>
       </main>
     );
@@ -118,13 +118,13 @@ function SearchConsolePage() {
   if (!user) {
     return (
       <main className="mx-auto max-w-md p-4">
-        <AppHeader />
+        <AppHeader title="Search Console" />
         <div className="mt-8 rounded-2xl border border-border bg-card p-5">
           <h1 className="text-lg font-semibold">Search Console monitor</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Sign in with an admin account to view indexing and canonical status.
           </p>
-          <Link to="/auth" className="mt-4 inline-block rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
+          <Link to="/auth" search={{ next: undefined }} className="mt-4 inline-block rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
             Sign in
           </Link>
         </div>
@@ -137,7 +137,7 @@ function SearchConsolePage() {
 
   return (
     <main className="mx-auto max-w-md p-4 pb-24">
-      <AppHeader />
+      <AppHeader title="Search Console" />
 
       <Link to="/settings" className="mt-4 inline-flex items-center gap-1 text-sm text-muted-foreground">
         <ArrowLeft className="h-4 w-4" /> Settings
