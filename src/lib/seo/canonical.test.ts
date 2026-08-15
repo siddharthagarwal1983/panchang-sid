@@ -49,4 +49,28 @@ describe("canonical strategy", () => {
     walk(join(process.cwd(), "src"));
     expect(offenders).toEqual([]);
   });
+  it("builds every canonical and og:url from the shared origin constant", () => {
+    // Guards against a template hardcoding a host or a relative URL: each
+    // canonical/og:url expression must come from canonicalLink/canonicalUrl or
+    // the SITE_URL constant, all of which resolve to indianpanchang.com.
+    const offenders: string[] = [];
+    for (const f of pageRouteFiles()) {
+      const src = readFileSync(join(ROUTES_DIR, f), "utf8");
+      const expressions = [
+        ...src.matchAll(/rel: "canonical", href: ([^}]+)}/g),
+        ...src.matchAll(/property: "og:url", content: ([^}]+)}/g),
+      ].map((m) => m[1]);
+      for (const expr of expressions) {
+        const ok = /SITE_URL|canonicalUrl|canonicalLink|canonicalOgUrl|\bURL\b|\burl\b/.test(expr);
+        if (!ok) offenders.push(`${f}: ${expr.trim()}`);
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it("serves the sitemap from the same canonical origin", () => {
+    const src = readFileSync(join(ROUTES_DIR, "sitemap[.]xml.ts"), "utf8");
+    expect(src).toContain("const BASE_URL = CANONICAL_ORIGIN;");
+    expect(src).not.toMatch(/const BASE_URL = "/);
+  });
 });
