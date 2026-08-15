@@ -4,8 +4,10 @@ import {
   SITEMAP_ENTRIES,
   assertSitemapExcludesMachineRoutes,
 } from "@/lib/seo/sitemap-entries";
+import { CANONICAL_ORIGIN } from "@/lib/seo/canonical";
 
-const BASE_URL = "https://indianpanchang.com";
+// Single source of truth — same origin every canonical tag advertises.
+const BASE_URL = CANONICAL_ORIGIN;
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
