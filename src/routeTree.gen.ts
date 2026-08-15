@@ -23,6 +23,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as MuhuratChoghadiyaRouteImport } from './routes/muhurat.choghadiya'
 import { Route as FestivalsYearRouteImport } from './routes/festivals.$year'
 import { Route as CompareEphemerisRouteImport } from './routes/compare.ephemeris'
+import { Route as AdminSearchConsoleRouteImport } from './routes/admin.search-console'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as VratsPurnimaIndexRouteImport } from './routes/vrats.purnima.index'
@@ -106,6 +107,11 @@ const CompareEphemerisRoute = CompareEphemerisRouteImport.update({
   path: '/compare/ephemeris',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSearchConsoleRoute = AdminSearchConsoleRouteImport.update({
+  id: '/admin/search-console',
+  path: '/admin/search-console',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
     id: '/.well-known/oauth-protected-resource',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/tithi-today': typeof TithiTodayRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/search-console': typeof AdminSearchConsoleRoute
   '/compare/ephemeris': typeof CompareEphemerisRoute
   '/festivals/$year': typeof FestivalsYearRoute
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
@@ -213,6 +220,7 @@ export interface FileRoutesByTo {
   '/tithi-today': typeof TithiTodayRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/search-console': typeof AdminSearchConsoleRoute
   '/compare/ephemeris': typeof CompareEphemerisRoute
   '/festivals/$year': typeof FestivalsYearRoute
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
@@ -242,6 +250,7 @@ export interface FileRoutesById {
   '/tithi-today': typeof TithiTodayRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/search-console': typeof AdminSearchConsoleRoute
   '/compare/ephemeris': typeof CompareEphemerisRoute
   '/festivals/$year': typeof FestivalsYearRoute
   '/muhurat/choghadiya': typeof MuhuratChoghadiyaRoute
@@ -272,6 +281,7 @@ export interface FileRouteTypes {
     | '/tithi-today'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/search-console'
     | '/compare/ephemeris'
     | '/festivals/$year'
     | '/muhurat/choghadiya'
@@ -300,6 +310,7 @@ export interface FileRouteTypes {
     | '/tithi-today'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/search-console'
     | '/compare/ephemeris'
     | '/festivals/$year'
     | '/muhurat/choghadiya'
@@ -328,6 +339,7 @@ export interface FileRouteTypes {
     | '/tithi-today'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/search-console'
     | '/compare/ephemeris'
     | '/festivals/$year'
     | '/muhurat/choghadiya'
@@ -357,6 +369,7 @@ export interface RootRouteChildren {
   TithiTodayRoute: typeof TithiTodayRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  AdminSearchConsoleRoute: typeof AdminSearchConsoleRoute
   CompareEphemerisRoute: typeof CompareEphemerisRoute
   FestivalsYearRoute: typeof FestivalsYearRoute
   MuhuratChoghadiyaRoute: typeof MuhuratChoghadiyaRoute
@@ -469,6 +482,13 @@ declare module '@tanstack/react-router' {
       path: '/compare/ephemeris'
       fullPath: '/compare/ephemeris'
       preLoaderRoute: typeof CompareEphemerisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/search-console': {
+      id: '/admin/search-console'
+      path: '/admin/search-console'
+      fullPath: '/admin/search-console'
+      preLoaderRoute: typeof AdminSearchConsoleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/oauth-protected-resource': {
@@ -587,6 +607,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  AdminSearchConsoleRoute: AdminSearchConsoleRoute,
   CompareEphemerisRoute: CompareEphemerisRoute,
   FestivalsYearRoute: FestivalsYearRoute,
   MuhuratChoghadiyaRoute: MuhuratChoghadiyaRoute,
