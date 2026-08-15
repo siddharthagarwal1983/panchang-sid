@@ -11,6 +11,7 @@ import {
 } from "@/lib/panchang/moon-phase-snapshot";
 import { dayKey, formatLongDate, formatTime, toCalendarDay, tzAbbr } from "@/lib/panchang/tz";
 import { usePrefs } from "@/lib/prefs";
+import { MONTHS } from "@/lib/seo/ekadashi-pages";
 
 /**
  * Shared body for /vrats/amavasya and /vrats/purnima. Server-renders real dates
@@ -134,7 +135,7 @@ export function MoonPhaseHub({ kind, faqs }: { kind: MoonPhaseKind; faqs: FaqIte
           ,{" "}
           <Link
             to="/vrats/amavasya/$year/$month"
-            params={{ year: String(snapshot.today.year), month: MONTH_SLUGS[snapshot.today.month - 1] }}
+            params={{ year: String(snapshot.today.year), month: MONTHS[snapshot.today.month - 1].slug }}
             className="text-primary underline-offset-2 hover:underline"
           >
             this month's Amavasya
@@ -152,18 +153,3 @@ export function MoonPhaseHub({ kind, faqs }: { kind: MoonPhaseKind; faqs: FaqIte
     </main>
   );
 }
-
-const MONTH_SLUGS = [
-  "january",
-  "february",
-  "march",
-  "april",
-  "may",
-  "june",
-  "july",
-  "august",
-  "september",
-  "october",
-  "november",
-  "december",
-];
