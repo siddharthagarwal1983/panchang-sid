@@ -33,6 +33,7 @@ import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as VratsEkadashiYearIndexRouteImport } from './routes/vrats.ekadashi.$year.index'
 import { Route as VratsEkadashiYearMonthRouteImport } from './routes/vrats.ekadashi.$year.$month'
+import { Route as VratsAmavasyaYearMonthRouteImport } from './routes/vrats.amavasya.$year.$month'
 import { Route as VratsEkadashiYearMonthDayRouteImport } from './routes/vrats.ekadashi.$year.$month.$day'
 
 const TithiTodayRoute = TithiTodayRouteImport.update({
@@ -158,6 +159,11 @@ const VratsEkadashiYearMonthRoute = VratsEkadashiYearMonthRouteImport.update({
   path: '/vrats/ekadashi/$year/$month',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VratsAmavasyaYearMonthRoute = VratsAmavasyaYearMonthRouteImport.update({
+  id: '/vrats/amavasya/$year/$month',
+  path: '/vrats/amavasya/$year/$month',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VratsEkadashiYearMonthDayRoute =
   VratsEkadashiYearMonthDayRouteImport.update({
     id: '/$day',
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/vrats/amavasya/': typeof VratsAmavasyaIndexRoute
   '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
   '/vrats/purnima/': typeof VratsPurnimaIndexRoute
+  '/vrats/amavasya/$year/$month': typeof VratsAmavasyaYearMonthRoute
   '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRouteWithChildren
   '/vrats/ekadashi/$year/': typeof VratsEkadashiYearIndexRoute
   '/vrats/ekadashi/$year/$month/$day': typeof VratsEkadashiYearMonthDayRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/vrats/amavasya': typeof VratsAmavasyaIndexRoute
   '/vrats/ekadashi': typeof VratsEkadashiIndexRoute
   '/vrats/purnima': typeof VratsPurnimaIndexRoute
+  '/vrats/amavasya/$year/$month': typeof VratsAmavasyaYearMonthRoute
   '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRouteWithChildren
   '/vrats/ekadashi/$year': typeof VratsEkadashiYearIndexRoute
   '/vrats/ekadashi/$year/$month/$day': typeof VratsEkadashiYearMonthDayRoute
@@ -243,6 +251,7 @@ export interface FileRoutesById {
   '/vrats/amavasya/': typeof VratsAmavasyaIndexRoute
   '/vrats/ekadashi/': typeof VratsEkadashiIndexRoute
   '/vrats/purnima/': typeof VratsPurnimaIndexRoute
+  '/vrats/amavasya/$year/$month': typeof VratsAmavasyaYearMonthRoute
   '/vrats/ekadashi/$year/$month': typeof VratsEkadashiYearMonthRouteWithChildren
   '/vrats/ekadashi/$year/': typeof VratsEkadashiYearIndexRoute
   '/vrats/ekadashi/$year/$month/$day': typeof VratsEkadashiYearMonthDayRoute
@@ -272,6 +281,7 @@ export interface FileRouteTypes {
     | '/vrats/amavasya/'
     | '/vrats/ekadashi/'
     | '/vrats/purnima/'
+    | '/vrats/amavasya/$year/$month'
     | '/vrats/ekadashi/$year/$month'
     | '/vrats/ekadashi/$year/'
     | '/vrats/ekadashi/$year/$month/$day'
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/vrats/amavasya'
     | '/vrats/ekadashi'
     | '/vrats/purnima'
+    | '/vrats/amavasya/$year/$month'
     | '/vrats/ekadashi/$year/$month'
     | '/vrats/ekadashi/$year'
     | '/vrats/ekadashi/$year/$month/$day'
@@ -326,6 +337,7 @@ export interface FileRouteTypes {
     | '/vrats/amavasya/'
     | '/vrats/ekadashi/'
     | '/vrats/purnima/'
+    | '/vrats/amavasya/$year/$month'
     | '/vrats/ekadashi/$year/$month'
     | '/vrats/ekadashi/$year/'
     | '/vrats/ekadashi/$year/$month/$day'
@@ -354,6 +366,7 @@ export interface RootRouteChildren {
   VratsAmavasyaIndexRoute: typeof VratsAmavasyaIndexRoute
   VratsEkadashiIndexRoute: typeof VratsEkadashiIndexRoute
   VratsPurnimaIndexRoute: typeof VratsPurnimaIndexRoute
+  VratsAmavasyaYearMonthRoute: typeof VratsAmavasyaYearMonthRoute
   VratsEkadashiYearMonthRoute: typeof VratsEkadashiYearMonthRouteWithChildren
   VratsEkadashiYearIndexRoute: typeof VratsEkadashiYearIndexRoute
 }
@@ -528,6 +541,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VratsEkadashiYearMonthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vrats/amavasya/$year/$month': {
+      id: '/vrats/amavasya/$year/$month'
+      path: '/vrats/amavasya/$year/$month'
+      fullPath: '/vrats/amavasya/$year/$month'
+      preLoaderRoute: typeof VratsAmavasyaYearMonthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/vrats/ekadashi/$year/$month/$day': {
       id: '/vrats/ekadashi/$year/$month/$day'
       path: '/$day'
@@ -576,6 +596,7 @@ const rootRouteChildren: RootRouteChildren = {
   VratsAmavasyaIndexRoute: VratsAmavasyaIndexRoute,
   VratsEkadashiIndexRoute: VratsEkadashiIndexRoute,
   VratsPurnimaIndexRoute: VratsPurnimaIndexRoute,
+  VratsAmavasyaYearMonthRoute: VratsAmavasyaYearMonthRoute,
   VratsEkadashiYearMonthRoute: VratsEkadashiYearMonthRouteWithChildren,
   VratsEkadashiYearIndexRoute: VratsEkadashiYearIndexRoute,
 }
