@@ -79,7 +79,10 @@ function withStaticAssetCaching(request: Request, response: Response): Response 
 const CANONICAL_HOST = "indianpanchang.com";
 const DUPLICATE_HOSTS = new Set(["panchanga.lovable.app", "www.indianpanchang.com"]);
 // Machine-only endpoints (MCP / OAuth discovery) must keep responding on their host.
-const NO_REDIRECT_PREFIXES = ["/mcp", "/.mcp", "/.well-known", "/.lovable", "/api"];
+// /~oauth is the Lovable Cloud Auth broker: its initiate/callback pair must stay on
+// the origin that started the flow, otherwise the popup's web_message response is
+// cross-origin and the session is never set.
+const NO_REDIRECT_PREFIXES = ["/mcp", "/.mcp", "/.well-known", "/.lovable", "/api", "/~oauth"];
 
 function canonicalHostRedirect(request: Request): Response | undefined {
   let url: URL;
