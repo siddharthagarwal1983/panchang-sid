@@ -17,6 +17,14 @@ import { BottomNav } from "../components/BottomNav";
 import { ParanaScheduler, ReminderScheduler } from "../lib/useReminderNotifications";
 
 function NotFoundComponent() {
+  // The root's head() doesn't know a child route threw notFound(), so it
+  // can't set a not-found-specific title — set it client-side instead. The
+  // HTTP status itself (see withNoindexOn404 in src/server.ts) is already
+  // correct and carries the X-Robots-Tag noindex header.
+  useEffect(() => {
+    document.title = "Page not found — Panchāṅga";
+  }, []);
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">

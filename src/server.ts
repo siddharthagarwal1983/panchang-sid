@@ -130,6 +130,22 @@ function withNoindexOnStagingHosts(request: Request, response: Response): Respon
   });
 }
 
+// TanStack's per-route head() doesn't run for the route that threw notFound()
+// (only the root's static head applies), so bad dynamic-param URLs like
+// /vrats/ekadashi/2099/january render with no noindex meta despite the
+// correct 404 status. The X-Robots-Tag header is Google's HTTP-level
+// equivalent of the meta tag and doesn't depend on what the head renders.
+function withNoindexOn404(response: Response): Response {
+  if (response.status !== 404) return response;
+  const headers = new Headers(response.headers);
+  headers.set("x-robots-tag", "noindex, nofollow");
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
@@ -138,7 +154,9 @@ export default {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       const normalized = await normalizeCatastrophicSsrResponse(response);
-      return withNoindexOnStagingHosts(request, withStaticAssetCaching(request, normalized));
+      return withNoindexOn404(
+        withNoindexOnStagingHosts(request, withStaticAssetCaching(request, normalized)),
+      );
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {
