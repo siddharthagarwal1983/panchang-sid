@@ -19,7 +19,7 @@ import {
   ldJson,
 } from "@/lib/seo/schema";
 
-const TITLE = "Ekadashi Parana Time Today & Tomorrow | Panchanga";
+const TITLE = "Ekadashi Parana Time Today & Tomorrow (Local US Times)";
 const DESCRIPTION =
   "Today's and tomorrow's Ekadashi parana time for your city, plus which Ekadashi is today or tomorrow and when the Dwadashi parana window opens and closes.";
 const URL = `${SITE_URL}/vrats/ekadashi/parana`;
