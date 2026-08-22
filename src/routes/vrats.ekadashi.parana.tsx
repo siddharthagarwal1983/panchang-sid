@@ -70,21 +70,25 @@ function metaTitle(): string {
     const snap = referenceParanaSnapshot();
     const todayKey = dayKey(snap.today);
     const fmt = (d: Date | null) => formatTime(d, snap.city.tz, true);
+    // Keep every branch under ~60 chars so the snippet is never truncated.
+    const short = (name: string) => name.replace(/ Ekadashi$/, "");
+    const mon = (d: CalendarDay) =>
+      (MONTHS.find((m) => m.number === d.month)?.name ?? "").slice(0, 3);
     const paranaToday = snap.entries.find((e) => dayKey(e.parana.date) === todayKey);
     if (paranaToday) {
       return `Parana Time Today: ${fmt(paranaToday.parana.start)}–${fmt(
         paranaToday.parana.end,
-      )} ET (${paranaToday.name})`;
+      )} ET (${short(paranaToday.name)})`;
     }
     const fastToday = snap.entries.find((e) => dayKey(e.date) === todayKey);
     if (fastToday) {
-      return `${fastToday.name} Today — Parana Tomorrow ${fmt(fastToday.parana.start)}–${fmt(
-        fastToday.parana.end,
-      )} ET`;
+      return `${short(fastToday.name)} Today — Parana Tomorrow ${fmt(
+        fastToday.parana.start,
+      )}–${fmt(fastToday.parana.end)} ET`;
     }
     const next = snap.entries.find((e) => dayKey(e.date) >= todayKey);
     if (next) {
-      return `Parana Time Today & Next: ${next.name} ${formatLongDate(next.date)}`;
+      return `Parana Time Today & Next: ${short(next.name)} ${mon(next.date)} ${next.date.day}`;
     }
   } catch {
     /* fall through to the static title */
