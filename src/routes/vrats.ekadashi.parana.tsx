@@ -8,7 +8,16 @@ import {
   referenceParanaSnapshot,
   REFERENCE_CITY,
 } from "@/lib/panchang/parana-snapshot";
-import { addDays, dayKey, formatLongDate, formatTime, toCalendarDay, tzAbbr } from "@/lib/panchang/tz";
+import {
+  dayKey,
+  formatLongDate,
+  formatTime,
+  toCalendarDay,
+  tzAbbr,
+  type CalendarDay,
+} from "@/lib/panchang/tz";
+import { findEkadashiDate } from "@/lib/seo/ekadashi-dates";
+import { MONTHS } from "@/lib/seo/ekadashi-pages";
 import { usePrefs } from "@/lib/prefs";
 import {
   SITE_URL,
@@ -51,6 +60,48 @@ function metaDescription(): string {
   return DESCRIPTION;
 }
 
+/**
+ * Snippet title carries the actual answer ("parana time today") with concrete
+ * times, which is what earns the click at position ~9. Falls back to the
+ * static title outside a fast period.
+ */
+function metaTitle(): string {
+  try {
+    const snap = referenceParanaSnapshot();
+    const todayKey = dayKey(snap.today);
+    const fmt = (d: Date | null) => formatTime(d, snap.city.tz, true);
+    // Keep every branch under ~60 chars so the snippet is never truncated.
+    const short = (name: string) => name.replace(/ Ekadashi$/, "");
+    const mon = (d: CalendarDay) =>
+      (MONTHS.find((m) => m.number === d.month)?.name ?? "").slice(0, 3);
+    const paranaToday = snap.entries.find((e) => dayKey(e.parana.date) === todayKey);
+    if (paranaToday) {
+      return `Parana Time Today: ${fmt(paranaToday.parana.start)}–${fmt(
+        paranaToday.parana.end,
+      )} ET (${short(paranaToday.name)})`;
+    }
+    const fastToday = snap.entries.find((e) => dayKey(e.date) === todayKey);
+    if (fastToday) {
+      return `${short(fastToday.name)} Today — Parana Tomorrow ${fmt(
+        fastToday.parana.start,
+      )}–${fmt(fastToday.parana.end)} ET`;
+    }
+    const next = snap.entries.find((e) => dayKey(e.date) >= todayKey);
+    if (next) {
+      return `Parana Time Today & Next: ${short(next.name)} ${mon(next.date)} ${next.date.day}`;
+    }
+  } catch {
+    /* fall through to the static title */
+  }
+  return TITLE;
+}
+
+/** Dated-page stub for an entry's local fast day, when one exists (2026–2027). */
+function stubFor(date: CalendarDay) {
+  const slug = MONTHS.find((m) => m.number === date.month)?.slug;
+  return slug ? findEkadashiDate(date.year, slug, date.day) : undefined;
+}
+
 const FAQS: FaqItem[] = [
   {
     q: "What is the Ekadashi parana time today?",
@@ -76,17 +127,18 @@ const FAQS: FaqItem[] = [
 
 export const Route = createFileRoute("/vrats/ekadashi/parana")({
   head: () => {
+    const title = metaTitle();
     const description = metaDescription();
     return {
     meta: [
-      { title: TITLE },
+      { title },
       { name: "description", content: description },
-      { property: "og:title", content: TITLE },
+      { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:url", content: URL },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: TITLE },
+      { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
     ],
     links: [{ rel: "canonical", href: URL }],
@@ -233,7 +285,28 @@ function ParanaPage() {
               </h2>
               {next ? (
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  The next fast is <strong className="text-foreground">{next.name}</strong> on{" "}
+                  The next fast is{" "}
+                  <strong className="text-foreground">
+                    {(() => {
+                      const stub = stubFor(next.date);
+                      return stub ? (
+                        <Link
+                          to="/vrats/ekadashi/$year/$month/$day"
+                          params={{
+                            year: String(stub.year),
+                            month: stub.monthSlug,
+                            day: String(stub.day),
+                          }}
+                          className="text-primary underline-offset-2 hover:underline"
+                        >
+                          {next.name}
+                        </Link>
+                      ) : (
+                        next.name
+                      );
+                    })()}
+                  </strong>{" "}
+                  on{" "}
                   <strong className="text-foreground">{formatLongDate(next.date)}</strong> (
                   {next.masa} · {next.paksha} paksha), with parana on{" "}
                   {formatLongDate(next.parana.date)} between {t(next.parana.start)} and{" "}
@@ -241,20 +314,39 @@ function ParanaPage() {
                 </p>
               ) : null}
               <ul className="mt-3 space-y-3">
-                {upcoming.map((e) => (
-                  <li key={dayKey(e.date)} className="rounded-xl border border-border px-3 py-3">
-                    <div className="flex items-baseline justify-between gap-3">
-                      <p className="text-sm font-medium text-foreground">{e.name}</p>
-                      <p className="shrink-0 text-xs tabular-nums text-muted-foreground">
-                        {formatLongDate(e.date)}
+                {upcoming.map((e) => {
+                  const stub = stubFor(e.date);
+                  return (
+                    <li key={dayKey(e.date)} className="rounded-xl border border-border px-3 py-3">
+                      <div className="flex items-baseline justify-between gap-3">
+                        <p className="text-sm font-medium text-foreground">
+                          {stub ? (
+                            <Link
+                              to="/vrats/ekadashi/$year/$month/$day"
+                              params={{
+                                year: String(stub.year),
+                                month: stub.monthSlug,
+                                day: String(stub.day),
+                              }}
+                              className="text-primary underline-offset-2 hover:underline"
+                            >
+                              {e.name}
+                            </Link>
+                          ) : (
+                            e.name
+                          )}
+                        </p>
+                        <p className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                          {formatLongDate(e.date)}
+                        </p>
+                      </div>
+                      <p className="mt-1 text-xs tabular-nums text-muted-foreground">
+                        Parana {formatLongDate(e.parana.date)} · {t(e.parana.start)} –{" "}
+                        {t(e.parana.end)}
                       </p>
-                    </div>
-                    <p className="mt-1 text-xs tabular-nums text-muted-foreground">
-                      Parana {formatLongDate(e.parana.date)} · {t(e.parana.start)} –{" "}
-                      {t(e.parana.end)}
-                    </p>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             </section>
         </>
@@ -271,14 +363,44 @@ function ParanaPage() {
           </p>
         </section>
 
+        <section className="panel px-5 py-5">
+          <h2 className="text-sm font-semibold text-foreground">Parana rules at a glance</h2>
+          <ul className="mt-2 list-disc space-y-1.5 pl-4 text-xs leading-relaxed text-muted-foreground">
+            <li>
+              Never break the fast during Hari Vasara — the first quarter of Dwadashi — even when
+              that pushes parana late into the morning.
+            </li>
+            <li>
+              Parana must happen on Dwadashi tithi; if Dwadashi ends early, break the fast before it
+              ends rather than waiting for a clock time.
+            </li>
+            <li>
+              When two consecutive sunrises fall inside Ekadashi (vriddhi), Smartas keep the first
+              day and Vaishnavas keep the second.
+            </li>
+            <li>
+              Breaking the fast after Dwadashi has ended counts as a missed parana, so the window
+              above is the deadline, not a suggestion.
+            </li>
+          </ul>
+        </section>
+
         <FaqSection items={FAQS} />
 
         <p className="px-1 text-xs text-muted-foreground">
           See the full{" "}
           <Link to="/vrats/ekadashi" className="text-primary underline-offset-2 hover:underline">
             Ekadashi calendar
-          </Link>{" "}
-          or{" "}
+          </Link>
+          ,{" "}
+          <Link
+            to="/vrats/ekadashi/$year"
+            params={{ year: "2026" }}
+            className="text-primary underline-offset-2 hover:underline"
+          >
+            Ekadashi 2026 dates
+          </Link>
+          , or{" "}
           <Link to="/tithi-today" className="text-primary underline-offset-2 hover:underline">
             today's tithi
           </Link>
