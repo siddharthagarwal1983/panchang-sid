@@ -40,8 +40,15 @@ describe("canonical strategy", () => {
         if (entry.isDirectory()) walk(p);
         else if (/\.(ts|tsx)$/.test(entry.name) && entry.name !== "routeTree.gen.ts") {
           const src = readFileSync(p, "utf8");
-          // host-policy.ts owns the duplicate-host redirect list (imported by src/server.ts).
-          if (p.endsWith("src/server.ts") || p.endsWith("host-policy.ts") || p.endsWith("canonical.test.ts")) continue;
+          // host-policy.ts owns the duplicate-host redirect list (imported by
+          // src/server.ts); its test file references the duplicate host on purpose.
+          if (
+            p.endsWith("src/server.ts") ||
+            p.endsWith("host-policy.ts") ||
+            p.endsWith("host-policy.test.ts") ||
+            p.endsWith("canonical.test.ts")
+          )
+            continue;
           if (src.includes(DUPLICATE_HOST)) offenders.push(p);
         }
       }

@@ -3,13 +3,18 @@
  * Live redirect & canonical regression check for https://indianpanchang.com
  *
  * Hard failures (exit 1):
- *   - https://panchanga.lovable.app/ and https://www.indianpanchang.com/ must 301
- *     to the canonical host (path preserved).
+ *   - https://panchanga.lovable.app/ and https://www.indianpanchang.com/ must
+ *     redirect (3xx) to the canonical host, path preserved. Note: the hosting
+ *     edge issues this redirect before app code runs and currently answers
+ *     302; the app's own 301 in src/lib/seo/host-policy.ts only executes if
+ *     the edge ever passes the request through. A non-permanent status is a
+ *     warning, not a failure.
  *   - https://indianpanchang.com/ must return 200 with a self-referencing
  *     <link rel="canonical"> and og:url, and must NOT carry an
  *     X-Robots-Tag: noindex header.
- *   - /~oauth/initiate on the publish host must NOT be redirected (auth broker
- *     has to stay on its own origin).
+ *   - The preview host must serve pages with X-Robots-Tag: noindex, nofollow
+ *     (exercises the app-level staging-host guard on a host the edge does
+ *     not redirect).
  *
  * Soft check (warning only): when LOVABLE_API_KEY and
  * GOOGLE_SEARCH_CONSOLE_API_KEY are set, the script also runs URL Inspection
