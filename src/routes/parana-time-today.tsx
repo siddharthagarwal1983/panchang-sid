@@ -8,16 +8,14 @@ import {
   paranaDescriptionToday,
   paranaTitleToday,
 } from "@/lib/seo/parana-meta";
-import {
-  SITE_URL,
-  articleSchema,
-  breadcrumbSchema,
-  definedTermSchema,
-  faqPageSchema,
-  ldJson,
-} from "@/lib/seo/schema";
+import { SITE_URL, breadcrumbSchema, faqPageSchema, ldJson } from "@/lib/seo/schema";
 
-export const Route = createFileRoute("/vrats/ekadashi/parana")({
+/**
+ * Exact-match entry page for "parana time today" queries. Renders the same
+ * SSR content as /vrats/ekadashi/parana and canonicalizes to it so link
+ * equity consolidates on a single URL instead of splitting across duplicates.
+ */
+export const Route = createFileRoute("/parana-time-today")({
   head: () => {
     const title = paranaTitleToday();
     const description = paranaDescriptionToday();
@@ -30,30 +28,16 @@ export const Route = createFileRoute("/vrats/ekadashi/parana")({
         { property: "og:url", content: PARANA_URL },
         { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: description },
       ],
       links: [canonicalLink("/vrats/ekadashi/parana")],
       scripts: [
         ldJson([
-          articleSchema({
-            headline: "Ekadashi parana time today and tomorrow",
-            description,
-            url: PARANA_URL,
-          }),
           breadcrumbSchema([
             { name: "Home", url: `${SITE_URL}/` },
             { name: "Ekadashi", url: `${SITE_URL}/vrats/ekadashi` },
-            { name: "Parana time today and tomorrow", url: PARANA_URL },
+            { name: "Parana time today", url: PARANA_URL },
           ]),
           faqPageSchema(PARANA_FAQS),
-          definedTermSchema({
-            name: "Parana",
-            alternateName: ["Ekadashi parana", "Dwadashi parana"],
-            description:
-              "The meal that ends an Ekadashi fast, taken after sunrise on Dwadashi once Hari Vasara has passed and before Dwadashi tithi ends.",
-            url: PARANA_URL,
-          }),
         ]),
       ],
     };

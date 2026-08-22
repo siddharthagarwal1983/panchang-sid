@@ -15,6 +15,8 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RemindersRouteImport } from './routes/reminders'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ParanaTimeTomorrowRouteImport } from './routes/parana-time-tomorrow'
+import { Route as ParanaTimeTodayRouteImport } from './routes/parana-time-today'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as CalendarRouteImport } from './routes/calendar'
@@ -65,6 +67,16 @@ const RemindersRoute = RemindersRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParanaTimeTomorrowRoute = ParanaTimeTomorrowRouteImport.update({
+  id: '/parana-time-tomorrow',
+  path: '/parana-time-tomorrow',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParanaTimeTodayRoute = ParanaTimeTodayRouteImport.update({
+  id: '/parana-time-today',
+  path: '/parana-time-today',
   getParentRoute: () => rootRouteImport,
 } as any)
 const McpRoute = McpRouteImport.update({
@@ -183,6 +195,8 @@ export interface FileRoutesByFullPath {
   '/calendar': typeof CalendarRoute
   '/feedback': typeof FeedbackRoute
   '/mcp': typeof McpRoute
+  '/parana-time-today': typeof ParanaTimeTodayRoute
+  '/parana-time-tomorrow': typeof ParanaTimeTomorrowRoute
   '/privacy': typeof PrivacyRoute
   '/reminders': typeof RemindersRoute
   '/settings': typeof SettingsRoute
@@ -212,6 +226,8 @@ export interface FileRoutesByTo {
   '/calendar': typeof CalendarRoute
   '/feedback': typeof FeedbackRoute
   '/mcp': typeof McpRoute
+  '/parana-time-today': typeof ParanaTimeTodayRoute
+  '/parana-time-tomorrow': typeof ParanaTimeTomorrowRoute
   '/privacy': typeof PrivacyRoute
   '/reminders': typeof RemindersRoute
   '/settings': typeof SettingsRoute
@@ -242,6 +258,8 @@ export interface FileRoutesById {
   '/calendar': typeof CalendarRoute
   '/feedback': typeof FeedbackRoute
   '/mcp': typeof McpRoute
+  '/parana-time-today': typeof ParanaTimeTodayRoute
+  '/parana-time-tomorrow': typeof ParanaTimeTomorrowRoute
   '/privacy': typeof PrivacyRoute
   '/reminders': typeof RemindersRoute
   '/settings': typeof SettingsRoute
@@ -273,6 +291,8 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/feedback'
     | '/mcp'
+    | '/parana-time-today'
+    | '/parana-time-tomorrow'
     | '/privacy'
     | '/reminders'
     | '/settings'
@@ -302,6 +322,8 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/feedback'
     | '/mcp'
+    | '/parana-time-today'
+    | '/parana-time-tomorrow'
     | '/privacy'
     | '/reminders'
     | '/settings'
@@ -331,6 +353,8 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/feedback'
     | '/mcp'
+    | '/parana-time-today'
+    | '/parana-time-tomorrow'
     | '/privacy'
     | '/reminders'
     | '/settings'
@@ -361,6 +385,8 @@ export interface RootRouteChildren {
   CalendarRoute: typeof CalendarRoute
   FeedbackRoute: typeof FeedbackRoute
   McpRoute: typeof McpRoute
+  ParanaTimeTodayRoute: typeof ParanaTimeTodayRoute
+  ParanaTimeTomorrowRoute: typeof ParanaTimeTomorrowRoute
   PrivacyRoute: typeof PrivacyRoute
   RemindersRoute: typeof RemindersRoute
   SettingsRoute: typeof SettingsRoute
@@ -426,6 +452,20 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parana-time-tomorrow': {
+      id: '/parana-time-tomorrow'
+      path: '/parana-time-tomorrow'
+      fullPath: '/parana-time-tomorrow'
+      preLoaderRoute: typeof ParanaTimeTomorrowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parana-time-today': {
+      id: '/parana-time-today'
+      path: '/parana-time-today'
+      fullPath: '/parana-time-today'
+      preLoaderRoute: typeof ParanaTimeTodayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -598,6 +638,8 @@ const rootRouteChildren: RootRouteChildren = {
   CalendarRoute: CalendarRoute,
   FeedbackRoute: FeedbackRoute,
   McpRoute: McpRoute,
+  ParanaTimeTodayRoute: ParanaTimeTodayRoute,
+  ParanaTimeTomorrowRoute: ParanaTimeTomorrowRoute,
   PrivacyRoute: PrivacyRoute,
   RemindersRoute: RemindersRoute,
   SettingsRoute: SettingsRoute,
