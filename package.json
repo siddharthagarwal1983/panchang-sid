@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
-    "reindex": "node scripts/request-reindex.mjs"
+    "reindex": "node scripts/request-reindex.mjs",
+    "check:canonical": "node scripts/check-canonical.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
