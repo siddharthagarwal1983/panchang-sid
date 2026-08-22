@@ -17,7 +17,17 @@ import {
 } from "@/lib/seo/schema";
 import { ekadashiEventNodes } from "@/lib/seo/observance-events";
 
-const TITLE = "Ekadashi 2026 Dates & Parana Times | Panchanga";
+/**
+ * The page lists the current and next year (user-toggleable), so the snippet
+ * names both years and stays accurate as the calendar rolls over.
+ */
+function titleYears(): string {
+  const y = new Date().getUTCFullYear();
+  return `${y}–${y + 1}`;
+}
+function metaTitle(): string {
+  return `Ekadashi Dates ${titleYears()} & Parana Times | Panchanga`;
+}
 const DESCRIPTION =
   "Every Ekadashi date with the exact parana (fast-breaking) window calculated for your own city's sunrise and Dwadashi end — not India time.";
 const URL = `${SITE_URL}/vrats/ekadashi`;
@@ -46,23 +56,25 @@ const FAQS: FaqItem[] = [
 ];
 
 export const Route = createFileRoute("/vrats/ekadashi/")({
-  head: () => ({
+  head: () => {
+    const title = metaTitle();
+    return {
     meta: [
-      { title: TITLE },
+      { title },
       { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE },
+      { property: "og:title", content: title },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:url", content: URL },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: TITLE },
+      { name: "twitter:title", content: title },
       { name: "twitter:description", content: DESCRIPTION },
     ],
     links: [{ rel: "canonical", href: URL }],
     scripts: [
       ldJson([
         articleSchema({
-          headline: "Ekadashi dates and parana times for your location",
+          headline: `Ekadashi dates and parana times ${titleYears()} for your location`,
           description: DESCRIPTION,
           url: URL,
         }),
@@ -86,7 +98,8 @@ export const Route = createFileRoute("/vrats/ekadashi/")({
         }),
       ]),
     ],
-  }),
+    };
+  },
   component: EkadashiPage,
 });
 
