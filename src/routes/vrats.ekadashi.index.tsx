@@ -17,7 +17,17 @@ import {
 } from "@/lib/seo/schema";
 import { ekadashiEventNodes } from "@/lib/seo/observance-events";
 
-const TITLE = "Ekadashi 2026 Dates & Parana Times | Panchanga";
+/**
+ * The page lists the current and next year (user-toggleable), so the snippet
+ * names both years and stays accurate as the calendar rolls over.
+ */
+function titleYears(): string {
+  const y = new Date().getUTCFullYear();
+  return `${y}–${y + 1}`;
+}
+function metaTitle(): string {
+  return `Ekadashi Dates ${titleYears()} & Parana Times | Panchanga`;
+}
 const DESCRIPTION =
   "Every Ekadashi date with the exact parana (fast-breaking) window calculated for your own city's sunrise and Dwadashi end — not India time.";
 const URL = `${SITE_URL}/vrats/ekadashi`;
