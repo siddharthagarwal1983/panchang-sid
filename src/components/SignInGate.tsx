@@ -70,7 +70,7 @@ export function SignInGate({
           onClick={() => trackAuthFunnel("sign_in_cta_clicked", { source: `gate:${target}` })}
           className="mt-4 inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm text-primary-foreground transition-opacity hover:opacity-90"
         >
-          Sign in
+          {ctaLabel}
         </Link>
       </section>
     );
