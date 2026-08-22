@@ -56,23 +56,25 @@ const FAQS: FaqItem[] = [
 ];
 
 export const Route = createFileRoute("/vrats/ekadashi/")({
-  head: () => ({
+  head: () => {
+    const title = metaTitle();
+    return {
     meta: [
-      { title: TITLE },
+      { title },
       { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE },
+      { property: "og:title", content: title },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:url", content: URL },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: TITLE },
+      { name: "twitter:title", content: title },
       { name: "twitter:description", content: DESCRIPTION },
     ],
     links: [{ rel: "canonical", href: URL }],
     scripts: [
       ldJson([
         articleSchema({
-          headline: "Ekadashi dates and parana times for your location",
+          headline: `Ekadashi dates and parana times ${titleYears()} for your location`,
           description: DESCRIPTION,
           url: URL,
         }),
