@@ -60,6 +60,44 @@ function metaDescription(): string {
   return DESCRIPTION;
 }
 
+/**
+ * Snippet title carries the actual answer ("parana time today") with concrete
+ * times, which is what earns the click at position ~9. Falls back to the
+ * static title outside a fast period.
+ */
+function metaTitle(): string {
+  try {
+    const snap = referenceParanaSnapshot();
+    const todayKey = dayKey(snap.today);
+    const fmt = (d: Date | null) => formatTime(d, snap.city.tz, true);
+    const paranaToday = snap.entries.find((e) => dayKey(e.parana.date) === todayKey);
+    if (paranaToday) {
+      return `Parana Time Today: ${fmt(paranaToday.parana.start)}–${fmt(
+        paranaToday.parana.end,
+      )} ET (${paranaToday.name})`;
+    }
+    const fastToday = snap.entries.find((e) => dayKey(e.date) === todayKey);
+    if (fastToday) {
+      return `${fastToday.name} Today — Parana Tomorrow ${fmt(fastToday.parana.start)}–${fmt(
+        fastToday.parana.end,
+      )} ET`;
+    }
+    const next = snap.entries.find((e) => dayKey(e.date) >= todayKey);
+    if (next) {
+      return `Parana Time Today & Next: ${next.name} ${formatLongDate(next.date)}`;
+    }
+  } catch {
+    /* fall through to the static title */
+  }
+  return TITLE;
+}
+
+/** Dated-page stub for an entry's local fast day, when one exists (2026–2027). */
+function stubFor(date: CalendarDay) {
+  const slug = MONTHS.find((m) => m.number === date.month)?.slug;
+  return slug ? findEkadashiDate(date.year, slug, date.day) : undefined;
+}
+
 const FAQS: FaqItem[] = [
   {
     q: "What is the Ekadashi parana time today?",
