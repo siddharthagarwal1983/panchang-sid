@@ -68,7 +68,9 @@ describe("canonical strategy", () => {
         ...src.matchAll(/property: "og:url", content: ([^}]+)}/g),
       ].map((m) => m[1]);
       for (const expr of expressions) {
-        const ok = /SITE_URL|canonicalUrl|canonicalLink|canonicalOgUrl|\bURL\b|\burl\b/.test(expr);
+        const ok = /SITE_URL|PARANA_URL|canonicalUrl|canonicalLink|canonicalOgUrl|\bURL\b|\burl\b/.test(
+          expr,
+        );
         if (!ok) offenders.push(`${f}: ${expr.trim()}`);
       }
     }
