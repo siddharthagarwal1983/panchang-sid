@@ -10,6 +10,8 @@ type Props = {
   next?: string;
   title: string;
   description: string;
+  /** Label for the sign-in button. Defaults to "Sign in". */
+  ctaLabel?: string;
   /** Number of shimmer rows shown while the session is resolving. */
   skeletonRows?: number;
   children: ReactNode;
@@ -19,7 +21,14 @@ type Props = {
  * Renders `children` only once a session exists. Protected UI is never mounted
  * for signed-out visitors, so it can safely assume a user.
  */
-export function SignInGate({ next, title, description, skeletonRows = 3, children }: Props) {
+export function SignInGate({
+  next,
+  title,
+  description,
+  ctaLabel = "Sign in",
+  skeletonRows = 3,
+  children,
+}: Props) {
   const { user, loading } = useAuth();
   const here = useRouterState({
     select: (s) => `${s.location.pathname}${s.location.searchStr ?? ""}`,
