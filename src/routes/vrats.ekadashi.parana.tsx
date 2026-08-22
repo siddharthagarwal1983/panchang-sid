@@ -8,7 +8,16 @@ import {
   referenceParanaSnapshot,
   REFERENCE_CITY,
 } from "@/lib/panchang/parana-snapshot";
-import { addDays, dayKey, formatLongDate, formatTime, toCalendarDay, tzAbbr } from "@/lib/panchang/tz";
+import {
+  dayKey,
+  formatLongDate,
+  formatTime,
+  toCalendarDay,
+  tzAbbr,
+  type CalendarDay,
+} from "@/lib/panchang/tz";
+import { findEkadashiDate } from "@/lib/seo/ekadashi-dates";
+import { MONTHS } from "@/lib/seo/ekadashi-pages";
 import { usePrefs } from "@/lib/prefs";
 import {
   SITE_URL,
