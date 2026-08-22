@@ -148,7 +148,7 @@ async function main() {
   await expectRedirect("https://panchanga.lovable.app/");
   await expectRedirect("https://panchanga.lovable.app/vrats/ekadashi", "/vrats/ekadashi");
   await expectRedirect("https://www.indianpanchang.com/");
-  await expectNoRedirect("https://panchanga.lovable.app/~oauth/initiate");
+  await expectPreviewNoindex();
   await checkCanonicalHomepage();
   await reportGoogleVerdict();
 
