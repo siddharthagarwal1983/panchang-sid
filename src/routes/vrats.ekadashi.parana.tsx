@@ -281,7 +281,28 @@ function ParanaPage() {
               </h2>
               {next ? (
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  The next fast is <strong className="text-foreground">{next.name}</strong> on{" "}
+                  The next fast is{" "}
+                  <strong className="text-foreground">
+                    {(() => {
+                      const stub = stubFor(next.date);
+                      return stub ? (
+                        <Link
+                          to="/vrats/ekadashi/$year/$month/$day"
+                          params={{
+                            year: String(stub.year),
+                            month: stub.monthSlug,
+                            day: String(stub.day),
+                          }}
+                          className="text-primary underline-offset-2 hover:underline"
+                        >
+                          {next.name}
+                        </Link>
+                      ) : (
+                        next.name
+                      );
+                    })()}
+                  </strong>{" "}
+                  on{" "}
                   <strong className="text-foreground">{formatLongDate(next.date)}</strong> (
                   {next.masa} · {next.paksha} paksha), with parana on{" "}
                   {formatLongDate(next.parana.date)} between {t(next.parana.start)} and{" "}
@@ -289,20 +310,39 @@ function ParanaPage() {
                 </p>
               ) : null}
               <ul className="mt-3 space-y-3">
-                {upcoming.map((e) => (
-                  <li key={dayKey(e.date)} className="rounded-xl border border-border px-3 py-3">
-                    <div className="flex items-baseline justify-between gap-3">
-                      <p className="text-sm font-medium text-foreground">{e.name}</p>
-                      <p className="shrink-0 text-xs tabular-nums text-muted-foreground">
-                        {formatLongDate(e.date)}
+                {upcoming.map((e) => {
+                  const stub = stubFor(e.date);
+                  return (
+                    <li key={dayKey(e.date)} className="rounded-xl border border-border px-3 py-3">
+                      <div className="flex items-baseline justify-between gap-3">
+                        <p className="text-sm font-medium text-foreground">
+                          {stub ? (
+                            <Link
+                              to="/vrats/ekadashi/$year/$month/$day"
+                              params={{
+                                year: String(stub.year),
+                                month: stub.monthSlug,
+                                day: String(stub.day),
+                              }}
+                              className="text-primary underline-offset-2 hover:underline"
+                            >
+                              {e.name}
+                            </Link>
+                          ) : (
+                            e.name
+                          )}
+                        </p>
+                        <p className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                          {formatLongDate(e.date)}
+                        </p>
+                      </div>
+                      <p className="mt-1 text-xs tabular-nums text-muted-foreground">
+                        Parana {formatLongDate(e.parana.date)} · {t(e.parana.start)} –{" "}
+                        {t(e.parana.end)}
                       </p>
-                    </div>
-                    <p className="mt-1 text-xs tabular-nums text-muted-foreground">
-                      Parana {formatLongDate(e.parana.date)} · {t(e.parana.start)} –{" "}
-                      {t(e.parana.end)}
-                    </p>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             </section>
         </>
