@@ -123,17 +123,18 @@ const FAQS: FaqItem[] = [
 
 export const Route = createFileRoute("/vrats/ekadashi/parana")({
   head: () => {
+    const title = metaTitle();
     const description = metaDescription();
     return {
     meta: [
-      { title: TITLE },
+      { title },
       { name: "description", content: description },
-      { property: "og:title", content: TITLE },
+      { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:url", content: URL },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: TITLE },
+      { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
     ],
     links: [{ rel: "canonical", href: URL }],
