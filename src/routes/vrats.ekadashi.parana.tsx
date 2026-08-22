@@ -359,14 +359,44 @@ function ParanaPage() {
           </p>
         </section>
 
+        <section className="panel px-5 py-5">
+          <h2 className="text-sm font-semibold text-foreground">Parana rules at a glance</h2>
+          <ul className="mt-2 list-disc space-y-1.5 pl-4 text-xs leading-relaxed text-muted-foreground">
+            <li>
+              Never break the fast during Hari Vasara — the first quarter of Dwadashi — even when
+              that pushes parana late into the morning.
+            </li>
+            <li>
+              Parana must happen on Dwadashi tithi; if Dwadashi ends early, break the fast before it
+              ends rather than waiting for a clock time.
+            </li>
+            <li>
+              When two consecutive sunrises fall inside Ekadashi (vriddhi), Smartas keep the first
+              day and Vaishnavas keep the second.
+            </li>
+            <li>
+              Breaking the fast after Dwadashi has ended counts as a missed parana, so the window
+              above is the deadline, not a suggestion.
+            </li>
+          </ul>
+        </section>
+
         <FaqSection items={FAQS} />
 
         <p className="px-1 text-xs text-muted-foreground">
           See the full{" "}
           <Link to="/vrats/ekadashi" className="text-primary underline-offset-2 hover:underline">
             Ekadashi calendar
-          </Link>{" "}
-          or{" "}
+          </Link>
+          ,{" "}
+          <Link
+            to="/vrats/ekadashi/$year"
+            params={{ year: "2026" }}
+            className="text-primary underline-offset-2 hover:underline"
+          >
+            Ekadashi 2026 dates
+          </Link>
+          , or{" "}
           <Link to="/tithi-today" className="text-primary underline-offset-2 hover:underline">
             today's tithi
           </Link>
