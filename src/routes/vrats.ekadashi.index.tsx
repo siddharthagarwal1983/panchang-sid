@@ -98,7 +98,8 @@ export const Route = createFileRoute("/vrats/ekadashi/")({
         }),
       ]),
     ],
-  }),
+    };
+  },
   component: EkadashiPage,
 });
 
