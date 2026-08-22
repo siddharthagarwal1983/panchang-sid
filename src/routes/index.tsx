@@ -521,17 +521,6 @@ function TodayPage() {
             </div>
           </section>
 
-          <p className="px-1 text-center text-xs text-muted-foreground">
-            Keeping an Ekadashi fast? See{" "}
-            <Link
-              to="/vrats/ekadashi/parana"
-              className="text-primary underline-offset-2 hover:underline"
-            >
-              parana time today and tomorrow
-            </Link>{" "}
-            for {city.name}.
-          </p>
-
           <SignInGate
             next="/"
             title="Sign in to see the full panchāṅga"
