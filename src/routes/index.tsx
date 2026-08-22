@@ -642,6 +642,19 @@ function TodayPage() {
         </div>
       )}
 
+      {/* Crawlable without hydration: routes "parana time today/tomorrow" queries
+          to the dedicated parana page. */}
+      <p className="px-5 pb-6 text-center text-xs text-muted-foreground">
+        Keeping an Ekadashi fast? See{" "}
+        <Link
+          to="/vrats/ekadashi/parana"
+          className="text-primary underline-offset-2 hover:underline"
+        >
+          parana time today and tomorrow
+        </Link>{" "}
+        for {city.name}.
+      </p>
+
       {openItem && (
         <Suspense fallback={null}>
           <FestivalModal

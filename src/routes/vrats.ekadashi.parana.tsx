@@ -49,10 +49,18 @@ function metaDescription(): string {
         paranaToday.parana.end,
       )} ET after ${paranaToday.name}. Times recalculate for your own city and sunrise.`;
     }
-    if (next) {
-      return `Next Ekadashi is ${next.name} on ${formatLongDate(next.date)}, with parana on ${formatLongDate(
+    if (next && dayKey(next.date) === todayKey) {
+      // Today is the fast day: the query intent shifts to "parana time tomorrow".
+      return `Today is ${next.name}. Parana time tomorrow (${formatLongDate(
         next.parana.date,
-      )} between ${fmt(next.parana.start)} and ${fmt(next.parana.end)} ET. Times recalculate for your own city.`;
+      )}) is ${fmt(next.parana.start)}–${fmt(next.parana.end)} ET. Times recalculate for your own city.`;
+    }
+    if (next) {
+      return `Parana time today: no Ekadashi fast ends today. Next is ${next.name} on ${formatLongDate(
+        next.date,
+      )}; parana ${formatLongDate(next.parana.date)}, ${fmt(next.parana.start)}–${fmt(
+        next.parana.end,
+      )} ET.`;
     }
   } catch {
     /* fall through to the static description */
@@ -104,11 +112,11 @@ function stubFor(date: CalendarDay) {
 
 const FAQS: FaqItem[] = [
   {
-    q: "What is the Ekadashi parana time today?",
+    q: "When is parana time today?",
     a: "Parana is taken the morning after the fast, after sunrise, during Dwadashi and after Hari Vasara (the first quarter of Dwadashi) has ended. The card above shows today's window in your own clock time; if no fast ended today it tells you the next date a parana window falls.",
   },
   {
-    q: "What is the Ekadashi parana time tomorrow?",
+    q: "What is the parana time tomorrow?",
     a: "If you are fasting today, tomorrow's window is shown above with its start and end time for your city. Break the fast inside that window — after it closes the parana is considered late.",
   },
   {
