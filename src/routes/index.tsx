@@ -64,7 +64,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Daily Hindu Panchang for any city and timezone — tithi, nakshatra, fasting, festivals, sunrise/sunset and muhurta windows calculated for your local location.",
+          "Daily Hindu Panchang tuned to your timezone — tithi, nakshatra, fasting, festivals, sunrise/sunset and muhurta windows calculated for your local location.",
       },
       { property: "og:title", content: "Today's Panchang — Tithi, Fasting & Muhurta" },
       {
@@ -100,7 +100,7 @@ export const Route = createFileRoute("/")({
         webPageSchema({
           name: "Today's Panchang — Tithi, Fasting & Muhurta",
           description:
-            "Daily Hindu Panchang for any city and timezone — tithi, nakshatra, fasting, festivals, sunrise/sunset and muhurta windows calculated for your local location.",
+            "Daily Hindu Panchang tuned to your timezone — tithi, nakshatra, fasting, festivals, sunrise/sunset and muhurta windows calculated for your local location.",
           url: `${SITE_URL}/`,
           about: [
             definedTermSchema({
