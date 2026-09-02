@@ -1,6 +1,6 @@
 # Panchāṅga
 
-> Daily Hindu panchang for the diaspora — tithi, nakshatra, yoga, karana, muhurta and festivals computed for your own location's local sunrise.
+> Daily Hindu panchang for any location and timezone — tithi, nakshatra, yoga, karana, muhurta and festivals computed for your own location's local sunrise.
 
 Panchāṅga uses drik ganita (true positions of the sun and moon) with the Lahiri (Chitrapaksha) ayanamsa. All timings are calculated for the user's detected or chosen location and timezone, so festival and vrat dates match the local day rather than the India date.
 

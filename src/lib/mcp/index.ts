@@ -13,7 +13,7 @@ export default defineMcp({
   title: "Panchāṅga",
   version: "0.1.0",
   instructions:
-    "Tools for Panchāṅga, a Hindu almanac app for the diaspora. Use `get_panchang` for the tithi, nakshatra, yoga, karana, sunrise/sunset and muhurtas of a date, `list_festivals` for upcoming festival and vrat dates, and `get_my_settings` to read the signed-in user's saved location and reminder preferences. All timings are computed at the local sunrise of the given place, not India time.",
+    "Tools for Panchāṅga, a Hindu almanac app for any timezone. Use `get_panchang` for the tithi, nakshatra, yoga, karana, sunrise/sunset and muhurtas of a date, `list_festivals` for upcoming festival and vrat dates, and `get_my_settings` to read the signed-in user's saved location and reminder preferences. All timings are computed at the local sunrise of the given place, not India time.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",

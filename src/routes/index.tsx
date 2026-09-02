@@ -64,13 +64,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Daily Hindu Panchang for the U.S. diaspora — tithi, nakshatra, fasting, festivals, sunrise/sunset and muhurta windows calculated for your local city.",
+          "Daily Hindu Panchang for any city and timezone — tithi, nakshatra, fasting, festivals, sunrise/sunset and muhurta windows calculated for your local location.",
       },
       { property: "og:title", content: "Today's Panchang — Tithi, Fasting & Muhurta" },
       {
         property: "og:description",
         content:
-          "Accurate daily Panchang tuned to your U.S. timezone. Get tithi, fasting days, festivals, local sunrise/sunset and auspicious muhurta times.",
+          "Accurate daily Panchang tuned to your timezone. Get tithi, fasting days, festivals, local sunrise/sunset and auspicious muhurta times.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE_URL}/` },
@@ -79,7 +79,7 @@ export const Route = createFileRoute("/")({
       {
         name: "twitter:description",
         content:
-          "Accurate daily Panchang tuned to your U.S. timezone. Get tithi, fasting days, festivals, local sunrise/sunset and auspicious muhurta times.",
+          "Accurate daily Panchang tuned to your timezone. Get tithi, fasting days, festivals, local sunrise/sunset and auspicious muhurta times.",
       },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/` }],
@@ -100,7 +100,7 @@ export const Route = createFileRoute("/")({
         webPageSchema({
           name: "Today's Panchang — Tithi, Fasting & Muhurta",
           description:
-            "Daily Hindu Panchang for the U.S. diaspora — tithi, nakshatra, fasting, festivals, sunrise/sunset and muhurta windows calculated for your local city.",
+            "Daily Hindu Panchang for any city and timezone — tithi, nakshatra, fasting, festivals, sunrise/sunset and muhurta windows calculated for your local location.",
           url: `${SITE_URL}/`,
           about: [
             definedTermSchema({
