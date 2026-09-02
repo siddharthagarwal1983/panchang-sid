@@ -5,8 +5,8 @@ import { canonicalLink } from "@/lib/seo/canonical";
 import {
   PARANA_FAQS,
   PARANA_URL,
-  paranaDescriptionToday,
-  paranaTitleToday,
+  paranaDescriptionHub,
+  paranaTitleHub,
 } from "@/lib/seo/parana-meta";
 import {
   SITE_URL,
@@ -19,8 +19,8 @@ import {
 
 export const Route = createFileRoute("/vrats/ekadashi/parana")({
   head: () => {
-    const title = paranaTitleToday();
-    const description = paranaDescriptionToday();
+    const title = paranaTitleHub();
+    const description = paranaDescriptionHub();
     return {
       meta: [
         { title },

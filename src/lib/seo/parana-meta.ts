@@ -4,9 +4,10 @@ import { dayKey, formatLongDate, formatTime, type CalendarDay } from "@/lib/panc
 import { MONTHS } from "@/lib/seo/ekadashi-pages";
 import { SITE_URL } from "./schema";
 
-export const PARANA_TITLE = "Ekadashi Parana Time Today & Tomorrow (Local US Times)";
+export const PARANA_TITLE = "Ekadashi Parana Time Today & Tomorrow in Your City";
 export const PARANA_DESCRIPTION =
-  "Today's and tomorrow's Ekadashi parana time for your city, plus which Ekadashi is today or tomorrow and when the Dwadashi parana window opens and closes.";
+  "Ekadashi parana time today and tomorrow, calculated from your own city's sunrise and timezone — not India time. See which Ekadashi it is and exactly when the Dwadashi parana window opens and closes.";
+
 /** Canonical URL shared by /vrats/ekadashi/parana, /parana-time-today and /parana-time-tomorrow. */
 export const PARANA_URL = `${SITE_URL}/vrats/ekadashi/parana`;
 
@@ -80,6 +81,44 @@ export function paranaTitleToday(): string {
   }
   return PARANA_TITLE;
 }
+
+/**
+ * Hub metadata for the canonical /vrats/ekadashi/parana page, kept distinct
+ * from the /parana-time-today entry page so no two routes share a title,
+ * description or social preview.
+ */
+export function paranaTitleHub(): string {
+  try {
+    const snap = referenceParanaSnapshot();
+    const next = snap.entries.find((e) => dayKey(e.date) >= dayKey(snap.today));
+    if (next) {
+      return `Ekadashi Parana Time Guide — Next: ${short(next.name)} ${mon(next.date)} ${next.date.day}`;
+    }
+  } catch {
+    /* fall through to the static title */
+  }
+  return PARANA_TITLE;
+}
+
+export function paranaDescriptionHub(): string {
+  try {
+    const snap = referenceParanaSnapshot();
+    const fmt = (d: Date | null) => formatTime(d, snap.city.tz, true);
+    const next = snap.entries.find((e) => dayKey(e.date) >= dayKey(snap.today));
+    if (next) {
+      return `Ekadashi parana rules, Hari Vasara and Dwadashi cut-offs, and every fast date. Next is ${
+        next.name
+      } on ${formatLongDate(next.date)} — parana ${formatLongDate(next.parana.date)}, ${fmt(
+        next.parana.start,
+      )}–${fmt(next.parana.end)} ET, recalculated for your own city's sunrise and timezone.`;
+    }
+  } catch {
+    /* fall through to the static description */
+  }
+  return PARANA_DESCRIPTION;
+}
+
+
 
 /** Tomorrow-focused title for /parana-time-tomorrow (canonical → parana page). */
 export function paranaTitleTomorrow(): string {
