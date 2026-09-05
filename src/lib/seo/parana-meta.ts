@@ -110,7 +110,7 @@ export function paranaDescriptionHub(): string {
         next.name
       } on ${formatLongDate(next.date)} — parana ${formatLongDate(next.parana.date)}, ${fmt(
         next.parana.start,
-      )}–${fmt(next.parana.end)} ET, recalculated for your own city's sunrise and timezone.`;
+      )}–${fmt(next.parana.end)} ET, tuned to your timezone and local sunrise.`;
     }
   } catch {
     /* fall through to the static description */
