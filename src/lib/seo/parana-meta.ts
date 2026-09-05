@@ -4,9 +4,9 @@ import { dayKey, formatLongDate, formatTime, type CalendarDay } from "@/lib/panc
 import { MONTHS } from "@/lib/seo/ekadashi-pages";
 import { SITE_URL } from "./schema";
 
-export const PARANA_TITLE = "Ekadashi Parana Time Today & Tomorrow in Your City";
+export const PARANA_TITLE = "Ekadashi Parana Time Tuned to Your Timezone — Not India Time";
 export const PARANA_DESCRIPTION =
-  "Ekadashi parana time today and tomorrow, calculated from your own city's sunrise and timezone — not India time. See which Ekadashi it is and exactly when the Dwadashi parana window opens and closes.";
+  "Ekadashi parana time tuned to your timezone and local sunrise — not India time. Get today's exact Dwadashi parana window for your city.";
 
 /** Canonical URL shared by /vrats/ekadashi/parana, /parana-time-today and /parana-time-tomorrow. */
 export const PARANA_URL = `${SITE_URL}/vrats/ekadashi/parana`;
@@ -92,7 +92,7 @@ export function paranaTitleHub(): string {
     const snap = referenceParanaSnapshot();
     const next = snap.entries.find((e) => dayKey(e.date) >= dayKey(snap.today));
     if (next) {
-      return `Ekadashi Parana Time Guide — Next: ${short(next.name)} ${mon(next.date)} ${next.date.day}`;
+      return `Ekadashi Parana Time for Your City — Next: ${short(next.name)} ${mon(next.date)} ${next.date.day}`;
     }
   } catch {
     /* fall through to the static title */
@@ -110,7 +110,7 @@ export function paranaDescriptionHub(): string {
         next.name
       } on ${formatLongDate(next.date)} — parana ${formatLongDate(next.parana.date)}, ${fmt(
         next.parana.start,
-      )}–${fmt(next.parana.end)} ET, recalculated for your own city's sunrise and timezone.`;
+      )}–${fmt(next.parana.end)} ET, tuned to your timezone and local sunrise.`;
     }
   } catch {
     /* fall through to the static description */
@@ -145,7 +145,7 @@ export function paranaTitleTomorrow(): string {
   } catch {
     /* fall through to the static title */
   }
-  return "Parana Time Tomorrow — Ekadashi Fast Breaking (Local US)";
+  return "Parana Time Tomorrow — Ekadashi Fast Breaking (Your Timezone)";
 }
 
 /** Tomorrow-focused description for /parana-time-tomorrow. */
