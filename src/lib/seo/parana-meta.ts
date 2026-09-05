@@ -4,9 +4,9 @@ import { dayKey, formatLongDate, formatTime, type CalendarDay } from "@/lib/panc
 import { MONTHS } from "@/lib/seo/ekadashi-pages";
 import { SITE_URL } from "./schema";
 
-export const PARANA_TITLE = "Ekadashi Parana Time Today & Tomorrow in Your City";
+export const PARANA_TITLE = "Ekadashi Parana Time Tuned to Your Timezone — Not India Time";
 export const PARANA_DESCRIPTION =
-  "Ekadashi parana time today and tomorrow, calculated from your own city's sunrise and timezone — not India time. See which Ekadashi it is and exactly when the Dwadashi parana window opens and closes.";
+  "Ekadashi parana time tuned to your timezone and local sunrise — not India time. Get today's exact Dwadashi parana window for your city.";
 
 /** Canonical URL shared by /vrats/ekadashi/parana, /parana-time-today and /parana-time-tomorrow. */
 export const PARANA_URL = `${SITE_URL}/vrats/ekadashi/parana`;
