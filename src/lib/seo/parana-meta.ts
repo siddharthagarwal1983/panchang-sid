@@ -92,7 +92,7 @@ export function paranaTitleHub(): string {
     const snap = referenceParanaSnapshot();
     const next = snap.entries.find((e) => dayKey(e.date) >= dayKey(snap.today));
     if (next) {
-      return `Ekadashi Parana Time Guide — Next: ${short(next.name)} ${mon(next.date)} ${next.date.day}`;
+      return `Ekadashi Parana Time for Your City — Next: ${short(next.name)} ${mon(next.date)} ${next.date.day}`;
     }
   } catch {
     /* fall through to the static title */
