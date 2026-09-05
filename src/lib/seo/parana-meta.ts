@@ -145,7 +145,7 @@ export function paranaTitleTomorrow(): string {
   } catch {
     /* fall through to the static title */
   }
-  return "Parana Time Tomorrow — Ekadashi Fast Breaking (Local US)";
+  return "Parana Time Tomorrow — Ekadashi Fast Breaking (Your Timezone)";
 }
 
 /** Tomorrow-focused description for /parana-time-tomorrow. */
