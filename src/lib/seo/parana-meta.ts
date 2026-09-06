@@ -4,9 +4,10 @@ import { dayKey, formatLongDate, formatTime, type CalendarDay } from "@/lib/panc
 import { MONTHS } from "@/lib/seo/ekadashi-pages";
 import { SITE_URL } from "./schema";
 
-export const PARANA_TITLE = "Ekadashi Parana Time Tuned to Your Timezone — Not India Time";
+export const PARANA_TITLE =
+  "Ekadashi Parana Time for US, UK & Canada — Your Timezone, Not India Time";
 export const PARANA_DESCRIPTION =
-  "Ekadashi parana time tuned to your timezone and local sunrise — not India time. Get today's exact Dwadashi parana window for your city.";
+  "Ekadashi parana time for the US, UK and Canada tuned to your timezone and local sunrise — not India time. Get today's exact Dwadashi parana window for your city.";
 
 /** Canonical URL shared by /vrats/ekadashi/parana, /parana-time-today and /parana-time-tomorrow. */
 export const PARANA_URL = `${SITE_URL}/vrats/ekadashi/parana`;
@@ -92,7 +93,7 @@ export function paranaTitleHub(): string {
     const snap = referenceParanaSnapshot();
     const next = snap.entries.find((e) => dayKey(e.date) >= dayKey(snap.today));
     if (next) {
-      return `Ekadashi Parana Time for Your City — Next: ${short(next.name)} ${mon(next.date)} ${next.date.day}`;
+      return `${short(next.name)} Parana Time for US, UK & Canada — ${mon(next.date)} ${next.date.day}`;
     }
   } catch {
     /* fall through to the static title */
@@ -106,11 +107,11 @@ export function paranaDescriptionHub(): string {
     const fmt = (d: Date | null) => formatTime(d, snap.city.tz, true);
     const next = snap.entries.find((e) => dayKey(e.date) >= dayKey(snap.today));
     if (next) {
-      return `Ekadashi parana rules, Hari Vasara and Dwadashi cut-offs, and every fast date. Next is ${
+      return `Ekadashi parana rules and exact Hari Vasara / Dwadashi windows for the US, UK and Canada — not India time. Next is ${
         next.name
-      } on ${formatLongDate(next.date)} — parana ${formatLongDate(next.parana.date)}, ${fmt(
+      } on ${formatLongDate(next.date)}; parana ${formatLongDate(next.parana.date)}, ${fmt(
         next.parana.start,
-      )}–${fmt(next.parana.end)} ET, tuned to your timezone and local sunrise.`;
+      )}–${fmt(next.parana.end)} ET, recomputed for your timezone and local sunrise.`;
     }
   } catch {
     /* fall through to the static description */
