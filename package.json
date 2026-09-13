@@ -12,7 +12,9 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "reindex": "node scripts/request-reindex.mjs",
-    "check:canonical": "node scripts/check-canonical.mjs"
+    "check:canonical": "node scripts/check-canonical.mjs",
+    "cap:sync": "cap sync android",
+    "cap:open": "cap open android"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",
