@@ -12,9 +12,13 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "reindex": "node scripts/request-reindex.mjs",
-    "check:canonical": "node scripts/check-canonical.mjs"
+    "check:canonical": "node scripts/check-canonical.mjs",
+    "cap:sync": "cap sync android",
+    "cap:open": "cap open android"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
     "@hookform/resolvers": "^5.2.2",
     "@lovable.dev/cloud-auth-js": "^1.1.2",
     "@lovable.dev/mcp-js": "^0.25.0",
@@ -73,6 +77,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "2.13.1",
     "@testing-library/jest-dom": "^7.0.0",
