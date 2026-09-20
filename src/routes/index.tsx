@@ -60,26 +60,26 @@ export const Route = createFileRoute("/")({
   }),
   head: () => ({
     meta: [
-      { title: "Today's Panchang — Tithi, Fasting & Muhurta" },
+      { title: "Hindu Panchang Today — Local Tithi, Fasting & Muhurta" },
       {
         name: "description",
         content:
-          "Daily Hindu Panchang tuned to your timezone — tithi, nakshatra, fasting, festivals, sunrise/sunset and muhurta windows calculated for your local location.",
+          "Get today's Hindu Panchang tuned to your timezone — local tithi, nakshatra, fasting dates, festivals, sunrise/sunset and auspicious muhurta windows for your city.",
       },
-      { property: "og:title", content: "Today's Panchang — Tithi, Fasting & Muhurta" },
+      { property: "og:title", content: "Hindu Panchang Today — Local Tithi, Fasting & Muhurta" },
       {
         property: "og:description",
         content:
-          "Accurate daily Panchang tuned to your timezone. Get tithi, fasting days, festivals, local sunrise/sunset and auspicious muhurta times.",
+          "Get today's Hindu Panchang tuned to your timezone — local tithi, nakshatra, fasting dates, festivals, sunrise/sunset and auspicious muhurta windows for your city.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE_URL}/` },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Today's Panchang — Tithi, Fasting & Muhurta" },
+      { name: "twitter:title", content: "Hindu Panchang Today — Local Tithi, Fasting & Muhurta" },
       {
         name: "twitter:description",
         content:
-          "Accurate daily Panchang tuned to your timezone. Get tithi, fasting days, festivals, local sunrise/sunset and auspicious muhurta times.",
+          "Get today's Hindu Panchang tuned to your timezone — local tithi, nakshatra, fasting dates, festivals, sunrise/sunset and auspicious muhurta windows for your city.",
       },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/` }],
