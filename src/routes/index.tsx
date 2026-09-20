@@ -93,14 +93,14 @@ export const Route = createFileRoute("/")({
           applicationCategory: "LifestyleApplication",
           operatingSystem: "Any",
           description:
-            "Daily Hindu panchang — tithi, nakshatra, fasting days, festivals and muhurta windows calculated for your own local sunrise.",
+            "Get today's Hindu Panchang tuned to your timezone — local tithi, nakshatra, fasting dates, festivals, sunrise/sunset and auspicious muhurta windows for your city.",
           offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
           publisher: { "@id": `${SITE_URL}/#organization` },
         },
         webPageSchema({
-          name: "Today's Panchang — Tithi, Fasting & Muhurta",
+          name: "Hindu Panchang Today — Local Tithi, Fasting & Muhurta",
           description:
-            "Daily Hindu Panchang tuned to your timezone — tithi, nakshatra, fasting, festivals, sunrise/sunset and muhurta windows calculated for your local location.",
+            "Get today's Hindu Panchang tuned to your timezone — local tithi, nakshatra, fasting dates, festivals, sunrise/sunset and auspicious muhurta windows for your city.",
           url: `${SITE_URL}/`,
           about: [
             definedTermSchema({
