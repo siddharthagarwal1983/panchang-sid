@@ -235,8 +235,8 @@ export function LocationPicker({
           )}
           {target === "mine" && !geoError && (
             <p className="mt-2 text-[11px] text-muted-foreground">
-              Used only on this device to calculate sunrise and tithi for where you are —
-              never stored or shared.
+              Used to calculate sunrise and tithi for where you are. Coordinates are sent to
+              OpenStreetMap to find your city name and saved to your account if you're signed in.
             </p>
           )}
           {geoError && <p className="mt-2 text-xs text-muted-foreground">{geoError}</p>}
