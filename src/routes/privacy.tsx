@@ -47,10 +47,13 @@ function PrivacyPage() {
           <h2 className="mt-5 font-display text-base text-foreground">What we collect</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>
-              <strong className="text-foreground">Device preferences:</strong> your chosen city, time format, theme, reminder settings and reminder list are stored locally in your browser.
+              <strong className="text-foreground">Device preferences:</strong> your chosen city (including its latitude/longitude and timezone), family city, recent cities, time format, theme and reminder settings are stored locally on your device.
             </li>
             <li>
-              <strong className="text-foreground">Account data (optional):</strong> if you sign in with Google or email, we store your account identifier and display name so we can sync your preferences across devices.
+              <strong className="text-foreground">Account data (optional):</strong> if you sign in with Google or email, we store your email, display name and profile photo URL, plus your synced preferences — including your saved locations with their latitude/longitude and timezone.
+            </li>
+            <li>
+              <strong className="text-foreground">Sign-in funnel analytics:</strong> we record anonymous sign-in steps (for example "sign-in page viewed" or "sign-in completed"), the method (Google or email), where the step started, a random visitor ID stored on your device, and a timestamp. We do not track page views or the content you look at.
             </li>
             <li>
               <strong className="text-foreground">Feedback:</strong> when you submit feedback, we store the name, email, category and message you provide.
@@ -59,45 +62,57 @@ function PrivacyPage() {
 
           <h2 className="mt-5 font-display text-base text-foreground">How we use it</h2>
           <p className="mt-2">
-            We use your information only to operate and improve the app: to show the correct panchang for your location, deliver reminders, keep your settings in sync, and respond to your feedback. We do not sell your personal data or use it for advertising.
+            We use your information only to operate and improve the app: to show the correct panchang for your location, deliver reminders, keep your settings in sync, understand whether sign-in works, and respond to your feedback. We do not sell your personal data, show ads, or use it for advertising.
           </p>
 
           <h2 className="mt-5 font-display text-base text-foreground">Location and timezone</h2>
           <p className="mt-2">
-            Your selected city and timezone are used only for on-device calculations. Geocoding requests may be sent to third-party search services when you look up a location, but they are not tied to your identity.
+            Your location is used to compute local sunrise, tithi and muhurta times. When you search for a city, the text you type is sent to Open-Meteo's geocoding service. When you tap "Use my current location", your coordinates are sent to OpenStreetMap Nominatim to look up your city name. If you are signed in, your selected locations (with coordinates) are saved to your account so they sync across devices.
           </p>
+
+          <h2 className="mt-5 font-display text-base text-foreground">Third-party processors</h2>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li><strong className="text-foreground">Open-Meteo</strong> — city search (place text).</li>
+            <li><strong className="text-foreground">OpenStreetMap Nominatim</strong> — reverse geocoding (coordinates).</li>
+            <li><strong className="text-foreground">Google</strong> — sign-in, if you choose "Continue with Google".</li>
+            <li><strong className="text-foreground">Lovable Cloud / Supabase</strong> — hosting, database and authentication.</li>
+          </ul>
 
           <h2 className="mt-5 font-display text-base text-foreground">Notifications</h2>
           <p className="mt-2">
-            Reminder notifications are scheduled locally while the app is open. If you grant browser notification permission, your device handles the alerts; we do not receive notification content or delivery status.
+            Reminder notifications are scheduled locally while the app is open. If you grant notification permission, your device handles the alerts; we do not receive notification content or delivery status.
           </p>
 
           <h2 className="mt-5 font-display text-base text-foreground">Cookies and analytics</h2>
           <p className="mt-2">
-            Panchanga does not use third-party analytics or advertising cookies. Essential authentication cookies are set only when you sign in.
+            Panchanga does not use third-party analytics or advertising SDKs or cookies. The only analytics are the anonymous sign-in funnel steps described above. Essential authentication data is stored only when you sign in.
           </p>
 
           <h2 className="mt-5 font-display text-base text-foreground">Data retention</h2>
           <p className="mt-2">
-            Local preferences remain on your device until you clear them. Account data and synced settings are kept while your account is active. Feedback submissions are retained so we can review and act on them.
+            Local preferences remain on your device until you clear them. Account data and synced settings are kept until you delete your account. Feedback submissions are retained so we can review and act on them.
+          </p>
+
+          <h2 className="mt-5 font-display text-base text-foreground">Deleting your account and data</h2>
+          <p className="mt-2">
+            Signed-in users can delete their account at any time in Settings → Account → "Delete my account and data". This permanently erases your profile (name and photo), your synced settings and saved locations, and your sign-in account, then signs you out. Feedback you sent is kept but no longer linked to your account. You can also request deletion by emailing us.
           </p>
 
           <h2 className="mt-5 font-display text-base text-foreground">Your choices</h2>
           <p className="mt-2">
-            You can change your city, reminders and theme at any time in Settings. You can sign out from the Account section. To delete your account and synced data, please contact us through the Feedback page.
-          </p>
-
-          <h2 className="mt-5 font-display text-base text-foreground">Hosting</h2>
-          <p className="mt-2">
-            The app is hosted and the optional backend is provided by Lovable Cloud. Lovable supplies the platform infrastructure; this privacy policy describes how the Panchanga app itself uses data.
+            You can change your city, reminders and theme at any time in Settings, sign out from the Account section, or delete your account as described above.
           </p>
 
           <h2 className="mt-5 font-display text-base text-foreground">Contact us</h2>
           <p className="mt-2">
-            If you have questions about this policy or want to exercise your privacy rights, send a message through the Feedback page.
+            For privacy questions, support or data-deletion requests, email{" "}
+            <a href="mailto:coolrahulmalhotra85@gmail.com" className="text-primary underline">
+              coolrahulmalhotra85@gmail.com
+            </a>
+            .
           </p>
 
-          <p className="mt-5 text-xs">Last updated: 26 July 2026</p>
+          <p className="mt-5 text-xs">Last updated: 26 September 2026</p>
         </article>
       </div>
     </main>
