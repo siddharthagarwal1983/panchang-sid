@@ -10,6 +10,8 @@ import { useReminderNotifications } from "@/lib/useReminderNotifications";
 import { SITE_URL, faqPageSchema, ldJson } from "@/lib/seo/schema";
 import { trackAuthFunnel } from "@/lib/analytics/auth-funnel";
 import { canonicalLink, canonicalOgUrl } from "@/lib/seo/canonical";
+import { useServerFn } from "@tanstack/react-start";
+import { deleteMyAccount } from "@/lib/account.functions";
 
 const FAQS: FaqItem[] = [
   {
@@ -201,7 +203,84 @@ function AccountCard() {
       <p className="mt-2.5 text-xs text-muted-foreground">
         Your city, time format, theme and reminders are saved to this account.
       </p>
+      <DeleteAccount onDeleted={async () => {
+        await signOut().catch(() => undefined);
+        navigate({ to: "/", search: { d: undefined }, replace: true });
+      }} />
     </section>
+  );
+}
+
+function DeleteAccount({ onDeleted }: { onDeleted: () => Promise<void> }) {
+  const del = useServerFn(deleteMyAccount);
+  const [open, setOpen] = useState(false);
+  const [confirm, setConfirm] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="mt-4 w-full rounded-xl border border-destructive/40 px-4 py-2.5 text-sm text-destructive transition-colors hover:bg-destructive/10"
+      >
+        Delete my account and data
+      </button>
+    );
+  }
+
+  return (
+    <div className="mt-4 rounded-xl border border-destructive/40 p-4">
+      <p className="text-sm text-foreground">This permanently deletes your account.</p>
+      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+        Your profile, saved locations, reminders and preferences are erased and you are signed
+        out. This cannot be undone. Type <strong className="text-foreground">DELETE</strong> to
+        confirm.
+      </p>
+      <input
+        value={confirm}
+        onChange={(e) => setConfirm(e.target.value)}
+        placeholder="DELETE"
+        aria-label="Type DELETE to confirm"
+        className="mt-3 w-full rounded-xl border border-border bg-transparent px-3 py-2.5 text-sm outline-none focus:border-destructive"
+      />
+      {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
+      <div className="mt-3 flex gap-2">
+        <button
+          disabled={confirm !== "DELETE" || busy}
+          onClick={async () => {
+            setBusy(true);
+            setError(null);
+            try {
+              await del();
+              try {
+                localStorage.removeItem("panchang.prefs.v1");
+              } catch {
+                /* ignore */
+              }
+              await onDeleted();
+            } catch (e) {
+              setError(e instanceof Error ? e.message : "Something went wrong.");
+              setBusy(false);
+            }
+          }}
+          className="flex-1 rounded-xl bg-destructive px-4 py-2.5 text-sm text-destructive-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+        >
+          {busy ? "Deleting…" : "Permanently delete"}
+        </button>
+        <button
+          disabled={busy}
+          onClick={() => {
+            setOpen(false);
+            setConfirm("");
+            setError(null);
+          }}
+          className="rounded-xl border border-border px-4 py-2.5 text-sm text-muted-foreground hover:bg-secondary"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
   );
 }
 

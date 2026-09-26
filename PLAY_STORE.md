@@ -50,7 +50,8 @@ Then rebuild the signed bundle with the same keystore and upload it as a new rel
 
 ## Review risk
 
-Google may reject apps that are only a website wrapper. Reminders/notifications,
-offline support, and location-based sunrise times are already part of the app —
-mention these in the listing. Adding real push notifications is the strongest
-next step if a reviewer pushes back.
+Google may reject apps that are only a website wrapper. In-app reminders (fire
+while the app is open) and location-based sunrise times are part of the app —
+mention these in the listing. The app does NOT work offline and has no push
+notifications today, so do not claim either. Adding real push notifications is
+the strongest next step if a reviewer pushes back.
